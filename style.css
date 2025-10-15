@@ -32,33 +32,58 @@ html, body {
     border-radius: 5px;
     padding: 15px;
     font-size: large;
-    font-style: bold;
+    font-weight: bold;
     border: none;
     width: 25%;
     margin: 5px;
     cursor: pointer;
 }
+
+/* --- THAY ĐỔI Ở ĐÂY --- */
 #show{
     display: flex;
-    justify-content:flex-end;
+    /* Chuyển hướng thành cột (trên-dưới) */
+    flex-direction: column; 
+    /* Căn các phần tử sang bên phải */
+    align-items: flex-end; 
     border: 1px none black;
-    font-size: larger;
-    font-style: bold;
     margin: 5px;
     padding: 15px;
     background: snow;
     width: 100%;
     border-radius: 5px;
 }
+#result, #pheptinh{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 #result{
-    
+    font-size: 2.5rem; /* Cho số chính to hơn */
+    font-weight: bold;
+    min-height: 48px; /* Giữ chiều cao cố định */
 }
 #pheptinh{
+    font-size: 1.2rem; /* Cho phép tính nhỏ hơn */
+    color: #555;      /* Màu xám */
+    min-height: 24px;  /* Giữ chiều cao cố định */
 }
+
 #clear, #zero {
-    width: calc(75% + 25px);
+    width: calc(50% + 2.5px); /* Điều chỉnh lại chiều rộng */
+}
+#equal{
+    width: calc(50% + 2.5px);
 }
 #divide, #plus, #minus, #time, #equal{
     background: coral;
     color: white;
+}
+#divide:hover, #plus:hover, #minus:hover, #time:hover, #equal:hover, .calc-button:hover{
+    background: linear-gradient(135deg, #bd3508, #64b3f4, #560347);
+    color: rgb(30, 2, 2);
+}
+#divide:active, #plus:active, #minus:active, #time:active, #equal:active, .calc-button:active{
+    background: red;
+    color: rgb(246, 241, 241);
 }
