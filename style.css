@@ -23,6 +23,9 @@ html, body {
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.4);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    /* Giới hạn chiều rộng tối đa của máy tính */
+    max-width: 350px; 
+    width: 90%;
 }
 
 .buttons{
@@ -32,19 +35,16 @@ html, body {
     border-radius: 5px;
     padding: 15px;
     font-size: large;
-    font-weight: bold;
+    font-style: bold;
     border: none;
-    width: 25%;
+    /* Dùng calc() để tính toán chiều rộng chính xác, trừ đi margin (5px trái + 5px phải) */
+    width: calc(25% - 10px);
     margin: 5px;
     cursor: pointer;
 }
-
-/* --- THAY ĐỔI Ở ĐÂY --- */
 #show{
     display: flex;
-    /* Chuyển hướng thành cột (trên-dưới) */
     flex-direction: column; 
-    /* Căn các phần tử sang bên phải */
     align-items: flex-end; 
     border: 1px none black;
     margin: 5px;
@@ -54,36 +54,29 @@ html, body {
     border-radius: 5px;
 }
 #result, #pheptinh{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-#result{
-    font-size: 2.5rem; /* Cho số chính to hơn */
-    font-weight: bold;
-    min-height: 48px; /* Giữ chiều cao cố định */
-}
-#pheptinh{
-    font-size: 1.2rem; /* Cho phép tính nhỏ hơn */
-    color: #555;      /* Màu xám */
-    min-height: 24px;  /* Giữ chiều cao cố định */
+    width: 100%;
+    text-align: right;
+    white-space: nowrap;      /* Bắt buộc văn bản nằm trên 1 dòng */
+    overflow: hidden;         /* Ẩn phần bị tràn */
+    text-overflow: ellipsis;  /* Hiển thị dấu "..." khi văn bản bị cắt */
+    min-width: 0;             /* Đây là chìa khóa: cho phép flex item co lại */
 }
 
+#result{
+    font-size: 2.5rem;
+    font-weight: bold;
+    min-height: 1.2em; /* Đảm bảo ô không bị thu lại khi trống */
+}
+#pheptinh{
+    font-size: 1.2rem;
+    color: #666;
+    min-height: 1.2em;
+}
 #clear, #zero {
-    width: calc(50% + 2.5px); /* Điều chỉnh lại chiều rộng */
+    width: calc(50% - 10px); 
 }
-#equal{
-    width: calc(50% + 2.5px);
-}
+
 #divide, #plus, #minus, #time, #equal{
     background: coral;
     color: white;
-}
-#divide:hover, #plus:hover, #minus:hover, #time:hover, #equal:hover, .calc-button:hover{
-    background: linear-gradient(135deg, #bd3508, #64b3f4, #560347);
-    color: rgb(30, 2, 2);
-}
-#divide:active, #plus:active, #minus:active, #time:active, #equal:active, .calc-button:active{
-    background: red;
-    color: rgb(246, 241, 241);
 }
