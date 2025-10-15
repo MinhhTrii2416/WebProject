@@ -38,9 +38,9 @@ html, body {
     margin: 5px;
     cursor: pointer;
 }
-#result{
+#show{
     display: flex;
-    justify-content: flex-end;
+    justify-content:flex-end;
     border: 1px none black;
     font-size: larger;
     font-style: bold;
@@ -49,6 +49,11 @@ html, body {
     background: snow;
     width: 100%;
     border-radius: 5px;
+}
+#result{
+    
+}
+#pheptinh{
 }
 #clear, #zero {
     width: calc(75% + 25px);
