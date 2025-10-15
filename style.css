@@ -36,6 +36,7 @@ html, body {
     border: none;
     width: 25%;
     margin: 5px;
+    cursor: pointer;
 }
 #result{
     display: flex;
