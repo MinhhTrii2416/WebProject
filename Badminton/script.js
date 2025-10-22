@@ -1,9 +1,7 @@
-window.addEventListener('scroll', function() {
-    const header = document.getElementById('main-header');
-    if (window.scrollY > 50) {
-        // Bạn có thể thêm một class để thay đổi style khi cuộn
-        // Ví dụ: header.classList.add('scrolled');
-    } else {
-        // header.classList.remove('scrolled');
-    }
+const dropdown = document.getElementsByClassName("dropdown");
+dropdown[0].addEventListener("mouseover", ()=> {
+    document.getElementById("dropdown-menu").style.display = "block";
+});
+dropdown[0].addEventListener("mouseout", ()=> {
+    document.getElementById("dropdown-menu").style.display = "none";
 });

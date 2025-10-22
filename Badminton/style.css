@@ -93,7 +93,7 @@ h2 {
     position: relative;
 }
 
-.dropdown-menu {
+#dropdown-menu {
     display: none;
     position: absolute;
     top: 100%;
@@ -101,20 +101,12 @@ h2 {
     background-color: var(--primary-color);
     border-top: 3px solid var(--accent-color);
     padding: 10px 0;
-    min-width: 180px;
+    min-width: 100px;
 }
 
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-.dropdown-menu li {
-    margin: 0;
-}
-
-.dropdown-menu a {
-    display: block;
+#dropdown-menu li {
     padding: 10px 20px;
+    margin: 0px;
 }
 
 .header-icons {
@@ -143,64 +135,14 @@ h2 {
 /* --- 2. Hero Section --- */
 .hero {
     /* Sử dụng hình ảnh của bạn ở đây */
-    background-image: url('https://placehold.co/1920x800/png?text=Chen+Long+Smash');
-    background-size: cover;
+    background-image: url('https://cdn.shopvnb.com/img/1920x640/uploads/slider/victor-axelsen_1759089349.webp');
+    background-size: contain;
     background-position: center;
     height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
     position: relative;
     margin-top: 65px; /* Bù cho sticky header */
 }
 
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Lớp phủ màu tối */
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
-
-.hero-content h1 {
-    font-size: 4rem;
-    color: var(--accent-color);
-    margin-bottom: 10px;
-}
-
-.hero-content h2 {
-    font-size: 3rem;
-    color: white;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.hero-content p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
-
-.cta-button {
-    background-color: var(--accent-color);
-    color: var(--primary-color);
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.cta-button:hover {
-    background-color: white;
-}
 
 /* --- 3. Featured Brands --- */
 .featured-brands {
