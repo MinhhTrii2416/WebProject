@@ -54,7 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Hàm lấy người dùng hiện tại
     function getCurrentUser() {
-        return localStorage.getItem(CURRENT_USER_KEY);
+        const curUser = localStorage.getItem(CURRENT_USER_KEY);
+        return curUser ? JSON.parse(curUser) : [];
     }
 
     // Hàm hiển thị thông báo lỗi
@@ -95,17 +96,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Hàm cập nhật UI dựa trên trạng thái đăng nhập ---
     function checkLoginStatus() {
-        const currentUserEmail = getCurrentUser();
-        
-        if (currentUserEmail) {
+        const currentUser = getCurrentUser();
+        if (currentUser.account) {
             // Đã đăng nhập
+            console.log("Da dang nhap");
             loginRegisterBtn.classList.add("hidden");
             userInfo.classList.remove("hidden");
-            // Lấy tên từ email (ví dụ: "test@gmail.com" -> "test")
-            const username = currentUserEmail.split('@')[0];
+            const username = currentUser.account;
             welcomeMsg.textContent = `Chào, ${username}`;
         } else {
             // Chưa đăng nhập
+            console.log("chua dang nhap");
             loginRegisterBtn.classList.remove("hidden");
             userInfo.classList.add("hidden");
             welcomeMsg.textContent = "";
@@ -117,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Xử lý Đăng ký
     function handleRegister(event) {
         event.preventDefault();
+        const account = document.getElementById("register-account").value;
         const email = document.getElementById("register-email").value;
         const password = document.getElementById("register-password").value;
         const confirmPassword = document.getElementById("register-confirm-password").value;
@@ -137,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Mã hóa mật khẩu (đơn giản, không an toàn cho sản phẩm thật)
         const hashedPassword = "hashed_" + password; 
         
-        users.push({ email: email, password: hashedPassword });
+        users.push({ account: account, email: email, password: hashedPassword });
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
 
         alert("Đăng ký thành công! Vui lòng đăng nhập.");
@@ -150,14 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const email = document.getElementById("login-email").value;
         const password = document.getElementById("login-password").value;
-        const hashedPassword = "hashed_" + password; // Mã hóa tương tự
+        const hashedPassword = "hashed_" + password; // giải mã hóa
 
         const users = getUsers();
-        const user = users.find(user => user.email === email && user.password === hashedPassword);
+        const user = users.find(user => user.account && user.email === email && user.password === hashedPassword);
 
         if (user) {
             // Đăng nhập thành công
-            localStorage.setItem(CURRENT_USER_KEY, user.email);
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
             hideModal();
             checkLoginStatus();
         } else {
