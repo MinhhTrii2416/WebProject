@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Xử lý khi nhấn vào Giỏ hàng
     function handleCartClick(event) {
         const currentUser = getCurrentUser();
-        if (!currentUser) {
+        if (!currentUser.account) {
             event.preventDefault(); // Chặn chuyển trang
             alert("Vui lòng đăng nhập để xem giỏ hàng!");
             showModal(); // Hiển thị modal đăng nhập
