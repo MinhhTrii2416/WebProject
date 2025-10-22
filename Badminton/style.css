@@ -5,6 +5,7 @@
     --text-color: #f0f0f0;    /* Màu chữ sáng */
     --dark-text: #333;
     --background-light: #ffffff;
+    --error-color: #e74c3c; /* Màu đỏ cho lỗi */
 }
 
 * {
@@ -43,6 +44,10 @@ h2 {
     font-size: 2.5rem;
     text-align: center;
     margin-bottom: 40px;
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* --- 1. Header --- */
@@ -109,15 +114,54 @@ h2 {
     margin: 0px;
 }
 
+/* --- PHẦN ICON HEADER --- */
 .header-icons {
     display: flex;
     align-items: center;
+    gap: 20px; /* Thêm khoảng cách giữa các icon */
 }
 
-.header-icons a {
-    margin-left: 20px;
+/* 1. Ô tìm kiếm */
+.search-container {
+    position: relative;
+}
+.search-input {
+    background-color: #2c3e50;
+    border: 1px solid #7f8c8d;
+    border-radius: 20px;
+    color: white;
+    padding: 8px 15px 8px 40px; /* Chừa chỗ cho icon */
+    width: 200px;
+    transition: width 0.3s ease;
+}
+.search-input::placeholder {
+    color: #bdc3c7;
+}
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    width: 250px; /* Mở rộng khi focus */
+}
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7f8c8d;
+}
+
+/* 2. Giỏ hàng & 3. Nút Người dùng */
+.cart-icon, .user-btn {
     font-size: 1.2rem;
     position: relative;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+.cart-icon:hover, .user-btn:hover {
+    color: var(--accent-color);
 }
 
 .cart-icon .cart-count {
@@ -132,9 +176,120 @@ h2 {
     font-weight: bold;
 }
 
+/* 3. Phần đã đăng nhập */
+#user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+#welcome-msg {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.logout-btn {
+    color: #e74c3c; /* Màu đỏ cho nút đăng xuất */
+}
+.logout-btn:hover {
+    color: #c0392b;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: white;
+    color: var(--dark-text);
+    padding: 30px 40px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+}
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.auth-btn:hover {
+    background-color: #1a2b4d;
+}
+
+.toggle-form {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+.toggle-form a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.error-msg {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+}
+
+
 /* --- 2. Hero Section --- */
 .hero {
-    /* Sử dụng hình ảnh của bạn ở đây */
+    /* (Giữ nguyên) */
     background-image: url('https://cdn.shopvnb.com/img/1920x640/uploads/slider/victor-axelsen_1759089349.webp');
     background-size: contain;
     background-position: center;
@@ -142,7 +297,6 @@ h2 {
     position: relative;
     margin-top: 65px; /* Bù cho sticky header */
 }
-
 
 /* --- 3. Featured Brands --- */
 .featured-brands {

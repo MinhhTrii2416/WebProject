@@ -29,16 +29,98 @@
                     <li><a href="#">Liên hệ</a></li>
                 </ul>
             </nav>
+            
             <div class="header-icons">
-                <a href="#" aria-label="Tìm kiếm"><i class="fas fa-search"></i></a>
-                <a href="#" class="cart-icon" aria-label="Giỏ hàng">
+                
+                <!-- 1. Ô TÌM KIẾM -->
+                <div class="search-container">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <!-- 2. GIỎ HÀNG (Thêm ID) -->
+                <a href="#" class="cart-icon" aria-label="Giỏ hàng" id="cart-link">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">3</span>
                 </a>
-                <a href="#" aria-label="Tài khoản"><i class="fas fa-user"></i></a>
+                
+                <!-- 3. NGƯỜI DÙNG (Nội dung động) -->
+                <div id="user-container">
+                    <!-- Trạng thái CHƯA ĐĂNG NHẬP (mặc định) -->
+                    <button id="login-register-btn" class="user-btn" aria-label="Tài khoản">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    
+                    <!-- Trạng thái ĐÃ ĐĂNG NHẬP (bị ẩn ban đầu) -->
+                    <div id="user-info" class="hidden">
+                        <span id="welcome-msg">Chào,</span>
+                        <button id="logout-btn" class_="user-btn logout-btn" aria-label="Đăng xuất">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
+            <!-- ========================================== -->
+
         </div>
     </header>
+
+    <!-- ====== CỬA SỔ POP-UP ĐĂNG NHẬP/ĐĂNG KÝ (MỚI) ====== -->
+    <div id="auth-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-modal">&times;</button>
+            
+            <!-- Form Đăng nhập (mặc định) -->
+            <div id="login-form-container">
+                <h2>Đăng nhập</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Mật khẩu</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Đăng nhập</button>
+                    <p id="login-error" class="error-msg hidden"></p>
+                    <p class="toggle-form">
+                        Chưa có tài khoản? <a href="#" id="show-register">Đăng ký ngay</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Form Đăng ký (bị ẩn) -->
+            <div id="register-form-container" class="hidden">
+                <h2>Đăng ký</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-user">Tài khoản</label>
+                        <input type="text" id="register-user" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Mật khẩu</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Xác nhận Mật khẩu</label>
+                        <input type="password" id="register-confirm-password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Đăng ký</button>
+                    <p id="register-error" class="error-msg hidden"></p>
+                    <p class="toggle-form">
+                        Đã có tài khoản? <a href="#" id="show-login">Đăng nhập</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- ================================================ -->
+
 
     <main>
         <div class="hero"></div>
