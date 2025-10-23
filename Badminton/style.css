@@ -113,7 +113,6 @@ h2 {
     padding: 10px 20px;
     margin: 0px;
 }
-
 /* --- PHẦN ICON HEADER --- */
 .header-icons {
     display: flex;
@@ -151,7 +150,7 @@ h2 {
 }
 
 /* 2. Giỏ hàng & 3. Nút Người dùng */
-.cart-icon, .user-btn {
+.cart-icon, .user-btn, #user-info > i {
     font-size: 1.2rem;
     position: relative;
     cursor: pointer;
@@ -160,7 +159,7 @@ h2 {
     color: var(--text-color);
     transition: color 0.3s ease;
 }
-.cart-icon:hover, .user-btn:hover {
+.cart-icon:hover, .user-btn:hover, #user-info > i:hover {
     color: var(--accent-color);
 }
 
@@ -177,17 +176,32 @@ h2 {
 }
 
 /* 3. Phần đã đăng nhập */
-#user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+
+#dropdown-user {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    background-color: var(--primary-color);
+    border-top: 3px solid var(--accent-color);
+    padding: 10px;
+    margin: 10px;
+    min-width: 200px;
 }
 #welcome-msg {
-    font-size: 0.9rem;
+    font-size: 1.0rem;
     font-weight: 500;
+    cursor: pointer;
+}
+#welcome-msg:hover {
+    color: var(--accent-color);
+}
+#welcome-msg:active {
+    color: #d8dc72;
 }
 .logout-btn {
     color: #e74c3c; /* Màu đỏ cho nút đăng xuất */
+    font-size: 0.9rem;
 }
 .logout-btn:hover {
     color: #c0392b;

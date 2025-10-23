@@ -1,4 +1,4 @@
-// --- Code cho dropdown menu (giữ nguyên) ---
+
 const dropdown = document.getElementsByClassName("dropdown");
 dropdown[0].addEventListener("mouseover", () => {
     document.getElementById("dropdown-menu").style.display = "block";
@@ -6,8 +6,14 @@ dropdown[0].addEventListener("mouseover", () => {
 dropdown[0].addEventListener("mouseout", () => {
     document.getElementById("dropdown-menu").style.display = "none";
 });
-
-// --- CODE MỚI CHO CHỨC NĂNG ĐĂNG NHẬP/ĐĂNG KÝ ---
+const dropdown_user = document.getElementById("dropdown-user");
+dropdown[1].addEventListener("click", () => {
+    if(dropdown_user.style.display === "none") {
+        dropdown_user.style.display = "block";
+    }else{
+        dropdown_user.style.display = "none";
+    }
+});
 
 // Đợi cho tất cả nội dung HTML được tải xong
 document.addEventListener("DOMContentLoaded", () => {
@@ -185,8 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Nếu đã đăng nhập, trình duyệt sẽ tự động đi tiếp
     }
 
-    // --- Gán các trình nghe sự kiện ---
-
     // Mở/Đóng Modal
     loginRegisterBtn.addEventListener("click", showModal);
     closeModalBtn.addEventListener("click", hideModal);
@@ -212,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Giỏ hàng
     cartLink.addEventListener("click", handleCartClick);
 
-    // --- Chạy hàm kiểm tra ban đầu khi tải trang ---
     checkLoginStatus();
 
 });

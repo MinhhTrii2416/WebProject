@@ -52,16 +52,22 @@
                     </button>
                     
                     <!-- Trạng thái ĐÃ ĐĂNG NHẬP (bị ẩn ban đầu) -->
-                    <div id="user-info" class="hidden">
-                        <span id="welcome-msg">Chào,</span>
+                    <div id="user-info" class="hidden dropdown">
+                            <span id="welcome-msg">Chào,</span>
+                        <div id="dropdown-user">
+                            <i class="fa-solid fa-circle-user"></i>
+                            <button></button>
+                            <button id="logout-btn" class="user-btn logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </div>
+                        <!-- <span id="welcome-msg">Chào,</span>
                         <button id="logout-btn" class_="user-btn logout-btn" aria-label="Đăng xuất">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </div>
-            <!-- ========================================== -->
-
         </div>
     </header>
 
