@@ -1,19 +1,5 @@
 
-const dropdown = document.getElementsByClassName("dropdown");
-dropdown[0].addEventListener("mouseover", () => {
-    document.getElementById("dropdown-menu").style.display = "block";
-});
-dropdown[0].addEventListener("mouseout", () => {
-    document.getElementById("dropdown-menu").style.display = "none";
-});
-const dropdown_user = document.getElementById("dropdown-user");
-dropdown[1].addEventListener("click", () => {
-    if(dropdown_user.style.display === "none") {
-        dropdown_user.style.display = "block";
-    }else{
-        dropdown_user.style.display = "none";
-    }
-});
+// Desktop hover for dropdown is handled via CSS.
 
 // Đợi cho tất cả nội dung HTML được tải xong
 document.addEventListener("DOMContentLoaded", () => {
@@ -49,6 +35,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Lấy link giỏ hàng
     const cartLink = document.getElementById("cart-link");
+
+    // Mobile menu elements
+    const menuToggleBtn = document.getElementById("menu-toggle");
+    const mainNav = document.querySelector(".main-nav");
+    const navOverlay = document.getElementById("nav-overlay");
+
+    // Mobile search elements
+    const mobileSearchBtn = document.getElementById("mobile-search-btn");
+    const mobileSearchPanel = document.getElementById("mobile-search-panel");
+    const mobileSearchClose = document.getElementById("mobile-search-close");
+    const mobileSearchInput = document.getElementById("mobile-search-input");
+
+    // Menu user elements in drawer
+    const menuUserName = document.getElementById("menu-user-name");
+    const menuUserToggle = document.getElementById("menu-user-toggle");
+    const menuUserDropdown = document.getElementById("menu-user-dropdown");
+    const menuUserLogin = document.getElementById("menu-user-login");
+    const menuUserLogout = document.getElementById("menu-user-logout");
+
+    // Nav 'Vợt' dropdown toggle on mobile (smooth slide)
+    const navCategoryToggle = document.querySelector('.main-nav .dropdown > a');
+
+    // Toast element
+    const toastEl = document.getElementById('toast');
+
+    function showToast(message, type = 'info', duration = 2500) {
+        if (!toastEl) return;
+        toastEl.textContent = message;
+        toastEl.className = `toast ${type} show`;
+        setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, duration);
+    }
 
     // --- Hàm trợ giúp ---
 
@@ -110,12 +129,22 @@ document.addEventListener("DOMContentLoaded", () => {
             userInfo.classList.remove("hidden");
             const username = currentUser.account;
             welcomeMsg.textContent = `Chào, ${username}`;
+
+            // Cập nhật khối user trong menu trái (mobile)
+            if (menuUserName) menuUserName.textContent = username;
+            if (menuUserLogin) menuUserLogin.classList.add("hidden");
+            if (menuUserLogout) menuUserLogout.classList.remove("hidden");
         } else {
             // Chưa đăng nhập
             console.log("chua dang nhap");
             loginRegisterBtn.classList.remove("hidden");
             userInfo.classList.add("hidden");
             welcomeMsg.textContent = "";
+
+            // Trạng thái khách trong menu trái
+            if (menuUserName) menuUserName.textContent = "Guest";
+            if (menuUserLogin) menuUserLogin.classList.remove("hidden");
+            if (menuUserLogout) menuUserLogout.classList.add("hidden");
         }
     }
 
@@ -148,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         users.push({ account: account, email: email, password: hashedPassword });
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
 
-        alert("Đăng ký thành công! Vui lòng đăng nhập.");
+        showToast("Đăng ký thành công! Vui lòng đăng nhập.", 'success');
         registerForm.reset();
         showLoginView();
     }
@@ -168,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
             hideModal();
             checkLoginStatus();
+            showToast("Đăng nhập thành công.", 'success');
         } else {
             // Sai thông tin
             showError(loginError, "Email hoặc Mật khẩu không đúng.");
@@ -185,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentUser = getCurrentUser();
         if (!currentUser.account) {
             event.preventDefault(); // Chặn chuyển trang
-            alert("Vui lòng đăng nhập để xem giỏ hàng!");
+            showToast("Vui lòng đăng nhập để xem giỏ hàng!", 'info');
             showModal(); // Hiển thị modal đăng nhập
         }
         // Nếu đã đăng nhập, trình duyệt sẽ tự động đi tiếp
@@ -216,6 +246,87 @@ document.addEventListener("DOMContentLoaded", () => {
     // Giỏ hàng
     cartLink.addEventListener("click", handleCartClick);
 
+    // --- Mobile menu toggle ---
+    function closeMobileMenu() {
+        if (mainNav) mainNav.classList.remove("open");
+        if (navOverlay) navOverlay.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    function toggleMobileMenu() {
+        if (!mainNav) return;
+        const willOpen = !mainNav.classList.contains("open");
+        mainNav.classList.toggle("open", willOpen);
+        if (navOverlay) navOverlay.classList.toggle("show", willOpen);
+        document.body.style.overflow = willOpen ? "hidden" : "";
+    }
+
+    if (menuToggleBtn) menuToggleBtn.addEventListener("click", toggleMobileMenu);
+    if (navOverlay) navOverlay.addEventListener("click", closeMobileMenu);
+
+    // --- Mobile search toggle ---
+    function openMobileSearch() {
+        if (!mobileSearchPanel) return;
+        mobileSearchPanel.classList.add("show");
+        mobileSearchPanel.setAttribute("aria-hidden", "false");
+        setTimeout(() => mobileSearchInput && mobileSearchInput.focus(), 0);
+    }
+    function closeMobileSearch() {
+        if (!mobileSearchPanel) return;
+        mobileSearchPanel.classList.remove("show");
+        mobileSearchPanel.setAttribute("aria-hidden", "true");
+    }
+    if (mobileSearchBtn) mobileSearchBtn.addEventListener("click", () => {
+        closeMobileMenu();
+        openMobileSearch();
+    });
+    if (mobileSearchClose) mobileSearchClose.addEventListener("click", closeMobileSearch);
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeMobileSearch();
+            closeMobileMenu();
+        }
+    });
+
+    // --- Drawer user block interactions ---
+    if (menuUserToggle) menuUserToggle.addEventListener("click", () => {
+        const willOpen = !menuUserDropdown.classList.contains("show");
+        menuUserDropdown.classList.toggle("show", willOpen);
+        menuUserToggle.setAttribute("aria-expanded", String(willOpen));
+    });
+    if (menuUserLogin) menuUserLogin.addEventListener("click", () => {
+        closeMobileMenu();
+        showModal();
+    });
+    if (menuUserLogout) menuUserLogout.addEventListener("click", () => {
+        handleLogout();
+        closeMobileMenu();
+    });
+
     checkLoginStatus();
+
+    // Toggle the 'Vợt' submenu when clicked (primarily for mobile)
+    if (navCategoryToggle) {
+        navCategoryToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const parentLi = navCategoryToggle.closest('.dropdown');
+            if (!parentLi) return;
+            parentLi.classList.toggle('open');
+        });
+    }
+
+    // Desktop user dropdown (logged-in): click to toggle small dropdown box
+    const desktopUserInfo = document.getElementById('user-info');
+    const desktopUserDropdown = document.getElementById('dropdown-user');
+    if (desktopUserInfo && desktopUserDropdown) {
+        desktopUserInfo.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isShown = desktopUserDropdown.style.display === 'block';
+            desktopUserDropdown.style.display = isShown ? 'none' : 'block';
+        });
+        document.addEventListener('click', () => {
+            desktopUserDropdown.style.display = 'none';
+        });
+    }
 
 });

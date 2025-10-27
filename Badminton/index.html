@@ -11,8 +11,24 @@
 
     <header class="header" id="main-header">
         <div class="container">
+            <!-- Nút mở menu (chỉ hiện trên mobile) -->
+            <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" title="Mở menu">
+                <i class="fas fa-bars"></i>
+            </button>
             <a href="#" class="logo">PROBADMINTON</a>
             <nav class="main-nav">
+                <!-- Khối người dùng trong menu (mobile) -->
+                <div class="menu-user" id="menu-user">
+                    <button class="menu-user-toggle" id="menu-user-toggle" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="menu-user-name">Guest</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </button>
+                    <ul class="menu-user-dropdown" id="menu-user-dropdown">
+                        <li><button type="button" id="menu-user-login" class="linklike">Đăng nhập / Đăng ký</button></li>
+                        <li><button type="button" id="menu-user-logout" class="linklike hidden">Đăng xuất</button></li>
+                    </ul>
+                </div>
                 <ul>
                     <li><a href="#">Trang chủ</a></li>
                     <li class="dropdown">
@@ -31,12 +47,15 @@
             </nav>
             
             <div class="header-icons">
-                
-                <!-- 1. Ô TÌM KIẾM -->
+                <!-- 1. Ô TÌM KIẾM (desktop) -->
                 <div class="search-container">
                     <input type="text" placeholder="Tìm kiếm sản phẩm..." class="search-input">
                     <i class="fas fa-search search-icon"></i>
                 </div>
+                <!-- Nút tìm kiếm (mobile) -->
+                <button class="mobile-search-btn" id="mobile-search-btn" aria-label="Tìm kiếm">
+                    <i class="fas fa-search"></i>
+                </button>
                 
                 <!-- 2. GIỎ HÀNG (Thêm ID) -->
                 <a href="#" class="cart-icon" aria-label="Giỏ hàng" id="cart-link">
@@ -67,6 +86,18 @@
             </div>
         </div>
     </header>
+
+    <!-- Overlay tối màn hình khi mở menu trên mobile -->
+    <div class="nav-overlay" id="nav-overlay"></div>
+
+    <!-- Thanh tìm kiếm cho mobile -->
+    <div class="mobile-search-panel" id="mobile-search-panel" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="mobile-search-inner">
+            <i class="fas fa-search"></i>
+            <input type="text" id="mobile-search-input" placeholder="Tìm kiếm sản phẩm..." />
+            <button id="mobile-search-close" aria-label="Đóng tìm kiếm"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
 
     <div id="auth-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -218,6 +249,9 @@
             <p>&copy; 2025 ProBadminton. Đã đăng ký bản quyền.</p>
         </div>
     </footer>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="script.js"></script>
 </body>
