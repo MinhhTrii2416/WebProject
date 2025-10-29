@@ -1,0 +1,144 @@
+/* 3. Phần đã đăng nhập */
+
+#dropdown-user {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    background-color: var(--primary-color);
+    border-top: 3px solid var(--accent-color);
+    padding: 10px;
+    margin: 10px;
+    min-width: 150px;
+}
+.user-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 5px;
+}
+#welcome-msg {
+    font-size: 1.0rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+#welcome-msg:hover {
+    color: var(--accent-color);
+}
+#welcome-msg:active {
+    color: #d8dc72;
+}
+.logout-btn {
+    color: #e74c3c; 
+}
+.logout-btn:hover {
+    color: #c0392b;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: white;
+    color: var(--dark-text);
+    padding: 30px 40px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+}
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.auth-btn:hover {
+    background-color: #1a2b4d;
+}
+
+.toggle-form {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+.toggle-form a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.error-msg {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Auth state classes - Ẩn/Hiện theo trạng thái đăng nhập */
+/* Mặc định (chưa đăng nhập): Ẩn phần tử logged-in */
+.auth-show-when-logged-in {
+    display: none !important;
+}
+
+/* Khi đã đăng nhập: Hiển thị phần tử logged-in, ẩn phần tử logged-out */
+body.user-logged-in .auth-show-when-logged-in {
+    display: revert !important;
+}
+
+body.user-logged-in .auth-show-when-logged-out {
+    display: none !important;
+}

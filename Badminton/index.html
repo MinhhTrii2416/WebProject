@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro Badminton Store</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login_logout.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -15,7 +20,7 @@
             <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" title="Mở menu">
                 <i class="fas fa-bars"></i>
             </button>
-            <a href="#" class="logo">PROBADMINTON</a>
+            <a href="#" class="logo"><img src="../img/logo.png" alt="Logo"></a>
             <nav class="main-nav">
                 <!-- Khối người dùng trong menu (mobile) -->
                 <div class="menu-user" id="menu-user">
@@ -25,8 +30,13 @@
                         <i class="fas fa-chevron-down chevron"></i>
                     </button>
                     <ul class="menu-user-dropdown" id="menu-user-dropdown">
-                        <li><button type="button" id="menu-user-login" class="linklike">Đăng nhập / Đăng ký</button></li>
-                        <li><button type="button" id="menu-user-logout" class="linklike hidden">Đăng xuất</button></li>
+                        <li><a href="#profile" class="linklike auth-show-when-logged-in"><i class="fas fa-user"></i> Hồ sơ</a></li>
+                        <li><a href="#setting" class="linklike auth-show-when-logged-in"><i class="fas fa-cog"></i> Cài đặt</a></li>
+                        <li><button type="button" id="menu-user-logout" class="linklike auth-show-when-logged-in logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log out</span></button>
+                        </li>
+                        <li><button type="button" id="menu-user-login" class="linklike auth-show-when-logged-out">Đăng nhập / Đăng ký</button></li>
                     </ul>
                 </div>
                 <ul>
@@ -66,19 +76,23 @@
                 <!-- 3. NGƯỜI DÙNG (Nội dung động) -->
                 <div id="user-container">
                     <!-- Trạng thái CHƯA ĐĂNG NHẬP (mặc định) -->
-                    <button id="login-register-btn" class="user-btn" aria-label="Tài khoản">
+                    <button id="login-register-btn" class="user-btn auth-show-when-logged-out" aria-label="Tài khoản">
                         <i class="fas fa-user"></i>
                     </button>
                     
                     <!-- Trạng thái ĐÃ ĐĂNG NHẬP (bị ẩn ban đầu) -->
-                    <div id="user-info" class="hidden dropdown">
+                    <div id="user-info" class="dropdown auth-show-when-logged-in">
                         <span id="welcome-msg">Chào,</span>
                         <div id="dropdown-user">
-                            <i class="fa-solid fa-circle-user"></i>
-                            <button></button>
-                            <button id="logout-btn" class="user-btn logout-btn">
+                            <a class="user-btn auth-show-when-logged-in" id="profile-btn" href="#profile">
+                                <i class="fa-solid fa-circle-user"></i><span> Profile</span>
+                            </a>
+                            <a href="#setting" class="user-btn auth-show-when-logged-in" id="setting-btn">
+                                <i class="fa-solid fa-gear"></i><span> Setting</span>
+                            </a>
+                            <button id="logout-btn" class="user-btn logout-btn auth-show-when-logged-in">
                                 <i class="fas fa-sign-out-alt"></i>
-                                <span>Đăng xuất</span>
+                                <span>Log out</span>
                             </button>
                         </div>
                     </div>
@@ -155,6 +169,10 @@
 
 
     <main>
+        <div class="profile" id="profile">
+
+        </div>
+
         <div class="hero"></div>
 
         <section class="featured-brands">
@@ -167,8 +185,8 @@
         </section>
 
         <section class="product-section">
+            <div id="hightlightProduct"><h2>SẢN PHẨM NỔI BẬT</h2></div>
             <div class="container">
-                <h2>SẢN PHẨM NỔI BẬT</h2>
                 <div class="product-grid">
                     <div class="product-card">
                         <img src="https://placehold.co/300x300/png?text=Astrox+100ZZ" alt="Vợt cầu lông">
@@ -253,6 +271,6 @@
     <!-- Toast notification -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>

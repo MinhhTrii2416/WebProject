@@ -1,0 +1,298 @@
+/* --- Thiết lập cơ bản & Biến màu --- */
+:root {
+    --primary-color: #0a0a23; /* Xanh navy đậm / Đen */
+    --accent-color: #f7ff00;  /* Vàng neon */
+    --text-color: #f0f0f0;    /* Màu chữ sáng */
+    --dark-text: #333;
+    --background-light: #ffffff;
+    --error-color: #e74c3c; /* Màu đỏ cho lỗi */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif; /* Giả sử dùng font Inter */
+    background-color: var(--background-light);
+    color: var(--dark-text);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+
+/* --- 2. Hero Section --- */
+.hero {
+    /* (Giữ nguyên) */
+    background-image: url('https://cdn.shopvnb.com/img/1920x640/uploads/slider/victor-axelsen_1759089349.webp');
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+}
+
+/* --- 3. Featured Brands --- */
+.featured-brands {
+    padding: 20px 0;
+    background-color: #f4f4f4;
+}
+
+.featured-brands .container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.featured-brands img {
+    max-height: 40px;
+    opacity: 0.7;
+    filter: grayscale(100%);
+}
+
+/* --- 4. Product Section --- */
+.product-section {
+    padding: 60px 0;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.product-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    background-color: #f9f9f9;
+}
+
+.product-card .product-brand {
+    font-size: 0.9rem;
+    color: #777;
+    margin-top: 15px;
+}
+
+.product-card h3 {
+    font-size: 1.2rem;
+    margin: 5px 0;
+}
+
+.product-card .product-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.add-to-cart-btn {
+    display: block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    margin: 0 15px 15px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #333;
+}
+
+/* --- 5. Promo Banner --- */
+.promo-banner {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    padding: 40px 0;
+    text-align: center;
+}
+
+.promo-banner h3 {
+    font-size: 2.5rem;
+}
+.promo-banner p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.promo-banner .cta-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+.promo-banner .cta-button:hover {
+    background-color: #333;
+}
+
+/* --- 7. Testimonials --- */
+.testimonials {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.testimonial-card {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+.testimonial-card p {
+    font-size: 1.3rem;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+.testimonial-card .rating {
+    color: #f39c12;
+    margin-bottom: 10px;
+}
+.testimonial-card h4 {
+    font-weight: 600;
+}
+
+/* --- 8. Footer --- */
+.footer {
+    background-color: var(--primary-color);
+    color: #aaa;
+    padding: 60px 0 0 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.footer-col h3 {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.footer-col h4 {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.footer-col p {
+    margin-bottom: 15px;
+}
+
+.footer-col ul li {
+    margin-bottom: 10px;
+}
+
+.footer-col ul a {
+    transition: color 0.3s ease;
+}
+
+.footer-col ul a:hover {
+    color: white;
+}
+
+.newsletter-form {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.newsletter-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 3px 0 0 3px;
+}
+
+.newsletter-form button {
+    padding: 10px;
+    border: none;
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    font-weight: 700;
+    border-radius: 0 3px 3px 0;
+    cursor: pointer;
+}
+
+.social-icons a {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: white;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid #333;
+}
+
+/* --- Toast --- */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--primary-color);
+    color: var(--text-color);
+    border: 2px solid var(--accent-color);
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 3000;
+    font-weight: 600;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+.toast.success { border-color: #2ecc71; }
+.toast.error { border-color: var(--error-color); }
+.toast.info { border-color: var(--accent-color); }
+

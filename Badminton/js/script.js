@@ -123,28 +123,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function checkLoginStatus() {
         const currentUser = getCurrentUser();
         if (currentUser.account) {
-            // Đã đăng nhập
-            console.log("Da dang nhap");
-            loginRegisterBtn.classList.add("hidden");
-            userInfo.classList.remove("hidden");
+            // Đã đăng nhập - Thêm class vào body
+            document.body.classList.add("user-logged-in");
             const username = currentUser.account;
             welcomeMsg.textContent = `Chào, ${username}`;
-
-            // Cập nhật khối user trong menu trái (mobile)
+            
+            // Cập nhật tên user trong menu trái (mobile)
             if (menuUserName) menuUserName.textContent = username;
-            if (menuUserLogin) menuUserLogin.classList.add("hidden");
-            if (menuUserLogout) menuUserLogout.classList.remove("hidden");
         } else {
-            // Chưa đăng nhập
-            console.log("chua dang nhap");
-            loginRegisterBtn.classList.remove("hidden");
-            userInfo.classList.add("hidden");
+            // Chưa đăng nhập - Xóa class khỏi body
+            document.body.classList.remove("user-logged-in");
             welcomeMsg.textContent = "";
-
+            
             // Trạng thái khách trong menu trái
             if (menuUserName) menuUserName.textContent = "Guest";
-            if (menuUserLogin) menuUserLogin.classList.remove("hidden");
-            if (menuUserLogout) menuUserLogout.classList.add("hidden");
         }
     }
 
