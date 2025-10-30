@@ -85,13 +85,13 @@
                         <span id="welcome-msg">Chào,</span>
                         <div id="dropdown-user">
                             <a class="user-btn auth-show-when-logged-in" id="profile-btn" href="#profile">
-                                <i class="fa-solid fa-circle-user"></i><span> Profile</span>
-                            </a>
-                            <a href="#setting" class="user-btn auth-show-when-logged-in" id="setting-btn">
-                                <i class="fa-solid fa-gear"></i><span> Setting</span>
-                            </a>
+                                <i class="fa-solid fa-circle-user"></i> <span> Profile</span>
+                            </a> <br>
+                            <a href="#profile/CaiDatTaiKhoan" class="user-btn auth-show-when-logged-in" id="setting-btn">
+                                <i class="fa-solid fa-gear"></i> <span> Setting</span>
+                            </a><br>
                             <button id="logout-btn" class="user-btn logout-btn auth-show-when-logged-in">
-                                <i class="fas fa-sign-out-alt"></i>
+                                <i class="fas fa-sign-out-alt"></i> 
                                 <span>Log out</span>
                             </button>
                         </div>
@@ -171,6 +171,38 @@
     <main>
         <div class="profile" id="profile">
 
+            <h2>Tài Khoản Của Tôi</h2>
+
+            <div class="container">
+                <img src="https://placehold.co/128x128/e0e7ff/4338ca?text=User" alt="Ảnh đại diện">
+                <h3 class="menu-user-name"></h3>
+                <p class="email"></p>
+                <button class="" id="">Chỉnh sửa Hồ Sơ</button>
+                <a href="#profile/TongQuan" class=""><span>Tổng Quan</span></a>
+                <a href="#profile/LichSuDonHang" class=""><span>Lịch Sử Đơn Hàng</span></a>
+                <a href="#profile/SanPhamYeuThich" class=""><span>Sản Phẩm Yêu Thích</span></a>
+                <a href="#profile/CaiDatTaiKhoan" class=""><span>Cài Đặt Tài Khoản</span></a>
+                <button class="logout-btn user-btn" id="">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log out</span>
+                </button>
+            </div>
+
+            <div id="TongQuan" class="TongQuan">
+
+            </div>
+
+            <div id="LichSuDonHang" class="">
+                
+            </div>
+
+            <div id="SanPhamYeuThich">
+
+            </div>
+
+            <div id="CaiDatTaiKhoan">
+
+            </div>
         </div>
 
         <div class="hero"></div>
@@ -272,5 +304,6 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="js/script.js"></script>
+    <script src="js/profile.js"></script>
 </body>
 </html>

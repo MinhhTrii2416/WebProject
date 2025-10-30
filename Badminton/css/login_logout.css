@@ -15,6 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+    flex-wrap: wrap;
     padding: 5px;
 }
 #welcome-msg {
@@ -32,7 +33,8 @@
     color: #e74c3c; 
 }
 .logout-btn:hover {
-    color: #c0392b;
+    background-color: #eed1ce;
+    color: #e74c3c;
 }
 
 .modal-overlay {
@@ -129,7 +131,7 @@
 }
 
 /* Auth state classes - Ẩn/Hiện theo trạng thái đăng nhập */
-/* Mặc định (chưa đăng nhập): Ẩn phần tử logged-in */
+/* Mặc định (chưa đăng nhập): Ẩn phần tử logged-in */   
 .auth-show-when-logged-in {
     display: none !important;
 }
