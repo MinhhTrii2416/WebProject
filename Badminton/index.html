@@ -169,41 +169,161 @@
 
 
     <main>
-        <div class="profile" id="profile">
-
-            <h2>Tài Khoản Của Tôi</h2>
-
-            <div class="container">
-                <img src="https://placehold.co/128x128/e0e7ff/4338ca?text=User" alt="Ảnh đại diện">
-                <h3 class="menu-user-name"></h3>
-                <p class="email"></p>
-                <button class="" id="">Chỉnh sửa Hồ Sơ</button>
-                <a href="#profile/TongQuan" class=""><span>Tổng Quan</span></a>
-                <a href="#profile/LichSuDonHang" class=""><span>Lịch Sử Đơn Hàng</span></a>
-                <a href="#profile/SanPhamYeuThich" class=""><span>Sản Phẩm Yêu Thích</span></a>
-                <a href="#profile/CaiDatTaiKhoan" class=""><span>Cài Đặt Tài Khoản</span></a>
-                <button class="logout-btn user-btn" id="">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Log out</span>
-                </button>
-            </div>
-
-            <div id="TongQuan" class="TongQuan">
-
-            </div>
-
-            <div id="LichSuDonHang" class="">
+        <!-- Profile Section -->
+        <section class="profile-section hidden" id="profile">
+            <div class="profile-container">
+                <h1 class="profile-title">Tài Khoản Của Tôi</h1>
                 
+                <!-- Layout 2 cột -->
+                <div class="profile-layout">
+                    
+                    <!-- Sidebar bên trái -->
+                    <aside class="profile-sidebar">
+                        <div class="profile-user-info">
+                            <img id="profile-avatar" src="https://placehold.co/128x128/e0e7ff/4338ca?text=User" alt="Ảnh đại diện" class="profile-avatar">
+                            <h2 id="profile-username" class="profile-name">Guest</h2>
+                            <p id="profile-email" class="profile-email-display">@guest</p>
+                            <button class="profile-edit-btn" id="profile-edit-btn">Chỉnh sửa Hồ sơ</button>
+                        </div>
+                        
+                        <!-- Menu điều hướng -->
+                        <nav class="profile-nav">
+                            <a href="#profile/TongQuan" class="profile-nav-link active" data-tab="TongQuan">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Tổng quan</span>
+                            </a>
+                            <a href="#profile/LichSuDonHang" class="profile-nav-link" data-tab="LichSuDonHang">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span>Lịch sử Đơn hàng</span>
+                            </a>
+                            <a href="#profile/SanPhamYeuThich" class="profile-nav-link" data-tab="SanPhamYeuThich">
+                                <i class="fa-solid fa-heart"></i>
+                                <span>Sản phẩm Yêu thích</span>
+                            </a>
+                            <a href="#profile/SoDiaChi" class="profile-nav-link" data-tab="SoDiaChi">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Sổ địa chỉ</span>
+                            </a>
+                            <a href="#profile/CaiDatTaiKhoan" class="profile-nav-link" data-tab="CaiDatTaiKhoan">
+                                <i class="fa-solid fa-gear"></i>
+                                <span>Cài đặt Tài khoản</span>
+                            </a>
+                            <hr class="profile-divider">
+                            <button class="profile-nav-link profile-logout-btn" id="profile-logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </nav>
+                    </aside>
+
+                    <!-- Nội dung bên phải -->
+                    <main class="profile-content">
+                        
+                        <!-- Tab Tổng quan -->
+                        <div id="TongQuan" class="profile-tab active">
+                            <h2 class="profile-tab-title">Chào mừng trở lại, <span id="welcome-username">Guest</span>!</h2>
+                            <p class="profile-tab-desc">
+                                Từ trang tổng quan này, bạn có thể dễ dàng kiểm tra các đơn hàng gần đây, quản lý địa chỉ giao hàng,
+                                và chỉnh sửa mật khẩu cũng như chi tiết tài khoản của mình.
+                            </p>
+                            <div class="profile-overview-grid">
+                                <div class="profile-overview-card">
+                                    <i class="fa-solid fa-box-archive profile-overview-icon"></i>
+                                    <div>
+                                        <h3 class="profile-overview-title">Đơn hàng của tôi</h3>
+                                        <p class="profile-overview-desc">Xem trạng thái & lịch sử</p>
+                                    </div>
+                                </div>
+                                <div class="profile-overview-card">
+                                    <i class="fa-solid fa-gear profile-overview-icon"></i>
+                                    <div>
+                                        <h3 class="profile-overview-title">Cài đặt</h3>
+                                        <p class="profile-overview-desc">Quản lý thông tin & bảo mật</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Lịch sử Đơn hàng -->
+                        <div id="LichSuDonHang" class="profile-tab">
+                            <h2 class="profile-tab-title">Lịch sử Đơn hàng</h2>
+                            <div class="profile-orders-list">
+                                <div class="profile-order-item">
+                                    <div class="profile-order-info">
+                                        <p class="profile-order-id">Mã đơn: #VN12345</p>
+                                        <p class="profile-order-date">Ngày đặt: 25/10/2025</p>
+                                    </div>
+                                    <div class="profile-order-price">
+                                        <p>Tổng tiền: <span class="profile-order-total">4.500.000đ</span></p>
+                                    </div>
+                                    <div class="profile-order-status">
+                                        <span class="profile-status-badge status-delivered">Đã giao hàng</span>
+                                    </div>
+                                </div>
+                                <div class="profile-order-item">
+                                    <div class="profile-order-info">
+                                        <p class="profile-order-id">Mã đơn: #VN12344</p>
+                                        <p class="profile-order-date">Ngày đặt: 22/10/2025</p>
+                                    </div>
+                                    <div class="profile-order-price">
+                                        <p>Tổng tiền: <span class="profile-order-total">1.200.000đ</span></p>
+                                    </div>
+                                    <div class="profile-order-status">
+                                        <span class="profile-status-badge status-shipping">Đang vận chuyển</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Sản phẩm Yêu thích -->
+                        <div id="SanPhamYeuThich" class="profile-tab">
+                            <h2 class="profile-tab-title">Sản phẩm Yêu thích</h2>
+                            <p class="profile-empty-message">Bạn chưa có sản phẩm yêu thích nào.</p>
+                        </div>
+
+                        <!-- Tab Cài đặt Tài khoản -->
+                        <div id="CaiDatTaiKhoan" class="profile-tab">
+                            <h2 class="profile-tab-title">Cài đặt Tài khoản</h2>
+                            <form id="profile-settings-form" class="profile-settings-form">
+                                <!-- Thông tin cá nhân -->
+                                <div class="profile-form-section">
+                                    <h3 class="profile-form-title">Thông tin cá nhân</h3>
+                                    <div class="profile-form-grid">
+                                        <div class="profile-form-group">
+                                            <label for="profile-fullname" class="profile-form-label">Họ và Tên</label>
+                                            <input type="text" id="profile-fullname" class="profile-form-input">
+                                        </div>
+                                        <div class="profile-form-group">
+                                            <label for="profile-email-input" class="profile-form-label">Email</label>
+                                            <input type="email" id="profile-email-input" class="profile-form-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Đổi mật khẩu -->
+                                <div class="profile-form-section">
+                                    <h3 class="profile-form-title">Đổi mật khẩu</h3>
+                                    <div class="profile-form-group">
+                                        <label for="profile-current-password" class="profile-form-label">Mật khẩu hiện tại</label>
+                                        <input type="password" id="profile-current-password" class="profile-form-input">
+                                    </div>
+                                    <div class="profile-form-group">
+                                        <label for="profile-new-password" class="profile-form-label">Mật khẩu mới</label>
+                                        <input type="password" id="profile-new-password" class="profile-form-input">
+                                    </div>
+                                </div>
+
+                                <!-- Nút lưu -->
+                                <div class="profile-form-actions">
+                                    <button type="submit" class="profile-save-btn">Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </main>
+                </div>
             </div>
-
-            <div id="SanPhamYeuThich">
-
-            </div>
-
-            <div id="CaiDatTaiKhoan">
-
-            </div>
-        </div>
+        </section>
 
         <div class="hero"></div>
 
