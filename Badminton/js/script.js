@@ -199,7 +199,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Xử lý Đăng xuất
     function handleLogout() {
         localStorage.removeItem(CURRENT_USER_KEY);
-        checkLoginStatus();
+        
+        // Hiển thị toast trước khi reload
+        showToast('Đăng xuất thành công!', 'success');
+        
+        // Reload trang về trang chủ sau khi đăng xuất (delay để hiện toast)
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 500);
     }
 
     // Xử lý khi nhấn vào Giỏ hàng
@@ -320,5 +327,21 @@ document.addEventListener("DOMContentLoaded", () => {
             desktopUserDropdown.style.display = 'none';
         });
     }
+
+    // Sticky header effect with scroll
+    const header = document.querySelector('.header');
+    let lastScrollTop = 0;
+    
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
 
 });

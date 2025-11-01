@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileSettingsForm = document.getElementById('profile-settings-form');
     const profileFullname = document.getElementById('profile-fullname');
     const profileEmailInput = document.getElementById('profile-email-input');
+    const brandSection = document.getElementById('brand-section');
     
     // Helper functions
     function getCurrentUser() {
@@ -76,6 +77,87 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Get user favorites from localStorage
+    function getUserFavorites(userId) {
+        const favKey = `proBadmintonFavorites_${userId}`;
+        const favorites = localStorage.getItem(favKey);
+        return favorites ? JSON.parse(favorites) : [];
+    }
+    
+    // Display favorite products
+    function displayFavoriteProducts() {
+        const currentUserAccount = localStorage.getItem(CURRENT_USER_KEY);
+        if (!currentUserAccount) return;
+        
+        const favoriteTab = document.getElementById('SanPhamYeuThich');
+        if (!favoriteTab) return;
+        
+        // Get favorites from dedicated localStorage key
+        const favorites = getUserFavorites(currentUserAccount);
+        
+        if (favorites.length === 0) {
+            favoriteTab.innerHTML = `
+                <h2 class="profile-tab-title">Sản phẩm Yêu thích</h2>
+                <p class="profile-empty-message">Bạn chưa có sản phẩm yêu thích nào.</p>
+            `;
+            return;
+        }
+        
+        // Get all products and filter favorites
+        const allProducts = [];
+        if (typeof productsData !== 'undefined') {
+            for (const brand in productsData) {
+                allProducts.push(...productsData[brand]);
+            }
+        }
+        
+        const favoriteProducts = allProducts.filter(p => favorites.includes(p.id));
+        
+        if (favoriteProducts.length === 0) {
+            favoriteTab.innerHTML = `
+                <h2 class="profile-tab-title">Sản phẩm Yêu thích</h2>
+                <p class="profile-empty-message">Bạn chưa có sản phẩm yêu thích nào.</p>
+            `;
+            return;
+        }
+        
+        // Render favorite products
+        const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
+        
+        const productsHTML = favoriteProducts.map(product => {
+            const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+            return `
+                <div class="product-card" data-id="${product.id}" data-click="view-detail">
+                    <div class="product-image-wrapper">
+                        <img src="${product.image}" alt="${product.name}">
+                        ${discount > 0 ? `<span class="product-discount">-${discount}%</span>` : ''}
+                        <button class="favorite-btn active" data-id="${product.id}" title="Xóa khỏi yêu thích">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <span class="product-brand">${product.brand}</span>
+                    <h3 class="product-name">${product.name} (${product.weight})</h3>
+                    <div class="product-price-wrapper">
+                        <p class="product-price">${formatPrice(product.price)}</p>
+                        ${product.originalPrice > product.price ? 
+                            `<p class="product-original-price">${formatPrice(product.originalPrice)}</p>` 
+                            : ''}
+                    </div>
+                    <button class="add-to-cart-btn" data-id="${product.id}">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+        favoriteTab.innerHTML = `
+            <h2 class="profile-tab-title">Sản phẩm Yêu thích (${favoriteProducts.length})</h2>
+            <div class="product-grid">
+                ${productsHTML}
+            </div>
+        `;
+    }
+    
     // Tab navigation
     function switchTab(tabId) {
         // Ẩn tất cả tabs
@@ -92,6 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedLink = document.querySelector(`.profile-nav-link[data-tab="${tabId}"]`);
         if (selectedLink) {
             selectedLink.classList.add('active');
+        }
+        
+        // Load favorite products if switching to favorites tab
+        if (tabId === 'SanPhamYeuThich') {
+            displayFavoriteProducts();
         }
     }
     
@@ -187,9 +274,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle hash navigation
     function handleHashChange() {
         const hash = window.location.hash;
-        
         if (hash.startsWith('#profile')) {
             if (checkProfileAccess()) {
+                // Cập nhật thông tin người dùng mỗi khi vào profile
+                displayUserInfo();
+                
                 // Hiện profile section
                 if (profileSection) {
                     profileSection.classList.remove('hidden');
@@ -224,6 +313,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Listen to hash change
     window.addEventListener('hashchange', handleHashChange);
+    
+    // Listen to favorites update event
+    window.addEventListener('favoritesUpdated', () => {
+        const hash = window.location.hash;
+        if (hash === '#profile/SanPhamYeuThich') {
+            displayFavoriteProducts();
+        }
+    });
     
     // Initial load
     if (checkProfileAccess()) {
