@@ -212,12 +212,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Xử lý khi nhấn vào Giỏ hàng
     function handleCartClick(event) {
         const currentUser = getCurrentUser();
-        if (!currentUser.account) {
+        if (!currentUser || !currentUser.account) {
             event.preventDefault(); // Chặn chuyển trang
             showToast("Vui lòng đăng nhập để xem giỏ hàng!", 'info');
             showModal(); // Hiển thị modal đăng nhập
+            return;
         }
-        // Nếu đã đăng nhập, trình duyệt sẽ tự động đi tiếp
+        // Nếu đã đăng nhập, cho phép chuyển trang
+        window.location.href = 'cart.html';
     }
 
     // Mở/Đóng Modal

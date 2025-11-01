@@ -84,6 +84,178 @@ document.addEventListener('DOMContentLoaded', () => {
         return favorites ? JSON.parse(favorites) : [];
     }
     
+    // Get user order history from localStorage
+    function getUserOrderHistory(userId) {
+        const ORDER_HISTORY_KEY = 'proBadmintonOrderHistory_';
+        const historyKey = ORDER_HISTORY_KEY + userId;
+        const history = localStorage.getItem(historyKey);
+        return history ? JSON.parse(history) : [];
+    }
+    
+    // Format price
+    function formatPrice(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
+    }
+    
+    // Format date
+    function formatDate(isoString) {
+        const date = new Date(isoString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    
+    // Get status badge class and text
+    function getStatusInfo(status) {
+        const statusMap = {
+            'processing': { class: 'status-processing', text: 'Đang xử lý' },
+            'shipping': { class: 'status-shipping', text: 'Đang vận chuyển' },
+            'delivered': { class: 'status-delivered', text: 'Đã giao hàng' },
+            'cancelled': { class: 'status-cancelled', text: 'Đã hủy' }
+        };
+        return statusMap[status] || { class: 'status-processing', text: 'Đang xử lý' };
+    }
+    
+    // Display order history
+    function displayOrderHistory() {
+        const currentUserAccount = localStorage.getItem(CURRENT_USER_KEY);
+        if (!currentUserAccount) return;
+        
+        const orderTab = document.getElementById('LichSuDonHang');
+        if (!orderTab) return;
+        
+        // Get order history
+        const orders = getUserOrderHistory(currentUserAccount);
+        
+        if (orders.length === 0) {
+            orderTab.innerHTML = `
+                <h2 class="profile-tab-title">Lịch sử Đơn hàng</h2>
+                <p class="profile-empty-message">Bạn chưa có đơn hàng nào.</p>
+            `;
+            return;
+        }
+        
+        // Render order history
+        const ordersHTML = orders.map(order => {
+            const statusInfo = getStatusInfo(order.status);
+            const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
+            
+            return `
+                <div class="profile-order-item">
+                    <div class="profile-order-info">
+                        <p class="profile-order-id">Mã đơn: #${order.orderId}</p>
+                        <p class="profile-order-date">Ngày đặt: ${formatDate(order.orderDate)}</p>
+                        <p class="profile-order-items">${itemCount} sản phẩm</p>
+                    </div>
+                    <div class="profile-order-price">
+                        <p>Tổng tiền: <span class="profile-order-total">${formatPrice(order.totalAmount)}</span></p>
+                    </div>
+                    <div class="profile-order-status">
+                        <span class="profile-status-badge ${statusInfo.class}">${statusInfo.text}</span>
+                    </div>
+                    <button class="profile-order-detail-btn" data-order-id="${order.orderId}">
+                        Xem chi tiết
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+        orderTab.innerHTML = `
+            <h2 class="profile-tab-title">Lịch sử Đơn hàng (${orders.length})</h2>
+            <div class="profile-orders-list">
+                ${ordersHTML}
+            </div>
+        `;
+        
+        // Add event listeners for detail buttons
+        const detailButtons = orderTab.querySelectorAll('.profile-order-detail-btn');
+        detailButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const orderId = btn.dataset.orderId;
+                showOrderDetail(orderId, currentUserAccount);
+            });
+        });
+    }
+    
+    // Show order detail modal
+    function showOrderDetail(orderId, userId) {
+        const orders = getUserOrderHistory(userId);
+        const order = orders.find(o => o.orderId === orderId);
+        
+        if (!order) return;
+        
+        const statusInfo = getStatusInfo(order.status);
+        
+        // Create modal HTML
+        const itemsHTML = order.items.map(item => `
+            <div class="order-detail-item">
+                <img src="${item.productImage}" alt="${item.productName}" class="order-item-image">
+                <div class="order-item-info">
+                    <span class="order-item-brand">${item.productBrand}</span>
+                    <h4 class="order-item-name">${item.productName}</h4>
+                    <p class="order-item-price">${formatPrice(item.price)} x ${item.quantity}</p>
+                </div>
+                <div class="order-item-total">
+                    ${formatPrice(item.price * item.quantity)}
+                </div>
+            </div>
+        `).join('');
+        
+        const modalHTML = `
+            <div class="order-detail-modal-overlay" id="order-detail-modal">
+                <div class="order-detail-modal-content">
+                    <button class="order-detail-modal-close" id="close-order-detail">&times;</button>
+                    <h2>Chi tiết đơn hàng #${order.orderId}</h2>
+                    <div class="order-detail-info">
+                        <p><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</p>
+                        <p><strong>Trạng thái:</strong> <span class="profile-status-badge ${statusInfo.class}">${statusInfo.text}</span></p>
+                    </div>
+                    <div class="order-detail-items">
+                        ${itemsHTML}
+                    </div>
+                    <div class="order-detail-summary">
+                        <div class="order-summary-row">
+                            <span>Tạm tính:</span>
+                            <span>${formatPrice(order.totalAmount)}</span>
+                        </div>
+                        <div class="order-summary-row">
+                            <span>Phí vận chuyển:</span>
+                            <span>Miễn phí</span>
+                        </div>
+                        <div class="order-summary-row total">
+                            <span>Tổng cộng:</span>
+                            <span>${formatPrice(order.totalAmount)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing modal if any
+        const existingModal = document.getElementById('order-detail-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add close event
+        const modal = document.getElementById('order-detail-modal');
+        const closeBtn = document.getElementById('close-order-detail');
+        
+        closeBtn.addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+    
     // Display favorite products
     function displayFavoriteProducts() {
         const currentUserAccount = localStorage.getItem(CURRENT_USER_KEY);
@@ -122,8 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Render favorite products
-        const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
-        
         const productsHTML = favoriteProducts.map(product => {
             const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
             return `
@@ -176,9 +346,11 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedLink.classList.add('active');
         }
         
-        // Load favorite products if switching to favorites tab
+        // Load data based on tab
         if (tabId === 'SanPhamYeuThich') {
             displayFavoriteProducts();
+        } else if (tabId === 'LichSuDonHang') {
+            displayOrderHistory();
         }
     }
     

@@ -277,6 +277,221 @@
     font-size: 1rem;
 }
 
+.profile-order-items {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.status-processing {
+    background-color: #e0e7ff;
+    color: #3730a3;
+}
+
+.status-cancelled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.profile-order-detail-btn {
+    background-color: #4f46e5;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 0.5rem;
+}
+
+.profile-order-detail-btn:hover {
+    background-color: #4338ca;
+}
+
+@media (min-width: 768px) {
+    .profile-order-detail-btn {
+        margin-top: 0;
+    }
+}
+
+/* Order Detail Modal */
+.order-detail-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.order-detail-modal-content {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.order-detail-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #6b7280;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
+}
+
+.order-detail-modal-close:hover {
+    color: #111827;
+}
+
+.order-detail-modal-content h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1.5rem;
+}
+
+.order-detail-info {
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.order-detail-info p {
+    margin: 0.5rem 0;
+    color: #374151;
+}
+
+.order-detail-items {
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.order-detail-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.order-detail-item:last-child {
+    border-bottom: none;
+}
+
+.order-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    background-color: #f3f4f6;
+}
+
+.order-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.order-item-brand {
+    color: var(--accent-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.order-item-price {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.order-item-total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    text-align: right;
+}
+
+.order-detail-summary {
+    background-color: #f9fafb;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.order-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.order-summary-row.total {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    padding-top: 1rem;
+    border-top: 2px solid #e5e7eb;
+    margin-bottom: 0;
+}
+
+.order-summary-row.total span:last-child {
+    color: #4f46e5;
+}
+
+@media (max-width: 768px) {
+    .order-detail-modal-content {
+        padding: 1.5rem;
+    }
+    
+    .order-detail-item {
+        grid-template-columns: 60px 1fr;
+    }
+    
+    .order-item-total {
+        grid-column: 2;
+        text-align: left;
+        margin-top: 0.5rem;
+    }
+    
+    .order-item-image {
+        width: 60px;
+        height: 60px;
+    }
+}
+
 /* Settings Form */
 .profile-settings-form {
     display: flex;

@@ -75,6 +75,57 @@ document.addEventListener('DOMContentLoaded', () => {
         return favorites.includes(productId);
     }
     
+    // Cart functions
+    const CART_KEY_PREFIX = 'proBadmintonCart_';
+    
+    function getCart(userId) {
+        const cartKey = CART_KEY_PREFIX + userId;
+        const cart = localStorage.getItem(cartKey);
+        return cart ? JSON.parse(cart) : [];
+    }
+    
+    function saveCart(userId, cart) {
+        const cartKey = CART_KEY_PREFIX + userId;
+        localStorage.setItem(cartKey, JSON.stringify(cart));
+        updateCartCount();
+    }
+    
+    function addToCart(userId, productId) {
+        const cart = getCart(userId);
+        const existingItem = cart.find(item => item.productId === productId);
+        
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({
+                productId: productId,
+                quantity: 1,
+                addedAt: new Date().toISOString()
+            });
+        }
+        
+        saveCart(userId, cart);
+    }
+    
+    function updateCartCount() {
+        const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+        const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+        const cartCountEl = document.getElementById('cart-count');
+        
+        if (!cartCountEl) return;
+        
+        if (!currentUser) {
+            cartCountEl.textContent = '0';
+            cartCountEl.style.display = 'none';
+            return;
+        }
+        
+        const cart = getCart(currentUser);
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountEl.textContent = totalItems;
+        cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
+    
     // Render product card
     function renderProductCard(product) {
         const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
@@ -484,7 +535,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // User is logged in - add to cart
-            // TODO: Add to cart logic here
+            addToCart(currentUser, productId);
+            
             if (toastEl) {
                 toastEl.textContent = 'Đã thêm sản phẩm vào giỏ hàng!';
                 toastEl.className = 'toast success show';
@@ -823,7 +875,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Add to cart logic here
+            // Add to cart
+            addToCart(currentUser, productId);
+            
             if (toastEl) {
                 toastEl.textContent = 'Đã thêm sản phẩm vào giỏ hàng!';
                 toastEl.className = 'toast success show';
@@ -837,5 +891,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Initial load
+    updateCartCount();
     handleHashChange();
 });
