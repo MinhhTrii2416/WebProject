@@ -130,11 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderProductCard(product) {
         const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
         const isFavorite = isProductFavorite(product.id);
+        const mainImage = Array.isArray(product.images) ? product.images[0] : product.image;
         
         return `
             <div class="product-card" data-id="${product.id}" data-click="view-detail">
                 <div class="product-image-wrapper">
-                    <img src="${product.image}" alt="${product.name}">
+                    <img src="${mainImage}" alt="${product.name}">
                     ${discount > 0 ? `<span class="product-discount">-${discount}%</span>` : ''}
                     <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${product.id}" title="Yêu thích">
                         <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
@@ -657,8 +658,57 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!product) return;
         
-        // Update modal content
-        document.getElementById('modal-product-image').src = product.image;
+        // Update modal images (support multiple images)
+        const imageContainer = document.querySelector('.product-modal-image');
+        const images = Array.isArray(product.images) ? product.images : [product.image];
+        
+        if (images.length > 1) {
+            // Multiple images - create carousel
+            imageContainer.innerHTML = `
+                <div class="product-image-carousel">
+                    <img id="modal-product-image" src="${images[0]}" alt="${product.name}">
+                    <div class="carousel-dots">
+                        ${images.map((img, index) => `
+                            <span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>
+                        `).join('')}
+                    </div>
+                    <div class="carousel-thumbnails">
+                        ${images.map((img, index) => `
+                            <img src="${img}" class="thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}" alt="Ảnh ${index + 1}">
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Add click handlers for thumbnails
+            const thumbnails = imageContainer.querySelectorAll('.thumbnail');
+            const dots = imageContainer.querySelectorAll('.dot');
+            const mainImage = imageContainer.querySelector('#modal-product-image');
+            
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener('click', () => {
+                    mainImage.src = images[index];
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    dots.forEach(d => d.classList.remove('active'));
+                    thumb.classList.add('active');
+                    dots[index].classList.add('active');
+                });
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    mainImage.src = images[index];
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    dots.forEach(d => d.classList.remove('active'));
+                    thumbnails[index].classList.add('active');
+                    dot.classList.add('active');
+                });
+            });
+        } else {
+            // Single image
+            imageContainer.innerHTML = `<img id="modal-product-image" src="${images[0]}" alt="${product.name}">`;
+        }
+        
         document.getElementById('modal-product-brand').textContent = product.brand;
         document.getElementById('modal-product-name').textContent = product.name;
         document.getElementById('modal-product-price').textContent = formatPrice(product.price);

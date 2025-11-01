@@ -53,6 +53,10 @@
 }
 
 /* Product Grid */
+.flex-container {
+    display: flex;
+    justify-content: center;
+}
 .product-grid {
     display: flex;
     flex-wrap: wrap;
