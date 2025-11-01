@@ -432,7 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             
             const productId = favoriteBtn.dataset.id;
-            console.log('Favorite button clicked for product:', productId);
             
             // Check if user is logged in
             const CURRENT_USER_KEY = 'proBadmintonCurrentUser';

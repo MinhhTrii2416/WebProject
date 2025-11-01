@@ -32,7 +32,7 @@
                     </button>
                     <ul class="menu-user-dropdown" id="menu-user-dropdown">
                         <li><a href="#profile" class="linklike auth-show-when-logged-in"><i class="fas fa-user"></i> Hồ sơ</a></li>
-                        <li><a href="#setting" class="linklike auth-show-when-logged-in"><i class="fas fa-cog"></i> Cài đặt</a></li>
+                        <li><a href="#profile/CaiDatTaiKhoan" class="linklike auth-show-when-logged-in"><i class="fas fa-cog"></i> Cài đặt</a></li>
                         <li><button type="button" id="menu-user-logout" class="linklike auth-show-when-logged-in logout-btn">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Log out</span></button>
@@ -182,8 +182,8 @@
                     <aside class="profile-sidebar">
                         <div class="profile-user-info">
                             <img id="profile-avatar" src="https://placehold.co/128x128/e0e7ff/4338ca?text=User" alt="Ảnh đại diện" class="profile-avatar">
-                            <h2 id="profile-username" class="profile-name">Guest</h2>
-                            <p id="profile-email" class="profile-email-display">@guest</p>
+                            <h2 id="profile-username" class="profile-name"></h2>
+                            <p id="profile-email" class="profile-email-display"></p>
                             <button class="profile-edit-btn" id="profile-edit-btn">Chỉnh sửa Hồ sơ</button>
                         </div>
                         
@@ -226,17 +226,17 @@
                             <div class="profile-overview-grid">
                                 <div class="profile-overview-card">
                                     <i class="fa-solid fa-box-archive profile-overview-icon"></i>
-                                    <div>
+                                    <a href="#profile/LichSuDonHang">
                                         <h3 class="profile-overview-title">Đơn hàng của tôi</h3>
                                         <p class="profile-overview-desc">Xem trạng thái & lịch sử</p>
-                                    </div>
+                                    </a>
                                 </div>
                                 <div class="profile-overview-card">
                                     <i class="fa-solid fa-gear profile-overview-icon"></i>
-                                    <div>
+                                    <a href="#profile/CaiDatTaiKhoan">
                                         <h3 class="profile-overview-title">Cài đặt</h3>
                                         <p class="profile-overview-desc">Quản lý thông tin & bảo mật</p>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -244,32 +244,7 @@
                         <!-- Tab Lịch sử Đơn hàng -->
                         <div id="LichSuDonHang" class="profile-tab">
                             <h2 class="profile-tab-title">Lịch sử Đơn hàng</h2>
-                            <div class="profile-orders-list">
-                                <div class="profile-order-item">
-                                    <div class="profile-order-info">
-                                        <p class="profile-order-id">Mã đơn: #VN12345</p>
-                                        <p class="profile-order-date">Ngày đặt: 25/10/2025</p>
-                                    </div>
-                                    <div class="profile-order-price">
-                                        <p>Tổng tiền: <span class="profile-order-total">4.500.000đ</span></p>
-                                    </div>
-                                    <div class="profile-order-status">
-                                        <span class="profile-status-badge status-delivered">Đã giao hàng</span>
-                                    </div>
-                                </div>
-                                <div class="profile-order-item">
-                                    <div class="profile-order-info">
-                                        <p class="profile-order-id">Mã đơn: #VN12344</p>
-                                        <p class="profile-order-date">Ngày đặt: 22/10/2025</p>
-                                    </div>
-                                    <div class="profile-order-price">
-                                        <p>Tổng tiền: <span class="profile-order-total">1.200.000đ</span></p>
-                                    </div>
-                                    <div class="profile-order-status">
-                                        <span class="profile-status-badge status-shipping">Đang vận chuyển</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <p class="profile-empty-message">Bạn chưa có đơn hàng nào.</p>
                         </div>
 
                         <!-- Tab Sản phẩm Yêu thích -->
