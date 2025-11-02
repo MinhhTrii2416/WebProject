@@ -164,10 +164,10 @@
         top: 0;
         left: 0;
         right: 0;
-        background: var(--background-light);
+        background: var(--primary-color);
         border-bottom: 2px solid var(--accent-color);
         z-index: 2000;
-        padding: 10px 12px;
+        padding: 20px 12px;
         box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     }
     .mobile-search-panel.show { display: block; }
@@ -175,6 +175,9 @@
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+    .mobile-search-inner i{
+        color: white;
     }
     .mobile-search-inner input {
         flex: 1;
