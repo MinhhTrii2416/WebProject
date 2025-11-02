@@ -74,10 +74,19 @@ h2 {
 
 .featured-brands img {
     max-height: 40px;
-    opacity: 0.7;
+    max-width: 120px;
     filter: grayscale(100%);
 }
-
+@media (max-width: 500px) {
+    .featured-brands .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        row-gap: 20px;
+    }
+    .featured-brands .container a{
+        justify-self: center;
+    }
+}
 /* --- 4. Product Section --- */
 
 .product-grid {
@@ -193,8 +202,8 @@ h2 {
 }
 
 .footer-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    justify-content: space-around;
     gap: 30px;
 }
 
@@ -225,6 +234,27 @@ h2 {
 .footer-col ul a:hover {
     color: white;
 }
+
+/* Footer Responsive */
+@media (max-width: 768px) {
+    .footer .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+}
+@media (max-width: 655px) {
+
+    .footer .container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media (max-width: 486px) {
+    .footer .container {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 .newsletter-form {
     display: flex;
@@ -264,6 +294,7 @@ h2 {
     margin-top: 40px;
     border-top: 1px solid #333;
 }
+
 
 /* --- Toast --- */
 .toast {
