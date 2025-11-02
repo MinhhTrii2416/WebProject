@@ -14,6 +14,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Inter', sans-serif; /* Giả sử dùng font Inter */
     background-color: var(--background-light);
@@ -154,6 +158,10 @@ h2 {
     text-align: center;
 }
 
+.promo-banner .container, .testimonials .container {
+    display: flex;
+    flex-direction: column;
+}
 .promo-banner h3 {
     font-size: 2.5rem;
 }
@@ -163,11 +171,17 @@ h2 {
 }
 
 .promo-banner .cta-button {
+    padding: 12px 20px;
+    border-radius: 20px;
     background-color: var(--primary-color);
     color: white;
 }
 .promo-banner .cta-button:hover {
-    background-color: #333;
+    background-color: white;
+    color: var(--primary-color);
+}
+.promo-banner .cta-button:active{
+    background-color: var(--error-color);
 }
 
 /* --- 7. Testimonials --- */
@@ -241,7 +255,7 @@ h2 {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
     }
-    
+
 }
 @media (max-width: 655px) {
 
