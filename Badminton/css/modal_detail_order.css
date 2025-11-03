@@ -1,0 +1,63 @@
+/* CSS cho Modal */
+h2
+{
+    text-align: center;
+}
+
+h4
+{
+    margin-bottom: 10px;
+}
+
+.modal#DetailOrder .modal_content {
+    max-width: 800px; 
+    width: 90%; 
+}
+.modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.Order_Info
+{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+/* Định dạng Bảng Chi tiết Đơn hàng */
+.detail_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+.detail_table th, .detail_table td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+.detail_table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+.Order_Summary {
+    width: 300px;
+    margin-top: 20px;
+    text-align: right;
+    margin-left: auto;
+}
+.order-summary p {
+    margin: 5px 0;
+}
+.total-line {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-top: 10px;
+    border-top: 2px dashed #ccc;
+}
