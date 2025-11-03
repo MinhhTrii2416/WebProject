@@ -54,20 +54,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Get user favorites from localStorage
     function getUserFavorites(userId) {
-        const favKey = `proBadmintonFavorites_${userId}`;
+        const favKey = `Favorites_${userId}`;
         const favorites = localStorage.getItem(favKey);
         return favorites ? JSON.parse(favorites) : [];
     }
     
     // Save user favorites to localStorage
     function saveUserFavorites(userId, favorites) {
-        const favKey = `proBadmintonFavorites_${userId}`;
+        const favKey = `Favorites_${userId}`;
         localStorage.setItem(favKey, JSON.stringify(favorites));
     }
     
     // Check if product is in favorites
     function isProductFavorite(productId) {
-        const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+        const CURRENT_USER_KEY = 'CurrentUser';
         const currentUser = localStorage.getItem(CURRENT_USER_KEY);
         if (!currentUser) return false;
         
@@ -76,17 +76,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Cart functions
-    const CART_KEY_PREFIX = 'proBadmintonCart_';
+    const CART_KEY_PREFIX = 'Cart_';
     
-    function getCart(userId) {
-        const cartKey = CART_KEY_PREFIX + userId;
-        const cart = localStorage.getItem(cartKey);
-        return cart ? JSON.parse(cart) : [];
+    function getCart(user) {
+        const GLOBAL_CART_KEY = 'AllCarts';
+        
+        // Parse user nếu là string
+        let userEmail;
+        if (typeof user === 'string') {
+            try {
+                const userObj = JSON.parse(user);
+                userEmail = userObj.email;
+            } catch (e) {
+                userEmail = user; // Nếu không parse được thì coi như là email
+            }
+        } else {
+            userEmail = user.email || user;
+        }
+        
+        // Lấy tất cả giỏ hàng
+        const allCartsStr = localStorage.getItem(GLOBAL_CART_KEY);
+        if (!allCartsStr) return [];
+        
+        try {
+            const allCarts = JSON.parse(allCartsStr);
+            // Tìm giỏ hàng của user này
+            const userCart = allCarts.find(cart => cart.email === userEmail);
+            return userCart ? userCart.items : [];
+        } catch (e) {
+            console.error('Error parsing carts:', e);
+            return [];
+        }
     }
     
-    function saveCart(userId, cart) {
-        const cartKey = CART_KEY_PREFIX + userId;
-        localStorage.setItem(cartKey, JSON.stringify(cart));
+    function saveCart(user, items) {
+        const GLOBAL_CART_KEY = 'AllCarts';
+        
+        // Parse user nếu là string
+        let userEmail;
+        if (typeof user === 'string') {
+            try {
+                const userObj = JSON.parse(user);
+                userEmail = userObj.email;
+            } catch (e) {
+                userEmail = user; // Nếu không parse được thì coi như là email
+            }
+        } else {
+            userEmail = user.email || user;
+        }
+        
+        // Lấy tất cả giỏ hàng
+        let allCarts = [];
+        const allCartsStr = localStorage.getItem(GLOBAL_CART_KEY);
+        if (allCartsStr) {
+            try {
+                allCarts = JSON.parse(allCartsStr);
+            } catch (e) {
+                console.error('Error parsing carts:', e);
+                allCarts = [];
+            }
+        }
+        
+        // Tìm giỏ hàng của user
+        const cartIndex = allCarts.findIndex(cart => cart.email === userEmail);
+        
+        if (cartIndex >= 0) {
+            // Cập nhật giỏ hàng hiện tại
+            allCarts[cartIndex].items = items;
+        } else {
+            // Thêm giỏ hàng mới
+            allCarts.push({
+                email: userEmail,
+                items: items
+            });
+        }
+        
+        // Lưu lại
+        localStorage.setItem(GLOBAL_CART_KEY, JSON.stringify(allCarts));
         updateCartCount();
     }
     
@@ -108,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateCartCount() {
-        const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+        const CURRENT_USER_KEY = 'CurrentUser';
         const currentUser = localStorage.getItem(CURRENT_USER_KEY);
         const cartCountEl = document.getElementById('cart-count');
         
@@ -435,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const productId = favoriteBtn.dataset.id;
             
             // Check if user is logged in
-            const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+            const CURRENT_USER_KEY = 'CurrentUser';
             const currentUser = localStorage.getItem(CURRENT_USER_KEY);
             const toastEl = document.getElementById('toast');
             
@@ -508,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const productId = btn.dataset.id;
             
             // Check if user is logged in
-            const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+            const CURRENT_USER_KEY = 'CurrentUser';
             const currentUser = localStorage.getItem(CURRENT_USER_KEY);
             
             const toastEl = document.getElementById('toast');
@@ -807,7 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const productId = btn.dataset.id;
             
             // Check if user is logged in
-            const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+            const CURRENT_USER_KEY = 'CurrentUser';
             const currentUser = localStorage.getItem(CURRENT_USER_KEY);
             const toastEl = document.getElementById('toast');
             
@@ -900,7 +966,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const productId = btn.dataset.id;
             
             // Check if user is logged in
-            const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+            const CURRENT_USER_KEY = 'CurrentUser';
             const currentUser = localStorage.getItem(CURRENT_USER_KEY);
             const toastEl = document.getElementById('toast');
             

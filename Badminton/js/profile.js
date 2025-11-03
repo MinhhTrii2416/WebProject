@@ -1,7 +1,7 @@
 // Profile Page JavaScript
 document.addEventListener('DOMContentLoaded', () => {
-    const USERS_KEY = 'proBadmintonUsers';
-    const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+    const USERS_KEY = 'Users';
+    const CURRENT_USER_KEY = 'CurrentUser';
     
     // Elements
     const profileSection = document.getElementById('profile');
@@ -79,17 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Get user favorites from localStorage
     function getUserFavorites(userId) {
-        const favKey = `proBadmintonFavorites_${userId}`;
+        const favKey = `Favorites_${userId}`;
         const favorites = localStorage.getItem(favKey);
         return favorites ? JSON.parse(favorites) : [];
     }
     
     // Get user order history from localStorage
-    function getUserOrderHistory(userId) {
-        const ORDER_HISTORY_KEY = 'proBadmintonOrderHistory_';
-        const historyKey = ORDER_HISTORY_KEY + userId;
-        const history = localStorage.getItem(historyKey);
-        return history ? JSON.parse(history) : [];
+    function getUserOrderHistory(userEmail) {
+        const GLOBAL_ORDERS_KEY = 'AllOrders';
+        const allOrders = localStorage.getItem(GLOBAL_ORDERS_KEY);
+        
+        if (!allOrders) return [];
+        
+        try {
+            const orders = JSON.parse(allOrders);
+            // Lọc các đơn hàng của user hiện tại dựa trên userEmail
+            return orders.filter(order => order.userEmail === userEmail);
+        } catch (e) {
+            console.error('Error parsing orders:', e);
+            return [];
+        }
     }
     
     // Format price
@@ -119,14 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Display order history
     function displayOrderHistory() {
-        const currentUserAccount = localStorage.getItem(CURRENT_USER_KEY);
-        if (!currentUserAccount) return;
+        const currentUser = getCurrentUser();
+        if (!currentUser) return;
         
         const orderTab = document.getElementById('LichSuDonHang');
         if (!orderTab) return;
         
-        // Get order history
-        const orders = getUserOrderHistory(currentUserAccount);
+        // Get order history (lọc theo email của user)
+        const orders = getUserOrderHistory(currentUser.email);
         
         if (orders.length === 0) {
             orderTab.innerHTML = `
@@ -173,14 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
         detailButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const orderId = btn.dataset.orderId;
-                showOrderDetail(orderId, currentUserAccount);
+                showOrderDetail(orderId, currentUser.email);
             });
         });
     }
     
     // Show order detail modal
-    function showOrderDetail(orderId, userId) {
-        const orders = getUserOrderHistory(userId);
+    function showOrderDetail(orderId, userEmail) {
+        const orders = getUserOrderHistory(userEmail);
         const order = orders.find(o => o.orderId === orderId);
         
         if (!order) return;
@@ -275,9 +284,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Get all products and filter favorites
+        // Get all products from localStorage (đọc từ localStorage thay vì global variable)
         const allProducts = [];
-        if (typeof productsData !== 'undefined') {
+        const PRODUCTS_KEY = 'dataProducts';
+        const productsDataStr = localStorage.getItem(PRODUCTS_KEY);
+        
+        if (productsDataStr) {
+            // Đọc từ localStorage
+            try {
+                const productsDataLocal = JSON.parse(productsDataStr);
+                for (const brand in productsDataLocal) {
+                    allProducts.push(...productsDataLocal[brand]);
+                }
+            } catch (e) {
+                console.error('Error parsing products from localStorage:', e);
+            }
+        } else if (typeof productsData !== 'undefined') {
+            // Fallback to global productsData nếu localStorage trống
             for (const brand in productsData) {
                 allProducts.push(...productsData[brand]);
             }
@@ -296,10 +319,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render favorite products
         const productsHTML = favoriteProducts.map(product => {
             const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+            // Xử lý image: kiểm tra nếu là mảng thì lấy phần tử đầu, nếu không thì dùng trực tiếp
+            const productImage = Array.isArray(product.images) ? product.images[0] : (product.image || product.images);
+            
             return `
                 <div class="product-card" data-id="${product.id}" data-click="view-detail">
                     <div class="product-image-wrapper">
-                        <img src="${product.image}" alt="${product.name}">
+                        <img src="${productImage}" alt="${product.name}">
                         ${discount > 0 ? `<span class="product-discount">-${discount}%</span>` : ''}
                         <button class="favorite-btn active" data-id="${product.id}" title="Xóa khỏi yêu thích">
                             <i class="fas fa-heart"></i>

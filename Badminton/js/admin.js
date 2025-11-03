@@ -1298,7 +1298,7 @@ function completeImport(id) {
     const btnLogout = document.querySelector('.btn-logout');
     if (btnLogout) {
         btnLogout.addEventListener('click', function() {
-            const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+            const CURRENT_USER_KEY = 'CurrentUser';
             
             // Xác nhận đăng xuất
             if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {

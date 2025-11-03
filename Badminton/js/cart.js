@@ -1,7 +1,7 @@
 // Cart Page JavaScript
 document.addEventListener('DOMContentLoaded', () => {
-    const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
-    const CART_KEY_PREFIX = 'proBadmintonCart_';
+    const CURRENT_USER_KEY = 'CurrentUser';
+    const CART_KEY_PREFIX = 'Cart_';
     
     const cartEmpty = document.getElementById('cart-empty');
     const cartContent = document.getElementById('cart-content');
@@ -27,38 +27,89 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return null;
         }
-        return currentUser;
+        try {
+            return JSON.parse(currentUser);
+        } catch (e) {
+            return null;
+        }
     }
 
-    // Get cart from localStorage
-    function getCart(userId) {
-        const cartKey = CART_KEY_PREFIX + userId;
-        const cart = localStorage.getItem(cartKey);
-        return cart ? JSON.parse(cart) : [];
+    // Get cart from localStorage (cấu trúc mới: lưu chung tất cả user)
+    function getCart(user) {
+        const GLOBAL_CART_KEY = 'AllCarts';
+        const userEmail = user.email || user;
+        
+        // Lấy tất cả giỏ hàng
+        const allCartsStr = localStorage.getItem(GLOBAL_CART_KEY);
+        if (!allCartsStr) return [];
+        
+        try {
+            const allCarts = JSON.parse(allCartsStr);
+            // Tìm giỏ hàng của user này
+            const userCart = allCarts.find(cart => cart.email === userEmail);
+            return userCart ? userCart.items : [];
+        } catch (e) {
+            console.error('Error parsing carts:', e);
+            return [];
+        }
     }
 
-    // Save cart to localStorage
-    function saveCart(userId, cart) {
-        const cartKey = CART_KEY_PREFIX + userId;
-        localStorage.setItem(cartKey, JSON.stringify(cart));
+    // Save cart to localStorage (cấu trúc mới)
+    function saveCart(user, items) {
+        const GLOBAL_CART_KEY = 'AllCarts';
+        const userEmail = user.email || user;
+        
+        // Lấy tất cả giỏ hàng
+        let allCarts = [];
+        const allCartsStr = localStorage.getItem(GLOBAL_CART_KEY);
+        if (allCartsStr) {
+            try {
+                allCarts = JSON.parse(allCartsStr);
+            } catch (e) {
+                console.error('Error parsing carts:', e);
+                allCarts = [];
+            }
+        }
+        
+        // Tìm giỏ hàng của user
+        const cartIndex = allCarts.findIndex(cart => cart.email === userEmail);
+        
+        if (cartIndex >= 0) {
+            // Cập nhật giỏ hàng hiện tại
+            allCarts[cartIndex].items = items;
+        } else {
+            // Thêm giỏ hàng mới
+            allCarts.push({
+                email: userEmail,
+                items: items
+            });
+        }
+        
+        // Lưu lại
+        localStorage.setItem(GLOBAL_CART_KEY, JSON.stringify(allCarts));
         updateCartCount();
     }
 
     // Update cart count in header
     function updateCartCount() {
-        const currentUser = localStorage.getItem(CURRENT_USER_KEY);
-        if (!currentUser) {
+        const currentUserData = localStorage.getItem(CURRENT_USER_KEY);
+        if (!currentUserData) {
             const cartCountEl = document.getElementById('cart-count');
             if (cartCountEl) cartCountEl.textContent = '0';
             return;
         }
 
-        const cart = getCart(currentUser);
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const cartCountEl = document.getElementById('cart-count');
-        if (cartCountEl) {
-            cartCountEl.textContent = totalItems;
-            cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+        try {
+            const currentUser = JSON.parse(currentUserData);
+            const cart = getCart(currentUser);
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountEl = document.getElementById('cart-count');
+            if (cartCountEl) {
+                cartCountEl.textContent = totalItems;
+                cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        } catch (e) {
+            console.error('Error updating cart count:', e);
         }
     }
 
@@ -69,10 +120,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Get product by ID
     function getProductById(productId) {
-        if (typeof productsData === 'undefined') return null;
+        const PRODUCTS_KEY = 'dataProducts';
+        const productsDataStr = localStorage.getItem(PRODUCTS_KEY);
         
-        for (const brand in productsData) {
-            const product = productsData[brand].find(p => p.id === productId);
+        if (!productsDataStr) {
+            // Fallback to global productsData if localStorage is empty
+            if (typeof productsData !== 'undefined') {
+                for (const brand in productsData) {
+                    const product = productsData[brand].find(p => p.id === productId);
+                    if (product) return product;
+                }
+            }
+            return null;
+        }
+        
+        const productsDataLocal = JSON.parse(productsDataStr);
+        for (const brand in productsDataLocal) {
+            const product = productsDataLocal[brand].find(p => p.id === productId);
             if (product) return product;
         }
         return null;
@@ -99,9 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const product = getProductById(item.productId);
             if (!product) return '';
 
+            // Lấy hình ảnh đầu tiên (hỗ trợ cả images array và image string)
+            const productImage = Array.isArray(product.images) ? product.images[0] : (product.image || product.images);
+
             return `
                 <div class="cart-item" data-product-id="${item.productId}">
-                    <img src="${product.image}" alt="${product.name}" class="cart-item-image">
+                    <img src="${productImage}" alt="${product.name}" class="cart-item-image">
                     <div class="cart-item-info">
                         <span class="cart-item-brand">${product.brand}</span>
                         <h3 class="cart-item-name">${product.name}</h3>
@@ -213,27 +280,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Save order to history
-    function saveOrderHistory(userId, orderData) {
-        const ORDER_HISTORY_KEY = 'proBadmintonOrderHistory_';
-        const historyKey = ORDER_HISTORY_KEY + userId;
+    // Save order to global orders list
+    function saveOrderHistory(userEmail, userName, orderData) {
+        const GLOBAL_ORDERS_KEY = 'AllOrders';
         
-        // Get existing history
-        let history = localStorage.getItem(historyKey);
-        history = history ? JSON.parse(history) : [];
+        // Get existing orders
+        let allOrders = localStorage.getItem(GLOBAL_ORDERS_KEY);
+        allOrders = allOrders ? JSON.parse(allOrders) : [];
         
-        // Add new order
-        history.unshift(orderData); // Add to beginning
+        // Add user info to order
+        const orderWithUser = {
+            ...orderData,
+            userEmail: userEmail,
+            userName: userName
+        };
+        
+        // Add to beginning
+        allOrders.unshift(orderWithUser);
         
         // Save back to localStorage
-        localStorage.setItem(historyKey, JSON.stringify(history));
+        localStorage.setItem(GLOBAL_ORDERS_KEY, JSON.stringify(allOrders));
     }
 
-    // Generate order ID
+    // Generate order ID with format DH_1, DH_2, ...
     function generateOrderId() {
-        const timestamp = Date.now();
-        const random = Math.floor(Math.random() * 10000);
-        return `VN${timestamp}${random}`;
+        const GLOBAL_ORDERS_KEY = 'AllOrders';
+        let allOrders = localStorage.getItem(GLOBAL_ORDERS_KEY);
+        allOrders = allOrders ? JSON.parse(allOrders) : [];
+        
+        // Get next order number
+        const nextNumber = allOrders.length + 1;
+        return `DH_${nextNumber}`;
     }
 
     // Handle checkout
@@ -259,12 +336,15 @@ document.addEventListener('DOMContentLoaded', () => {
             cart.forEach(item => {
                 const product = getProductById(item.productId);
                 if (product) {
+                    // Lấy hình ảnh đầu tiên (hỗ trợ cả images array và image string)
+                    const productImage = Array.isArray(product.images) ? product.images[0] : (product.image || product.images);
+                    
                     total += product.price * item.quantity;
                     orderItems.push({
                         productId: item.productId,
                         productName: product.name,
                         productBrand: product.brand,
-                        productImage: product.image,
+                        productImage: productImage,
                         price: product.price,
                         quantity: item.quantity
                     });
@@ -276,15 +356,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Create order data
                 const orderData = {
                     orderId: generateOrderId(),
-                    orderDate: new Date().toISOString(),
+                    orderDate: new Date().toISOString().split('T')[0], // Chỉ lưu ngày YYYY-MM-DD
                     items: orderItems,
                     totalAmount: total,
-                    status: 'processing', // processing, shipping, delivered, cancelled
-                    statusText: 'Đang xử lý'
+                    status: 0, // 0 = Chưa xử lý, 1 = Đã xử lý
+                    statusText: 'Chưa xử lý'
                 };
                 
-                // Save order to history
-                saveOrderHistory(currentUser, orderData);
+                // Save order to history with user email and name
+                saveOrderHistory(currentUser.email, currentUser.account, orderData);
                 
                 // Clear cart
                 saveCart(currentUser, []);

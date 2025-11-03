@@ -5,8 +5,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- Khai báo các biến ---
-    const USERS_KEY = 'proBadmintonUsers';
-    const CURRENT_USER_KEY = 'proBadmintonCurrentUser';
+    const USERS_KEY = 'Users';
+    const CURRENT_USER_KEY = 'CurrentUser';
 
     // Lấy các phần tử modal
     const authModal = document.getElementById("auth-modal");
@@ -166,7 +166,15 @@ document.addEventListener("DOMContentLoaded", () => {
         // Mã hóa mật khẩu (đơn giản, không an toàn cho sản phẩm thật)
         const hashedPassword = "hashed_" + password; 
         
-        users.push({ account: account, email: email, password: hashedPassword });
+        // Tạo user mới với isLocked = false
+        const newUser = {
+            account: account,
+            email: email,
+            password: hashedPassword,
+            isLocked: false
+        };
+        
+        users.push(newUser);
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
 
         showToast("Đăng ký thành công! Vui lòng đăng nhập.", 'success');
@@ -185,8 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const adminUser = {
                 account: "Admin",
                 email: "Admin@gmail.com",
-                password: "hashed_Admin123",
-                role: "admin"
+                password: "hashed_Admin123"
             };
             localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(adminUser));
             hideModal();
@@ -205,6 +212,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = users.find(user => user.account && user.email === email && user.password === hashedPassword);
 
         if (user) {
+            // Kiểm tra tài khoản có bị khóa không
+            if (user.isLocked === true) {
+                showError(loginError, "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.");
+                return;
+            }
+            
             // Đăng nhập thành công
             localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
             hideModal();
