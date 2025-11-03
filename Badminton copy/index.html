@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Badminton Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login_logout.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/product_detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="header" id="main-header">
+        <div class="container">
+            <!-- Nút mở menu (chỉ hiện trên mobile) -->
+            <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" title="Mở menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo"></a>
+            <nav class="main-nav">
+                <!-- Khối người dùng trong menu (mobile) -->
+                <div class="menu-user" id="menu-user">
+                    <button class="menu-user-toggle" id="menu-user-toggle" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="menu-user-name">Guest</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </button>
+                    <ul class="menu-user-dropdown" id="menu-user-dropdown">
+                        <li><a href="#profile" class="linklike auth-show-when-logged-in"><i class="fas fa-user"></i> Hồ sơ</a></li>
+                        <li><a href="#profile/CaiDatTaiKhoan" class="linklike auth-show-when-logged-in"><i class="fas fa-cog"></i> Cài đặt</a></li>
+                        <li><button type="button" id="menu-user-logout" class="linklike auth-show-when-logged-in logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log out</span></button>
+                        </li>
+                        <li><button type="button" id="menu-user-login" class="linklike auth-show-when-logged-out">Đăng nhập / Đăng ký</button></li>
+                    </ul>
+                </div>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li class="dropdown">
+                        <a href="#">Vợt <i class="fas fa-chevron-down"></i></a>
+                        <ul id="dropdown-menu">
+                            <li><a href="#brand/yonex">Yonex</a></li>
+                            <li><a href="#brand/lining">Lining</a></li>
+                            <li><a href="#brand/victor">Victor</a></li>
+                            <li><a href="#brand/mizuno">Mizuno</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Phụ kiện</a></li>
+                    <li><a href="#News">Tin tức</a></li>
+                    <li><a href="#Phone">Liên hệ</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-icons">
+                <!-- 1. Ô TÌM KIẾM (desktop) -->
+                <div class="search-container">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <!-- Nút tìm kiếm (mobile) -->
+                <button class="mobile-search-btn" id="mobile-search-btn" aria-label="Tìm kiếm">
+                    <i class="fas fa-search"></i>
+                </button>
+                
+                <!-- 2. GIỎ HÀNG (Thêm ID) -->
+                <a href="cart.html" class="cart-icon" aria-label="Giỏ hàng" id="cart-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                
+                <!-- 3. NGƯỜI DÙNG (Nội dung động) -->
+                <div id="user-container">
+                    <!-- Trạng thái CHƯA ĐĂNG NHẬP (mặc định) -->
+                    <button id="login-register-btn" class="user-btn auth-show-when-logged-out" aria-label="Tài khoản">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    
+                    <!-- Trạng thái ĐÃ ĐĂNG NHẬP (bị ẩn ban đầu) -->
+                    <div id="user-info" class="dropdown auth-show-when-logged-in">
+                        <span id="welcome-msg">Chào,</span>
+                        <div id="dropdown-user">
+                            <a class="user-btn auth-show-when-logged-in" id="profile-btn" href="#profile">
+                                <i class="fa-solid fa-circle-user"></i> <span> Profile</span>
+                            </a> <br>
+                            <a href="#profile/CaiDatTaiKhoan" class="user-btn auth-show-when-logged-in" id="setting-btn">
+                                <i class="fa-solid fa-gear"></i> <span> Setting</span>
+                            </a><br>
+                            <button id="logout-btn" class="user-btn logout-btn auth-show-when-logged-in">
+                                <i class="fas fa-sign-out-alt"></i> 
+                                <span>Log out</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay tối màn hình khi mở menu trên mobile -->
+    <div class="nav-overlay" id="nav-overlay"></div>
+
+    <!-- Thanh tìm kiếm cho mobile -->
+    <div class="mobile-search-panel" id="mobile-search-panel" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="mobile-search-inner">
+            <i class="fas fa-search"></i>
+            <input type="text" id="mobile-search-input" placeholder="Tìm kiếm sản phẩm..." />
+            <button id="mobile-search-close" aria-label="Đóng tìm kiếm"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-modal">&times;</button>
+            
+            <!-- Form Đăng nhập (mặc định) -->
+            <div id="login-form-container">
+                <h2>Đăng nhập</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Mật khẩu</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Đăng nhập</button>
+                    <p id="login-error" class="error-msg hidden"></p>
+                    <p class="toggle-form">
+                        Chưa có tài khoản? <a href="#" id="show-register">Đăng ký ngay</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Form Đăng ký (bị ẩn) -->
+            <div id="register-form-container" class="hidden">
+                <h2>Đăng ký</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-account">Tài khoản</label>
+                        <input type="text" id="register-account" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Mật khẩu</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Xác nhận Mật khẩu</label>
+                        <input type="password" id="register-confirm-password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Đăng ký</button>
+                    <p id="register-error" class="error-msg hidden"></p>
+                    <p class="toggle-form">
+                        Đã có tài khoản? <a href="#" id="show-login">Đăng nhập</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <main>
+        <!-- Profile Section -->
+        <section class="profile-section hidden" id="profile">
+            <div class="profile-container">
+                <h1 class="profile-title">Tài Khoản Của Tôi</h1>
+                
+                <!-- Layout 2 cột -->
+                <div class="profile-layout">
+                    
+                    <!-- Sidebar bên trái -->
+                    <aside class="profile-sidebar">
+                        <div class="profile-user-info">
+                            <img id="profile-avatar" src="https://placehold.co/128x128/e0e7ff/4338ca?text=User" alt="Ảnh đại diện" class="profile-avatar">
+                            <h2 id="profile-username" class="profile-name"></h2>
+                            <p id="profile-email" class="profile-email-display"></p>
+                            <button class="profile-edit-btn" id="profile-edit-btn">Chỉnh sửa Hồ sơ</button>
+                        </div>
+                        
+                        <!-- Menu điều hướng -->
+                        <nav class="profile-nav">
+                            <a href="#profile/TongQuan" class="profile-nav-link active" data-tab="TongQuan">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Tổng quan</span>
+                            </a>
+                            <a href="#profile/LichSuDonHang" class="profile-nav-link" data-tab="LichSuDonHang">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span>Lịch sử Đơn hàng</span>
+                            </a>
+                            <a href="#profile/SanPhamYeuThich" class="profile-nav-link" data-tab="SanPhamYeuThich">
+                                <i class="fa-solid fa-heart"></i>
+                                <span>Sản phẩm Yêu thích</span>
+                            </a>
+                            <a href="#profile/CaiDatTaiKhoan" class="profile-nav-link" data-tab="CaiDatTaiKhoan">
+                                <i class="fa-solid fa-gear"></i>
+                                <span>Cài đặt Tài khoản</span>
+                            </a>
+                            <hr class="profile-divider">
+                            <button class="profile-nav-link profile-logout-btn" id="profile-logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </nav>
+                    </aside>
+
+                    <!-- Nội dung bên phải -->
+                    <main class="profile-content">
+                        
+                        <!-- Tab Tổng quan -->
+                        <div id="TongQuan" class="profile-tab active">
+                            <h2 class="profile-tab-title">Chào mừng trở lại, <span id="welcome-username">Guest</span>!</h2>
+                            <p class="profile-tab-desc">
+                                Từ trang tổng quan này, bạn có thể dễ dàng kiểm tra các đơn hàng gần đây, quản lý địa chỉ giao hàng,
+                                và chỉnh sửa mật khẩu cũng như chi tiết tài khoản của mình.
+                            </p>
+                            <div class="profile-overview-grid">
+                                <div class="profile-overview-card">
+                                    <i class="fa-solid fa-box-archive profile-overview-icon"></i>
+                                    <a href="#profile/LichSuDonHang">
+                                        <h3 class="profile-overview-title">Đơn hàng của tôi</h3>
+                                        <p class="profile-overview-desc">Xem trạng thái & lịch sử</p>
+                                    </a>
+                                </div>
+                                <div class="profile-overview-card">
+                                    <i class="fa-solid fa-gear profile-overview-icon"></i>
+                                    <a href="#profile/CaiDatTaiKhoan">
+                                        <h3 class="profile-overview-title">Cài đặt</h3>
+                                        <p class="profile-overview-desc">Quản lý thông tin & bảo mật</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Lịch sử Đơn hàng -->
+                        <div id="LichSuDonHang" class="profile-tab">
+                            <h2 class="profile-tab-title">Lịch sử Đơn hàng</h2>
+                            <p class="profile-empty-message">Bạn chưa có đơn hàng nào.</p>
+                        </div>
+
+                        <!-- Tab Sản phẩm Yêu thích -->
+                        <div id="SanPhamYeuThich" class="profile-tab">
+                            <h2 class="profile-tab-title">Sản phẩm Yêu thích</h2>
+                            <p class="profile-empty-message">Bạn chưa có sản phẩm yêu thích nào.</p>
+                        </div>
+
+                        <!-- Tab Cài đặt Tài khoản -->
+                        <div id="CaiDatTaiKhoan" class="profile-tab">
+                            <h2 class="profile-tab-title">Cài đặt Tài khoản</h2>
+                            <form id="profile-settings-form" class="profile-settings-form">
+                                <!-- Thông tin cá nhân -->
+                                <div class="profile-form-section">
+                                    <h3 class="profile-form-title">Thông tin cá nhân</h3>
+                                    <div class="profile-form-grid">
+                                        <div class="profile-form-group">
+                                            <label for="profile-fullname" class="profile-form-label">Họ và Tên</label>
+                                            <input type="text" id="profile-fullname" class="profile-form-input">
+                                        </div>
+                                        <div class="profile-form-group">
+                                            <label for="profile-email-input" class="profile-form-label">Email</label>
+                                            <input type="email" id="profile-email-input" class="profile-form-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Đổi mật khẩu -->
+                                <div class="profile-form-section">
+                                    <h3 class="profile-form-title">Đổi mật khẩu</h3>
+                                    <div class="profile-form-group">
+                                        <label for="profile-current-password" class="profile-form-label">Mật khẩu hiện tại</label>
+                                        <input type="password" id="profile-current-password" class="profile-form-input">
+                                    </div>
+                                    <div class="profile-form-group">
+                                        <label for="profile-new-password" class="profile-form-label">Mật khẩu mới</label>
+                                        <input type="password" id="profile-new-password" class="profile-form-input">
+                                    </div>
+                                </div>
+
+                                <!-- Nút lưu -->
+                                <div class="profile-form-actions">
+                                    <button type="submit" class="profile-save-btn">Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </main>
+                </div>
+            </div>
+        </section>
+
+        <div class="hero"></div>
+
+        <section class="featured-brands">
+            <div class="container">
+                <a href="#brand/yonex"><img src="https://placehold.co/150x50/png?text=YONEX" alt="Yonex Logo"></a>
+                <a href="#brand/lining"><img src="https://placehold.co/150x50/png?text=LINING" alt="Lining Logo"></a>
+                <a href="#brand/victor"><img src="https://placehold.co/150x50/png?text=VICTOR" alt="Victor Logo"></a>
+                <a href="#brand/mizuno"><img src="https://placehold.co/150x50/png?text=MIZUNO" alt="Mizuno Logo"></a>
+            </div>
+        </section>
+
+        <!-- Sản phẩm nổi bật (Trang chủ) -->
+        <section class="product-section" id="featured-products-section">
+            <div id="section-title"></div><h2 class="section-title">SẢN PHẨM NỔI BẬT</h2></div>
+            
+            <!-- Filter Bar cho trang chủ -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label for="home-price-filter">Giá:</label>
+                    <select id="home-price-filter">
+                        <option value="all">Tất cả</option>
+                        <option value="0-3000000">Dưới 3 triệu</option>
+                        <option value="3000000-4000000">3 - 4 triệu</option>
+                        <option value="4000000-5000000">4 - 5 triệu</option>
+                        <option value="5000000-999999999">Trên 5 triệu</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="home-weight-filter">Độ nặng:</label>
+                    <select id="home-weight-filter">
+                        <option value="all">Tất cả</option>
+                        <option value="70-75">6U (73g - Siêu nhẹ)</option>
+                        <option value="75-80">5U (78g - Nhẹ)</option>
+                        <option value="80-85">4U (83g - Trung bình)</option>
+                        <option value="85-90">3U (88g - Nặng)</option>
+                        <option value="90-95">2U (93g - Rất nặng)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="home-category-filter">Lối chơi:</label>
+                    <select id="home-category-filter">
+                        <option value="all">Tất cả</option>
+                        <option value="Tấn công">Tấn công</option>
+                        <option value="Đa năng">Đa năng</option>
+                        <option value="Tốc độ">Tốc độ</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="container flex-container">
+                <!-- Product Grid -->
+                <div class="product-grid" id="featured-product-grid">
+                    <!-- Sản phẩm sẽ được render bằng JavaScript -->
+                </div>
+            </div>
+            <!-- phân trang -->
+            <div class="pagination" id="featured-pagination">
+                <!-- phân trang sẽ được render bằng JavaScript -->
+            </div>
+        </section>
+
+        <section class="promo-banner" id="News">
+            <div class="container">
+                <h3>BỘ SƯU TẬP MỚI 2025!!!</h3>
+                <div class="banner-card">
+                    <p>Trải nghiệm tốc độ và sức mạnh vượt trội.</p>
+                    <a href="#featured-products-section" class="cta-button">XEM NGAY</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <div class="container">
+                <h2>KHÁCH HÀNG NÓI GÌ ?!?</h2>
+                <div class="testimonial-card">
+                    <p>"Dịch vụ tuyệt vời, vợt chính hãng và giao hàng rất nhanh. Sẽ ủng hộ shop lâu dài."</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <h4>- Anh Minh (Hà Nội) -</h4>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3>Về chúng tôi</h3>
+                <p>Pro Badminton - Cửa hàng vợt cầu lông uy tín hàng đầu Việt Nam.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Liên kết</h3>
+                <ul>
+                    <li><a href="#">Chính sách đổi trả</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Điều khoản sử dụng</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Hỗ trợ</h3>
+                <ul>
+                    <li><a href="#">Hướng dẫn mua hàng</a></li>
+                    <li><a href="#">Phương thức thanh toán</a></li>
+                    <li><a href="#">Câu hỏi thường gặp</a></li>
+                </ul>
+            </div>
+            <div class="footer-col" id="Phone">
+                <h3>Liên hệ</h3>
+                <p><i class="fas fa-phone"></i> 0123 456 789</p>
+                <p><i class="fas fa-envelope"></i> info@probadminton.vn</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ProBadminton. Đã đăng ký bản quyền.</p>
+        </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-detail-modal" class="product-modal-overlay hidden">
+        <div class="product-modal-content">
+            <button class="product-modal-close" id="close-product-modal">&times;</button>
+            <div class="product-modal-body">
+                <div class="product-modal-image">
+                    <img id="modal-product-image" src="" alt="Product">
+                </div>
+                <div class="product-modal-info">
+                    <span class="modal-product-brand" id="modal-product-brand"></span>
+                    <h2 class="modal-product-name" id="modal-product-name"></h2>
+                    <div class="modal-product-rating" id="modal-product-rating"></div>
+                    <div class="modal-product-price-wrapper">
+                        <p class="modal-product-price" id="modal-product-price"></p>
+                        <p class="modal-product-original-price" id="modal-product-original-price"></p>
+                    </div>
+                    <div class="modal-product-description" id="modal-product-description"></div>
+                    <div class="modal-product-specs">
+                        <h3>Thông số kỹ thuật</h3>
+                        <table class="specs-table">
+                            <tr>
+                                <td><strong>Trọng lượng:</strong></td>
+                                <td id="modal-product-weight"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Điểm cân bằng:</strong></td>
+                                <td id="modal-product-balance"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Độ cứng:</strong></td>
+                                <td id="modal-product-flexibility"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Căng tối đa:</strong></td>
+                                <td id="modal-product-tension"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Xuất xứ:</strong></td>
+                                <td id="modal-product-origin"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lối chơi:</strong></td>
+                                <td id="modal-product-category"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-product-actions">
+                        <button class="modal-add-to-cart-btn" id="modal-add-to-cart">
+                            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
+                        </button>
+                        <button class="modal-favorite-btn" id="modal-favorite-btn">
+                            <i class="far fa-heart"></i> Yêu thích
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/product.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/category.js"></script>
+</body>
+</html>

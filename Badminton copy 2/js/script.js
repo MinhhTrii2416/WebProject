@@ -179,8 +179,28 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const email = document.getElementById("login-email").value;
         const password = document.getElementById("login-password").value;
-        const hashedPassword = "hashed_" + password; // giải mã hóa
 
+        // Kiểm tra tài khoản Admin (không phân biệt hoa thường cho email)
+        if (email.toLowerCase() === "admin@gmail.com" && password === "Admin123") {
+            const adminUser = {
+                account: "Admin",
+                email: "Admin@gmail.com",
+                password: "hashed_Admin123",
+                role: "admin"
+            };
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(adminUser));
+            hideModal();
+            showToast("Đăng nhập Admin thành công.", 'success');
+            
+            // Chuyển hướng đến trang admin sau 500ms
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 500);
+            return;
+        }
+
+        // Kiểm tra tài khoản người dùng thông thường
+        const hashedPassword = "hashed_" + password;
         const users = getUsers();
         const user = users.find(user => user.account && user.email === email && user.password === hashedPassword);
 
