@@ -373,7 +373,7 @@ tbody tr td {
     margin: 0 2px;
 }
 
-.status-complete {
+.status-completed {
     background-color: #27ae60;
     color: #fff;
     padding: 5px 10px;
@@ -382,8 +382,26 @@ tbody tr td {
     display: inline-block;
 }
 
-.status-no-complete {
+.status-canceled {
     background-color: #f04e2e;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 15px;
+    display: inline-block;
+}
+
+.status-just-ordered {
+    background-color: orange;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 15px;
+    display: inline-block;
+}
+
+.status-delivered {
+    background-color: #0066CC;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
