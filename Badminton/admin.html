@@ -972,8 +972,8 @@ function openEditProductModal(productId) {
                     <td>${user.joinDate}</td>
                     <td><span class="${statusClass}">${statusText}</span></td>
                     <td>
-                        <button class="${actionButtonClass}" onclick="openStatusModal(${user.stt}, ${user.isLocked})">${actionButtonText}</button>
-                        <button class="btn-detail" onclick="openResetPasswordModal(${user.stt})">Reset MK</button>
+                        <button class="${actionButtonClass}" onclick="openStatusModal('${user.email}', ${user.isLocked})">${actionButtonText}</button>
+                        <button class="btn-detail" onclick="openResetPasswordModal(${user.email})">Reset MK</button>
                 </tr>
             `;
         });
@@ -996,7 +996,7 @@ function openEditProductModal(productId) {
 // Thay thế các hàm mẫu trong LOGIC KHÁCH HÀNG (User)
 
 // 1. Chức năng KHÓA/MỞ KHÓA (Toggle Status)
-function openStatusModal(userId, currentStatus) {
+function openStatusModal(userEmail, currentStatus) {
     const statusModal = document.getElementById('StatusModal');
     const confirmButton = document.getElementById('ConfirmStatusButton');
     const userDisplay = document.getElementById('UserToChangeStatus');
@@ -1008,7 +1008,7 @@ function openStatusModal(userId, currentStatus) {
     }
     
     // Tìm khách hàng để lấy tên (Giả định userList là biến toàn cục)
-    const user = userList.find(u => u.stt === userId);
+    const user = userList.find(u => u.email === userEmail);
     if (!user) return alert("Không tìm thấy khách hàng.");
 
     // Xác định hành động và trạng thái MỚI
@@ -1022,16 +1022,16 @@ function openStatusModal(userId, currentStatus) {
     
     // Khi người dùng bấm nút 'XÁC NHẬN', nó sẽ gọi hàm changeUserStatus
     confirmButton.onclick = function() {
-        changeUserStatus(userId, newStatus, action);
+        changeUserStatus(userEmail, newStatus, action);
     };
 
     //Hiển thị Modal
     statusModal.style.display = 'block';
 }
 
-function changeUserStatus(id, newStatus, actionText) {
+function changeUserStatus(email, newStatus, actionText) {
     // Giả định userList là biến toàn cục
-    const userIndex = userList.findIndex(u => u.stt === id);
+    const userIndex = userList.findIndex(u => u.email === email);
     
     if (userIndex !== -1) {
         // Cập nhật trạng thái
@@ -1244,7 +1244,7 @@ function viewOrderDetail(id) {
     if (!modal || !modalChoice || !actionButton || !cancelButton) return;
 
     // Lấy Chi tiết các mặt hàng của đơn hàng này
-    const orderDetails = orderDetailsList.filter(detail => detail.orderId === id);
+    const orderDetails = order.items || [];
     
     let calculatedTotal = 0;
     let html = '';
@@ -1257,7 +1257,7 @@ function viewOrderDetail(id) {
         html += `
             <tr>
                 <td>${index + 1}</td>
-                <td>${item.productName}</td>
+                <td>${item.productName} (${item.productId})</td>
                 <td>${formatCurrency(item.price)}</td>
                 <td>${item.quantity}</td>
                 <td>${formatCurrency(lineTotal)}</td>
@@ -1419,38 +1419,41 @@ function thongke() {
         const dateMatchStart = !timeStart || order.orderDate >= timeStart;
         const dateMatchEnd = !timeEnd || order.orderDate <= timeEnd;
         return order.status > 1 && dateMatchStart && dateMatchEnd;
-    }).map(order => order.orderId); 
+    });
 
-    // 2. Lọc Chi tiết Đơn hàng dựa trên các đơn hàng đã hoàn thành
-    let filteredDetails = orderDetailsList.filter(detail => completedOrders.includes(detail.orderId));
+    // 2. Tổng hợp dữ liệu thống kê từ items trong các đơn hàng đã lọc
+    const statisticalData = [];
+    
+    completedOrders.forEach(order => {
+        // Lặp qua từng item trong đơn hàng
+        order.items.forEach(item => {
+            const existingProduct = statisticalData.find(stat => stat.id === item.productId);
+            
+            if (existingProduct) {
+                // Nếu đã có sản phẩm này, cộng dồn số lượng và doanh thu
+                existingProduct.quantitySold += item.quantity;
+                existingProduct.revenue += item.quantity * item.price;
+            } else {
+                // Nếu chưa có, thêm mới
+                statisticalData.push({
+                    id: item.productId,
+                    name: item.productName,
+                    type: item.productBrand,
+                    quantitySold: item.quantity,
+                    revenue: item.quantity * item.price
+                });
+            }
+        });
+    });
 
-    // 3. Tổng hợp dữ liệu thống kê theo Tên sản phẩm
-    const statisticalData = filteredDetails.reduce((acc, detail) => {
-        const existingProduct = acc.find(item => item.name === detail.productName);
-        const productInfo = productList.find(p => p.name === detail.productName);
-
-        if (existingProduct) {
-            existingProduct.quantitySold += detail.quantity;
-            existingProduct.revenue += detail.quantity * detail.price;
-        } else {
-            acc.push({
-                name: detail.productName,
-                type: detail.productBrand,
-                quantitySold: detail.quantity,
-                revenue: detail.quantity * detail.price,
-            });
-        }
-        return acc;
-    }, []);
-
-    // 4. Áp dụng Tìm kiếm và Lọc trên dữ liệu đã Tổng hợp
+    // 3. Áp dụng Tìm kiếm và Lọc trên dữ liệu đã Tổng hợp
     let finalData = statisticalData.filter(item => {
         const nameMatch = item.name.toLowerCase().includes(searchInput);
         const categoryMatch = categorySelect === 'Tất cả' || item.type === categorySelect;
         return nameMatch && categoryMatch;
     });
 
-    // 5. Hiển thị dữ liệu và Cập nhật Thẻ Thống kê
+    // 4. Hiển thị dữ liệu và Cập nhật Thẻ Thống kê
     let totalQuantitySold = 0;
     let totalRevenueStat = 0;
     let html = '';
@@ -1461,10 +1464,10 @@ function thongke() {
         
         html += `
             <tr>
-            <td>${index + 1}</td>
-            <td>${item.name}</td>
-            <td>${item.quantitySold}</td> 
-            <td>${formatCurrency(item.revenue)}</td>
+                <td>${index + 1}</td>
+                <td>${item.name} (${item.id})</td>
+                <td>${item.quantitySold}</td> 
+                <td>${formatCurrency(item.revenue)}</td>
             </tr>
         `;
     });

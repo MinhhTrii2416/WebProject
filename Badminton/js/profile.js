@@ -118,10 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get status badge class and text
     function getStatusInfo(status) {
         const statusMap = {
-            'processing': { class: 'status-processing', text: 'Đang xử lý' },
-            'shipping': { class: 'status-shipping', text: 'Đang vận chuyển' },
-            'delivered': { class: 'status-delivered', text: 'Đã giao hàng' },
-            'cancelled': { class: 'status-cancelled', text: 'Đã hủy' }
+            1: { class: 'status-processing', text: 'Đang xử lý' },
+            2: { class: 'status-shipping', text: 'Đã xử lý' },
+            3: { class: 'status-delivered', text: 'Đã giao hàng' },
+            0: { class: 'status-cancelled', text: 'Đã hủy' }
         };
         return statusMap[status] || { class: 'status-processing', text: 'Đang xử lý' };
     }
