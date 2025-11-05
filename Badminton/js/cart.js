@@ -1,7 +1,6 @@
 // Cart Page JavaScript
 document.addEventListener('DOMContentLoaded', () => {
     const CURRENT_USER_KEY = 'CurrentUser';
-    const CART_KEY_PREFIX = 'Cart_';
     
     const cartEmpty = document.getElementById('cart-empty');
     const cartContent = document.getElementById('cart-content');
@@ -313,7 +312,169 @@ document.addEventListener('DOMContentLoaded', () => {
         return `DH_${nextNumber}`;
     }
 
-    // Handle checkout
+    // Districts data for cities
+    const districtsData = {
+        'Hà Nội': ['Ba Đình', 'Hoàn Kiếm'],
+        'Hồ Chí Minh': ['Quận 1', 'Quận 3']
+    };
+
+    const wardsData = {
+        'Ba Đình': ['Phúc Xá', 'Trúc Bạch', 'Vĩnh Phúc', 'Cống Vị', 'Liễu Giai', 'Nguyễn Trung Trực', 'Quán Thánh', 'Ngọc Hà', 'Điện Biên', 'Đội Cấn', 'Ngọc Khánh', 'Kim Mã', 'Giảng Võ', 'Thành Công'],
+        'Hoàn Kiếm': ['Phúc Tân', 'Đồng Xuân', 'Hàng Mã', 'Hàng Buồm', 'Hàng Đào', 'Hàng Bồ', 'Cửa Đông', 'Lý Thái Tổ', 'Hàng Bạc', 'Hàng Gai', 'Chương Dương', 'Hàng Trống', 'Cửa Nam', 'Hàng Bông', 'Tràng Tiền', 'Trần Hưng Đạo', 'Phan Chu Trinh'],
+        'Quận 1': ['Tân Định', 'Đa Kao', 'Bến Nghé', 'Bến Thành', 'Nguyễn Thái Bình', 'Phạm Ngũ Lão', 'Cầu Ông Lãnh', 'Cô Giang', 'Nguyễn Cư Trinh', 'Cầu Kho'],
+        'Quận 3': ['Võ Thị Sáu', 'Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14']
+    };
+
+    // Handle city change
+    const citySelect = document.getElementById('city');
+    const districtSelect = document.getElementById('district');
+    const wardSelect = document.getElementById('ward');
+
+    if (citySelect && districtSelect && wardSelect) {
+        citySelect.addEventListener('change', () => {
+            const city = citySelect.value;
+            districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+            wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            
+            if (city && districtsData[city]) {
+                districtsData[city].forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            }
+        });
+
+        districtSelect.addEventListener('change', () => {
+            const district = districtSelect.value;
+            wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            
+            if (district && wardsData[district]) {
+                wardsData[district].forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward;
+                    option.textContent = ward;
+                    wardSelect.appendChild(option);
+                });
+            }
+        });
+    }
+
+    // Validate shipping form
+    function validateShippingForm() {
+        const name = document.getElementById('receiver-name').value.trim();
+        const phone = document.getElementById('receiver-phone').value.trim();
+        const city = document.getElementById('city').value;
+        const district = document.getElementById('district').value;
+        const ward = document.getElementById('ward').value;
+        const address = document.getElementById('address').value.trim();
+
+        if (!name || !phone || !city || !district || !ward || !address) {
+            if (toastEl) {
+                toastEl.textContent = 'Vui lòng điền đầy đủ thông tin giao hàng!';
+                toastEl.className = 'toast error show';
+                setTimeout(() => toastEl.classList.remove('show'), 2500);
+            }
+            return false;
+        }
+
+        // Validate phone number
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(phone)) {
+            if (toastEl) {
+                toastEl.textContent = 'Số điện thoại không hợp lệ! (10-11 chữ số)';
+                toastEl.className = 'toast error show';
+                setTimeout(() => toastEl.classList.remove('show'), 2500);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    // Get shipping info
+    function getShippingInfo() {
+        return {
+            name: document.getElementById('receiver-name').value.trim(),
+            phone: document.getElementById('receiver-phone').value.trim(),
+            city: document.getElementById('city').value,
+            district: document.getElementById('district').value,
+            ward: document.getElementById('ward').value,
+            address: document.getElementById('address').value.trim(),
+            note: document.getElementById('note').value.trim()
+        };
+    }
+
+    // Get payment method
+    function getPaymentMethod() {
+        const selected = document.querySelector('input[name="payment"]:checked');
+        return selected ? selected.value : 'cod';
+    }
+
+    // Get payment method text
+    function getPaymentMethodText(method) {
+        const texts = {
+            'cod': 'Tiền mặt khi nhận hàng (COD)',
+            'bank': 'Chuyển khoản ngân hàng',
+            'online': 'Thanh toán trực tuyến'
+        };
+        return texts[method] || texts['cod'];
+    }
+
+    // Show order review modal
+    function showOrderReview(cart, total) {
+        
+        const modal = document.getElementById('order-review-modal');
+        const shippingInfo = getShippingInfo();
+        const paymentMethod = getPaymentMethod();
+
+        // Set shipping info
+        document.getElementById('review-name').textContent = shippingInfo.name;
+        document.getElementById('review-phone').textContent = shippingInfo.phone;
+        document.getElementById('review-address').textContent = 
+            `${shippingInfo.address}, ${shippingInfo.ward}, ${shippingInfo.district}, ${shippingInfo.city}`;
+        
+        // Set note (hide if empty)
+        const noteContainer = document.getElementById('review-note-container');
+        if (shippingInfo.note) {
+            document.getElementById('review-note').textContent = shippingInfo.note;
+            noteContainer.classList.remove('hidden');
+        } else {
+            noteContainer.classList.add('hidden');
+        }
+
+        // Set payment method
+        document.getElementById('review-payment').innerHTML = `<i class="fas ${
+            paymentMethod === 'cod' ? 'fa-money-bill-wave' : 
+            paymentMethod === 'bank' ? 'fa-university' : 'fa-credit-card'
+        }"></i> ${getPaymentMethodText(paymentMethod)}`;
+
+        // Set totals
+        document.getElementById('review-subtotal').textContent = formatPrice(total);
+        document.getElementById('review-total').textContent = formatPrice(total);
+
+        // Show modal
+        modal.classList.remove('hidden');
+    }
+
+    // Close review modal
+    const closeReviewBtn = document.getElementById('close-review-modal');
+    const cancelReviewBtn = document.getElementById('cancel-review-btn');
+    
+    if (closeReviewBtn) {
+        closeReviewBtn.addEventListener('click', () => {
+            document.getElementById('order-review-modal').classList.add('hidden');
+        });
+    }
+    
+    if (cancelReviewBtn) {
+        cancelReviewBtn.addEventListener('click', () => {
+            document.getElementById('order-review-modal').classList.add('hidden');
+        });
+    }
+
+    // Handle checkout button
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
             const currentUser = checkLogin();
@@ -329,6 +490,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Validate shipping form
+            if (!validateShippingForm()) return;
+
+            // Calculate total
+            let total = 0;
+            cart.forEach(item => {
+                const product = getProductById(item.productId);
+                if (product) {
+                    total += product.price * item.quantity;
+                }
+            });
+
+            // Show review modal
+            showOrderReview(cart, total);
+        });
+    }
+
+    // Confirm order from review modal
+    const confirmOrderBtn = document.getElementById('confirm-order-btn');
+    if (confirmOrderBtn) {
+        confirmOrderBtn.addEventListener('click', () => {
+            const currentUser = checkLogin();
+            if (!currentUser) return;
+
+            const cart = getCart(currentUser);
+            const shippingInfo = getShippingInfo();
+            const paymentMethod = getPaymentMethod();
+
             // Calculate total and prepare order items
             let total = 0;
             const orderItems = [];
@@ -336,7 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cart.forEach(item => {
                 const product = getProductById(item.productId);
                 if (product) {
-                    // Lấy hình ảnh đầu tiên (hỗ trợ cả images array và image string)
                     const productImage = Array.isArray(product.images) ? product.images[0] : (product.image || product.images);
                     
                     total += product.price * item.quantity;
@@ -351,32 +539,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Show confirmation
-            if (confirm(`Xác nhận thanh toán đơn hàng?\n\nTổng tiền: ${formatPrice(total)}`)) {
-                // Create order data
-                const orderData = {
-                    orderId: generateOrderId(),
-                    orderDate: new Date().toISOString().split('T')[0], // Chỉ lưu ngày YYYY-MM-DD
-                    items: orderItems,
-                    totalAmount: total,
-                    status: 0, // 0 = Chưa xử lý, 1 = Đã xử lý
-                    statusText: 'Chưa xử lý'
-                };
-                
-                // Save order to history with user email and name
-                saveOrderHistory(currentUser.email, currentUser.account, orderData);
-                
-                // Clear cart
-                saveCart(currentUser, []);
-                
-                if (toastEl) {
-                    toastEl.textContent = 'Đặt hàng thành công! Cảm ơn bạn đã mua hàng.';
-                    toastEl.className = 'toast success show';
-                    setTimeout(() => {
-                        toastEl.classList.remove('show');
-                        window.location.href = 'index.html';
-                    }, 2500);
-                }
+            // Create order data
+            const orderData = {
+                orderId: generateOrderId(),
+                orderDate: new Date().toISOString().split('T')[0],
+                items: orderItems,
+                totalAmount: total,
+                status: 1, // 1 = Mới đặt
+                statusText: 'Mới đặt',
+                shippingInfo: {
+                    name: shippingInfo.name,
+                    phone: shippingInfo.phone,
+                    address: `${shippingInfo.address}, ${shippingInfo.ward}, ${shippingInfo.district}, ${shippingInfo.city}`,
+                    note: shippingInfo.note
+                },
+                paymentMethod: paymentMethod,
+                paymentMethodText: getPaymentMethodText(paymentMethod)
+            };
+            
+            // Save order to history
+            saveOrderHistory(currentUser.email, currentUser.account, orderData);
+            
+            // Clear cart
+            saveCart(currentUser, []);
+            
+            // Close modal
+            document.getElementById('order-review-modal').classList.add('hidden');
+            
+            if (toastEl) {
+                toastEl.textContent = 'Đặt hàng thành công! Cảm ơn bạn đã mua hàng.';
+                toastEl.className = 'toast success show';
+                setTimeout(() => {
+                    toastEl.classList.remove('show');
+                    window.location.href = 'index.html';
+                }, 2500);
             }
         });
     }

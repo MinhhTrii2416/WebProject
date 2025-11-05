@@ -3,7 +3,7 @@
     --lightest-gray: rgb(249, 249, 249);
     --lighter-gray: rgb(240, 240, 240);
     --dark-gray: rgb(13, 13, 13);
-    --sidebar-width: 240px; /* Định nghĩa chiều rộng Sidebar */
+    --sidebar-width: 240px;
 }
 
 *,
@@ -18,8 +18,8 @@
 
 body {
     margin: 0;
-    font-family: "Segoe UI", sans-serif; /* Sử dụng font bạn định nghĩa */
-    background-color: #f4f4f4; /* Sử dụng nền bạn định nghĩa */
+    font-family: "Segoe UI", sans-serif; 
+    background-color: #f4f4f4;
     overflow-x: hidden;
 }
 
@@ -47,14 +47,14 @@ select {
     top: 0;
     left: 0;
     height: 100vh;
-    width: var(--sidebar-width); /* Sử dụng biến */
+    width: var(--sidebar-width);
     background-color: #1e1e2d;
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.3);
-    z-index: 100; /* Đảm bảo Sidebar luôn ở trên cùng */
+    z-index: 100;
 }
 
 .top-sidebar {
@@ -131,19 +131,18 @@ select {
 
 /* --- CẤU TRÚC CHÍNH (ĐÃ SỬA) --- */
 .content {
-    /* ĐIỂM SỬA CHỮA QUAN TRỌNG: Thêm margin-left bằng chiều rộng Sidebar */
     margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width)); /* Đảm bảo width không bị tràn */
-    background-color: #f4f4f4; /* Sửa lại background-color cho Content */
+    width: calc(100% - var(--sidebar-width));
+    background-color: #f4f4f4;
     overflow-x: hidden;
 }
 
 .section {
     padding: 2rem 2rem 0 1.5rem;
     display: none;
-    background-color: #f4f4f4; /* Đảm bảo background cho từng section */
+    background-color: #f4f4f4; 
     position: relative;
-    min-height: calc(100vh - 2rem); /* Chiều cao tối thiểu */
+    min-height: calc(100vh - 2rem);
 }
 
 .section.active {
@@ -153,7 +152,7 @@ select {
 /* --- THẺ TỔNG QUAN (.cards) --- */
 .cards {
     display: flex;
-    flex-wrap: wrap; /* Cho phép xuống dòng */
+    flex-wrap: wrap;
     gap: 24px;
     margin: 12px;
 }
@@ -161,7 +160,6 @@ select {
 .cards .card-single {
     background: #fff;
     height: 180px; 
-    /* Đảm bảo chiều rộng linh hoạt */
     flex: 1 1 290px; 
     position: relative;
     box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
@@ -222,7 +220,7 @@ select {
     margin-bottom: 20px;
     flex-wrap: wrap;
     align-items: center;
-    gap: 15px; /* Thêm khoảng cách tổng thể */
+    gap: 15px;
 }
 
 .admin-control .left, 
@@ -231,12 +229,12 @@ select {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* Reset flex: 1 cho center để nó không chiếm quá nhiều không gian */
     flex: 0 1 auto; 
 }
 
 .admin-control .left {
-    flex: 1 1 250px; /* Cho phép tìm kiếm chiếm không gian lớn */
+    flex: 1 1 250px;
+    min-width: 250px;
 }
 
 .admin-control .center {
@@ -271,7 +269,7 @@ select {
 
 .form-search {
     display: flex;
-    width: 100%; /* Đảm bảo form-search lấp đầy .admin-control .left */
+    width: 100%;
     max-width: 350px;
 }
 
@@ -284,7 +282,8 @@ select {
     padding-left: 0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    width: 100%; /* Sửa: Chiếm hết phần còn lại của form-search */
+    width: 100%;
+    min-width: 150px;
 }
 
 .search { 
@@ -306,6 +305,7 @@ select {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 .fill-date label {
     margin-right: 5px;
@@ -318,12 +318,13 @@ select {
     padding: 10px 20px;
     border-radius: 5px;
     height: 40px;
+    max-width: 150px;
 }
 
 /* --- BẢNG (.table) --- */
 .table {
     width: 100%;
-    overflow-x: auto; /* Sửa: Dùng overflow-x để cuộn ngang */
+    overflow-x: auto;
     background: #fff;
     border-radius: 7px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -331,9 +332,9 @@ select {
 
 table {
     border-collapse: collapse;
-    min-width: 900px; /* Đảm bảo bảng có chiều rộng tối thiểu để không bị co */
+    min-width: 900px;
+    width: 100%;
 }
-
 tr {
     border-bottom: 1px solid var(--lighter-gray);
 }
@@ -351,7 +352,8 @@ thead td {
 tbody tr td {
     padding: 10px 15px;
     text-align: center;
-    white-space: nowrap;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 /* --- NÚT HÀNH ĐỘNG/TRẠẠNG THÁI TRONG BẢNG --- */
@@ -373,7 +375,7 @@ tbody tr td {
     margin: 0 2px;
 }
 
-.status-completed {
+.status-complete,.status-completed,.status-delivered {
     background-color: #27ae60;
     color: #fff;
     padding: 5px 10px;
@@ -382,17 +384,8 @@ tbody tr td {
     display: inline-block;
 }
 
-.status-canceled {
-    background-color: #f04e2e;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 15px;
-    display: inline-block;
-}
-
 .status-just-ordered {
-    background-color: orange;
+    background-color: #f39c12;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -400,8 +393,8 @@ tbody tr td {
     display: inline-block;
 }
 
-.status-delivered {
-    background-color: #0066CC;
+.status-no-complet, .status-canceled {
+    background-color: #f04e2e;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -419,7 +412,7 @@ tbody tr td {
 
 .order-statistical-card {
     box-shadow: 0px 1px 5px 2px #f1f1f1;
-    flex: 1 1 250px; /* Linh hoạt hơn */
+    flex: 1 1 250px;
     display: flex;
     padding: 20px 40px;
     align-items: center;
@@ -449,7 +442,7 @@ h3
 {
     display: none;
     position: fixed; 
-    z-index: 1010; /* Tăng z-index để chắc chắn ở trên cùng */
+    z-index: 1010;
     top: 0;
     left: 0;
     width: 100%;
@@ -468,6 +461,18 @@ h3
     max-width: 500px;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.table-scroll-wrapper {
+    overflow-x: auto; 
+    padding: 0 20px;
+}
+
+/* Modal Chi tiết Đơn hàng */
+.modal#DetailOrder .modal_content {
+    max-width: 950px; 
+    width: 90%; 
+    overflow: hidden; 
 }
 
 /*  Nút Đóng */
@@ -584,7 +589,7 @@ h3
     justify-content: space-between;
     flex-wrap: wrap;
     margin-bottom: 30px;
-    padding: 0 20px;
+    padding: 0 10px;
     gap: 30px;  
 }
 .Order_Info h4{
@@ -603,13 +608,15 @@ h3
 }
 .Order_Info > div {
     flex: 1 1 45%;
+    min-width: 250px;
 }
 
 .detail_table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
-    table-layout: fixed;    
+    table-layout: fixed;
+    min-width: 700px;  
 }
 .detail_table th, .detail_table td {
     padding: 10px 8px;
@@ -622,8 +629,8 @@ h3
 }
 .detail_table thead tr th:nth-child(1) { width: 10%; text-align: center; }
 .detail_table tbody tr td:nth-child(1) { text-align: center; }
-.detail_table thead tr th:nth-child(2) { width: 40%; text-align: left; }
-.detail_table tbody tr td:nth-child(2) { text-align: left; }
+.detail_table thead tr th:nth-child(2) { width: 40%; text-align: center; }
+.detail_table tbody tr td:nth-child(2) { text-align: center;  white-space: normal;  word-break: break-word; }
 .detail_table thead tr th:nth-child(3) { width: 20%; text-align: center; }
 .detail_table tbody tr td:nth-child(3) { text-align: center; }
 .detail_table thead tr th:nth-child(4) { width: 10%; text-align: center; }

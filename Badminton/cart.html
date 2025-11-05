@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/login_logout.css">
     <link rel="stylesheet" href="css/product.css">
     <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="css/cart_extended.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -163,26 +164,163 @@
                     <!-- Cart items will be rendered here -->
                 </div>
 
-                <div class="cart-summary">
-                    <h2>Tổng đơn hàng</h2>
-                    <div class="summary-row">
-                        <span>Tạm tính (<span id="total-items">0</span> sản phẩm):</span>
-                        <span class="price" id="subtotal">0đ</span>
+                <div class="cart-right-section">
+                    <!-- Địa chỉ giao hàng -->
+                    <div class="shipping-address-section">
+                        <h2><i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng</h2>
+                        <form id="shipping-form">
+                            <div class="form-group">
+                                <label for="receiver-name">Họ và tên người nhận <span class="required">*</span></label>
+                                <input type="text" id="receiver-name" placeholder="Nhập họ và tên" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="receiver-phone">Số điện thoại <span class="required">*</span></label>
+                                <input type="tel" id="receiver-phone" placeholder="Nhập số điện thoại" pattern="[0-9]{10,11}" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">Tỉnh/Thành phố <span class="required">*</span></label>
+                                    <select id="city" required>
+                                        <option value="">Chọn Tỉnh/Thành phố</option>
+                                        <option value="Hà Nội">Hà Nội</option>
+                                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="district">Quận/Huyện <span class="required">*</span></label>
+                                    <select id="district" required>
+                                        <option value="">Chọn Quận/Huyện</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ward">Phường/Xã <span class="required">*</span></label>
+                                <select id="ward" required>
+                                    <option value="">Chọn Phường/Xã</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Địa chỉ cụ thể <span class="required">*</span></label>
+                                <input type="text" id="address" placeholder="Số nhà, tên đường..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="note">Ghi chú (không bắt buộc)</label>
+                                <textarea id="note" rows="3" placeholder="Ghi chú về đơn hàng, ví dụ: thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn"></textarea>
+                            </div>
+                        </form>
                     </div>
-                    <div class="summary-row">
-                        <span>Phí vận chuyển:</span>
-                        <span class="price" id="shipping">Miễn phí</span>
+
+                    <!-- Phương thức thanh toán -->
+                    <div class="payment-method-section">
+                        <h2><i class="fas fa-credit-card"></i> Phương thức thanh toán</h2>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cod" checked>
+                                <div class="payment-card">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <div class="payment-info">
+                                        <strong>Tiền mặt khi nhận hàng (COD)</strong>
+                                        <span>Thanh toán khi nhận được hàng</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="bank">
+                                <div class="payment-card">
+                                    <i class="fas fa-university"></i>
+                                    <div class="payment-info">
+                                        <strong>Chuyển khoản ngân hàng</strong>
+                                        <span>Chuyển khoản trước khi nhận hàng</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="online">
+                                <div class="payment-card">
+                                    <i class="fas fa-credit-card"></i>
+                                    <div class="payment-info">
+                                        <strong>Thanh toán trực tuyến</strong>
+                                        <span>Visa, Mastercard, ATM nội địa</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
-                    <div class="summary-row total">
-                        <span>Tổng cộng:</span>
-                        <span class="price" id="total">0đ</span>
+
+                    <!-- Tóm tắt đơn hàng -->
+                    <div class="cart-summary">
+                        <h2>Tổng đơn hàng</h2>
+                        <div class="summary-row">
+                            <span>Tạm tính (<span id="total-items">0</span> sản phẩm):</span>
+                            <span class="price" id="subtotal">0đ</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Phí vận chuyển:</span>
+                            <span class="price" id="shipping">Miễn phí</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Tổng cộng:</span>
+                            <span class="price" id="total">0đ</span>
+                        </div>
+                        <button class="checkout-btn" id="checkout-btn">
+                            <i class="fas fa-check-circle"></i> Đặt hàng
+                        </button>
+                        <a href="index.html" class="continue-shopping">
+                            <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+                        </a>
                     </div>
-                    <button class="checkout-btn" id="checkout-btn">
-                        <i class="fas fa-credit-card"></i> Thanh toán
-                    </button>
-                    <a href="index.html" class="continue-shopping">
-                        <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
-                    </a>
+                </div>
+            </div>
+
+            <!-- Modal xem lại đơn hàng -->
+            <div id="order-review-modal" class="modal-overlay hidden">
+                <div class="modal-content order-review">
+                    <button id="close-review-modal" class="close-modal">&times;</button>
+                    <h2><i class="fas fa-clipboard-check"></i> Xác nhận đơn hàng</h2>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Thông tin giao hàng</h3>
+                        <div class="review-info">
+                            <p><strong>Người nhận:</strong> <span id="review-name"></span></p>
+                            <p><strong>Số điện thoại:</strong> <span id="review-phone"></span></p>
+                            <p><strong>Địa chỉ:</strong> <span id="review-address"></span></p>
+                            <p id="review-note-container" class="hidden"><strong>Ghi chú:</strong> <span id="review-note"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-credit-card"></i> Phương thức thanh toán</h3>
+                        <div class="review-info">
+                            <p id="review-payment"></p>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-receipt"></i> Tổng thanh toán</h3>
+                        <div class="review-total">
+                            <div class="summary-row">
+                                <span>Tạm tính:</span>
+                                <span id="review-subtotal"></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Phí vận chuyển:</span>
+                                <span>Miễn phí</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Tổng cộng:</span>
+                                <span id="review-total"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-actions">
+                        <button id="confirm-order-btn" class="confirm-btn">
+                            <i class="fas fa-check"></i> Xác nhận đặt hàng
+                        </button>
+                        <button id="cancel-review-btn" class="cancel-btn">
+                            <i class="fas fa-times"></i> Quay lại chỉnh sửa
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

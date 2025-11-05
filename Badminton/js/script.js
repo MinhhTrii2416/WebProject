@@ -171,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             account: account,
             email: email,
             password: hashedPassword,
+            joinDate: new Date().toISOString().slice(0, 10), // Định dạng: YYYY-MM-DD
             isLocked: false
         };
         
@@ -209,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Kiểm tra tài khoản người dùng thông thường
         const hashedPassword = "hashed_" + password;
         const users = getUsers();
-        const user = users.find(user => user.account && user.email === email && user.password === hashedPassword);
+        const user = users.find(user => user.account && user.email.toLowerCase() === email.toLowerCase() && user.password === hashedPassword);
 
         if (user) {
             // Kiểm tra tài khoản có bị khóa không
