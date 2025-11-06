@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sidebar Quản lý</title>
-  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/admin.css?v=1700.0">
   <link rel="stylesheet" href="css/modal_add_products_style.css">
   <link rel="stylesheet" href="css/modal_detail_order.css">
 
@@ -13,7 +13,7 @@
 <body>
     <div class="sidebar">
     <div class="top-sidebar">
-      <h2 class="brand-name">Quản lý bán vợt</h2>
+      <div class="logo"><img src="img/logo.png" alt="Logo"></div>
     </div>
 
     <div class="middle-sidebar">
@@ -32,37 +32,40 @@
         <button class="btn-home" onclick="window.location.href='index.html'">Trang chủ</button>
         <button class="btn-logout">Đăng xuất</button>
       </div>
-        </div>
     </div>
+  </div>
 
-                        <main class="content">
-            <!--Tổng quan-->
+  <main class="content">
+    <!--Tổng quan-->
             <div class="section active"id="overview">
                 <div class="cards"> 
-                    <div class="card-single">
+                    <div class="card-single" onclick="navigateToSection('user')" style="cursor: pointer;">
                         <div class="box">
-                            <h2 id="amount-user">0</h2>
-                            <div class="in-box">
+                            <div class="card-content">
                                 <h3>Khách hàng</h3>
+                                <h2 id="amount-user">0</h2>
                             </div>
+                            <i class="fa-solid fa-users card-icon"></i>
                         </div>
                     </div>
                     
-                    <div class="card-single">
+                    <div class="card-single" onclick="navigateToSection('product')" style="cursor: pointer;">
                         <div class="box">
-                            <h2 id="amount-product">0</h2> 
-                            <div class="in-box">
+                            <div class="card-content">
                                 <h3>Sản phẩm</h3>
+                                <h2 id="amount-product">0</h2>
                             </div>
+                            <i class="fa-solid fa-box card-icon"></i>
                         </div>
                     </div>
                     
-                    <div class="card-single">
+                    <div class="card-single" onclick="navigateToSection('statistical')" style="cursor: pointer;">
                         <div class="box">
-                            <h2 id="Doanh-thu"></h2>
-                            <div class="in-box">
+                            <div class="card-content">
                                 <h3>Doanh thu</h3>
+                                <h2 id="Doanh-thu"></h2>
                             </div>
+                            <i class="fa-solid fa-dollar-sign card-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -122,8 +125,6 @@
                             <span class="search"><i class="fa-solid fa-magnifying-glass"></i></span>
                             <input id="form-search-user" type="text" class="form-search-input" placeholder="Tìm kiếm khách hàng..." oninput="showUser()">
                         </form>
-                    </div>
-                    <div class="admin-control center">
                         <select class="tinh-trang" id="tinh-trang-user" onchange="showUser()">
                             <option value="2">Tất cả</option>
                             <option value="1">Hoạt động</option>
@@ -133,11 +134,11 @@
                     <div class="admin-control right">
                         <form action="" class="fill-date">
                             <div>
-                                <label for="time-start">Từ</label>
+                                <label for="time-start-user">Từ</label>
                                 <input type="date" class="form-control-date" id="time-start-user" onchange="showUser()">
                             </div>
                             <div>
-                                <label for="time-end">Đến</label>
+                                <label for="time-end-user">Đến</label>
                                 <input type="date" class="form-control-date" id="time-end-user" onchange="showUser()">
                             </div>
                         </form>
@@ -150,7 +151,7 @@
                 </div>
                 <div class="table">
                     <table width="100%">
-                        <thead>
+                        <thead> 
                             <tr>
                                 <td>STT</td>
                                 <td>Họ và tên</td>
@@ -290,32 +291,63 @@
             <!--Giá Bán & Lợi Nhuận-->
             <div class="section" id="price-mgt">
                 <h2>Quản lý Giá Bán & Lợi Nhuận</h2>
-                <div class="admin-control" style="margin-top: 20px;">
-                    <div class="admin-control left">
-                        <h3>Tỷ lệ Lợi nhuận Mặc định: 15%</h3>
-                    </div>
-                    <div class="admin-control right">
-                        <button class="control" id="save-profit-rate">
-                            <i class="fa-solid fa-floppy-disk"></i>
-                            <span>Lưu Tỷ lệ</span>
-                        </button>
+                
+                <!-- Quản lý theo LOẠI sản phẩm -->
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #dc3545; margin-bottom: 15px;">
+                        <i class="fa-solid fa-layer-group"></i> Quản lý Lợi nhuận theo Loại sản phẩm
+                    </h3>
+                    <div class="table">
+                        <table width="100%">
+                            <thead>
+                                <tr>
+                                    <td>STT</td>
+                                    <td>Loại sản phẩm</td>
+                                    <td>Số lượng SP</td>
+                                    <td>Tỷ lệ Lợi nhuận (%)</td>
+                                    <td>Thao tác</td>
+                                </tr>
+                            </thead>
+                            <tbody id="show-brand-profit">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="table">
-                    <table width="100%">
-                        <thead>
-                            <tr>
-                                <td>STT</td>
-                                <td>Sản phẩm</td>
-                                <td>Giá vốn (TB)</td>
-                                <td>Giá bán hiện tại</td>
-                                <td>Tỷ lệ Lợi nhuận (%)</td>
-                                <td>Thao tác</td>
-                            </tr>
-                        </thead>
-                        <tbody id="show-profit-rate">
-                        </tbody>
-                    </table>
+
+                <!-- Quản lý theo TỪNG sản phẩm -->
+                <div style="margin-top: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 15px;">
+                        <i class="fa-solid fa-box"></i> Quản lý Lợi nhuận từng Sản phẩm
+                    </h3>
+                    <div class="admin-control" style="margin-bottom: 20px;">
+                        <div class="admin-control left">
+                            <form action="" class="form-search">
+                                <span class="search"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input id="form-search-price" type="text" class="form-search-input" placeholder="Tìm kiếm sản phẩm..." oninput="showPriceManagement()">
+                            </form>
+                        </div>
+                        <div class="admin-control center">
+                            <select id="filter-brand-price" onchange="showPriceManagement()">
+                                <option value="">Tất cả loại</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table">
+                        <table width="100%">
+                            <thead>
+                                <tr>
+                                    <td>STT</td>
+                                    <td>Sản phẩm</td>
+                                    <td>Giá vốn (TB)</td>
+                                    <td>Giá bán hiện tại</td>
+                                    <td>Tỷ lệ Lợi nhuận (%)</td>
+                                    <td>Thao tác</td>
+                                </tr>
+                            </thead>
+                            <tbody id="show-profit-rate">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <!--Nhập hàng-->
@@ -368,27 +400,123 @@
             <form id = "ProductForm">
                 <input type = "hidden" id = "ProductID" name = "id" value = "">
 
-                <div class = "form_group">
-                    <label for = "ProductName">Tên sản phẩm:</label>
-                    <input type = "text" id = "ProductName" name = "name" required>
+                <!-- Thông tin cơ bản -->
+                <div class="section-header">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <h4>Thông tin cơ bản</h4>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form_group">
+                        <label for="ProductName">Tên sản phẩm <span class="required">*</span></label>
+                        <input type="text" id="ProductName" name="name" required placeholder="VD: Yonex Astrox 100ZZ">
+                    </div>
                 </div>
 
-                <div class = "form_group">
-                    <label for = "ProductType">Loại:</label>
-                    <select id = "ProductType" name = "type" required>
-                        <option>Yonex</option>
-                        <option>Victor</option>
-                        <option>Lining</option>
-                        <option>Mizuno</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form_group col-2">
+                        <label for="ProductType">Hãng <span class="required">*</span></label>
+                        <select id="ProductType" name="type" required>
+                            <option value="">-- Chọn hãng --</option>
+                            <option>Yonex</option>
+                            <option>Victor</option>
+                            <option>Lining</option>
+                            <option>Mizuno</option>
+                        </select>
+                    </div>
+
+                    <div class="form_group col-2">
+                        <label for="ProductPrice">Giá bán (VNĐ) <span class="required">*</span></label>
+                        <input type="number" id="ProductPrice" name="price" required min="0" placeholder="4.200.000">
+                    </div>
                 </div>
 
-                <div class = "form_group">
-                    <label for = "ProductPrice">Giá bán:</label>
-                    <input type = "number" id = "ProductPrice" name = "price" required min = "0">
+                <div class="form-row">
+                    <div class="form_group col-2">
+                        <label for="ProductStock">Tồn kho</label>
+                        <input type="number" id="ProductStock" name="stock" min="0" value="0" placeholder="Số lượng">
+                    </div>
+
+                    <div class="form_group col-2">
+                        <label for="ProductWeight">Trọng lượng</label>
+                        <input type="text" id="ProductWeight" name="weight" placeholder="VD: 3U (85-89.9g)">
+                    </div>
                 </div>
 
-                <button type = "submit" id = "ButtonSubmitForm" class = "button_submit">Thêm</button>
+                <!-- Thông số kỹ thuật -->
+                <div class="section-header">
+                    <i class="fa-solid fa-sliders"></i>
+                    <h4>Thông số kỹ thuật</h4>
+                </div>
+
+                <div class="form-row">
+                    <div class="form_group col-2">
+                        <label for="ProductBalance">Điểm cân bằng</label>
+                        <select id="ProductBalance" name="balance">
+                            <option value="">-- Chọn --</option>
+                            <option>Nặng đầu</option>
+                            <option>Cân bằng</option>
+                            <option>Nặng cán</option>
+                        </select>
+                    </div>
+
+                    <div class="form_group col-2">
+                        <label for="ProductFlexibility">Độ cứng</label>
+                        <select id="ProductFlexibility" name="flexibility">
+                            <option value="">-- Chọn --</option>
+                            <option>Cứng</option>
+                            <option>Trung bình</option>
+                            <option>Mềm</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form_group col-2">
+                        <label for="ProductMaxTension">Sức căng tối đa</label>
+                        <input type="text" id="ProductMaxTension" name="maxTension" placeholder="VD: 32 lbs">
+                    </div>
+
+                    <div class="form_group col-2">
+                        <label for="ProductCategory">Phong cách chơi</label>
+                        <select id="ProductCategory" name="category">
+                            <option value="">-- Chọn --</option>
+                            <option>Tấn công</option>
+                            <option>Phòng thủ</option>
+                            <option>Toàn diện</option>
+                            <option>Kiểm soát</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Thông tin khác -->
+                <div class="section-header">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <h4>Thông tin bổ sung</h4>
+                </div>
+
+                <div class="form-row">
+                    <div class="form_group">
+                        <label for="ProductMadeIn">Xuất xứ</label>
+                        <input type="text" id="ProductMadeIn" name="madeIn" placeholder="VD: China, Japan, Taiwan">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form_group">
+                        <label for="ProductDescription">Mô tả sản phẩm</label>
+                        <textarea id="ProductDescription" name="description" rows="4" placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('Modal')">
+                        <i class="fa-solid fa-xmark"></i> Hủy
+                    </button>
+                    <button type="submit" id="ButtonSubmitForm" class="button_submit">
+                        <i class="fa-solid fa-check"></i> <span>Thêm</span>
+                    </button>
+                </div>  
             </form>
         </div>
     </div>
@@ -416,13 +544,39 @@
                 <input type="hidden" id="UserID" name="id" value="">
 
                 <div class="form_group">
-                    <label for="UserName">Tên khách hàng:</label>
-                    <input type="text" id="UserName" name="name" required>
+                    <label for="UserName">Tên khách hàng: <span style="color: red;">*</span></label>
+                    <input type="text" id="UserName" name="name" placeholder="Nhập tên đầy đủ" required>
                 </div>
 
                 <div class="form_group">
-                    <label for="UserPhone">Số điện thoại:</label>
-                    <input type="text" id="UserPhone" name="phone" required>
+                    <label for="UserPhone">Số điện thoại: <span style="color: red;">*</span></label>
+                    <input type="tel" id="UserPhone" name="phone" placeholder="Ví dụ: 0123456789" pattern="[0-9]{10}" required>
+                </div>
+
+                <div class="form_group">
+                    <label for="UserEmail">Email:</label>
+                    <input type="email" id="UserEmail" name="email" placeholder="example@email.com">
+                </div>
+
+                <div class="form_group">
+                    <label for="UserPassword">Mật khẩu: <span style="color: red;">*</span></label>
+                    <input type="password" id="UserPassword" name="password" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+                </div>
+
+                <div class="form_group">
+                    <label for="UserType">Loại khách hàng:</label>
+                    <select id="UserType" name="userType">
+                        <option value="1">Khách hàng thường</option>
+                        <option value="2">Khách hàng VIP</option>
+                    </select>
+                </div>
+
+                <div class="form_group">
+                    <label for="UserStatus">Trạng thái:</label>
+                    <select id="UserStatus" name="status">
+                        <option value="1" selected>Hoạt động</option>
+                        <option value="0">Bị khóa</option>
+                    </select>
                 </div>
                 
                 <button type="submit" id="ButtonSubmitUserForm" class="button_submit">Thêm</button>
@@ -506,12 +660,16 @@
             
             <form id="ImportForm">
                 <input type="hidden" id="ImportID" name="id" value="">
-                <div class="form_group">
-                    <label for="ImportDate">Ngày Nhập:</label>
-                    <input type="date" id="ImportDate" name="date" required value="${new Date().toISOString().slice(0, 10)}">
+                <div class="form_group" style="margin-bottom: 20px;">
+                    <label for="ImportDate" style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 14px;">
+                        <i class="fa-regular fa-calendar"></i> Ngày Nhập:
+                    </label>
+                    <input type="date" id="ImportDate" name="date" required class="form-control-date" style="width: 100%; max-width: 100%;" value="${new Date().toISOString().slice(0, 10)}">
                 </div>
 
-                <h4 style="margin-top: 20px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Chi tiết sản phẩm</h4>
+                <h4 style="margin-top: 20px; border-bottom: 2px solid #dc3545; padding-bottom: 8px; color: #343a40; font-weight: 700;">
+                    <i class="fa-solid fa-box-open"></i> Chi tiết sản phẩm
+                </h4>
                 <div id="ImportItemsContainer" style="max-height: 300px; overflow-y: auto;">
                     </div>
                 
@@ -575,6 +733,21 @@
     }
 
     function formatCurrency(amount) {
+        // Nếu số quá lớn (trên 1 tỷ), hiển thị dạng rút gọn
+        if (amount >= 1000000000) {
+            return (amount / 1000000000).toLocaleString('vi-VN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }) + ' tỷ';
+        }
+        // Nếu trên 1 triệu, hiển thị dạng rút gọn
+        else if (amount >= 1000000) {
+            return (amount / 1000000).toLocaleString('vi-VN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1
+            }) + ' tr';
+        }
+        // Số nhỏ hơn 1 triệu, hiển thị đầy đủ
         return amount.toLocaleString('vi-VN') + ' đ';
     }
 
@@ -591,7 +764,7 @@
     }
 
     // --- KHAI BÁO KEY LOCAL STORAGE ---
-const LS_KEY_USERS = 'Users'; // Key Khách hàng từ script.js
+const LS_KEY_USERS = 'accounts'; // ✅ Key Khách hàng từ script.js (đúng tên là 'accounts')
 const LS_KEY_ORDERS = 'AllOrders'; // Key Đơn hàng từ cart.js
 const LS_KEY_PRODUCT_DATA = 'dataProducts'; // Key Sản phẩm từ initProduct.js
 
@@ -669,11 +842,14 @@ function getUserListFromStore() {
     const users = localStorage.getItem(LS_KEY_USERS);
     // Sử dụng userListDefault (Mock Data cũ) nếu LS trống
     return users ? JSON.parse(users).map((u) => ({
-        account: u.account || 'N/A', 
-        email: u.email || 'N/A', 
+        fullname: u.fullname || 'N/A',  // ✅ Dùng fullname thay vì account
+        email: u.email || u.phone || 'N/A',  // ✅ Ưu tiên email, fallback phone
+        phone: u.phone || 'N/A',
         password: u.password,
-        joinDate: u.joinDate || 'N/A',
-        isLocked: u.isLocked === true ? true : false // Lấy trạng thái khóa từ Frontend
+        join: u.join || 'N/A',  // ✅ Dùng join thay vì joinDate
+        status: u.status || 1,  // ✅ Giữ status gốc
+        userType: u.userType || 1,
+        isLocked: u.status === 0 ? true : false  // ✅ status=0 là bị khóa
     })) : userListDefault; 
 }
 
@@ -711,6 +887,12 @@ function getOrderDetailsListFromStore() {
     const orderDetailsList = getOrderDetailsListFromStore();
     const importList = getImportListFromStore();
     const profitRateList = getProfitRateListFromStore();
+    
+    // ✅ DEBUG: Kiểm tra dữ liệu
+    console.log('=== KIỂM TRA DỮ LIỆU KHÁCH HÀNG ===');
+    console.log('localStorage Users:', localStorage.getItem('Users'));
+    console.log('userList loaded:', userList);
+    console.log('Số lượng users:', userList.length);
     // --- 1. LOGIC SẢN PHẨM (Product) ---
 
     function showProduct() {
@@ -821,7 +1003,7 @@ function openAddProductModal() {
     if (modalToOpen) {
         // --- CÀI ĐẶT CHẾ ĐỘ THÊM ---
         if (modalTitle) modalTitle.textContent = "Thêm Sản Phẩm Mới";
-        if (btnSubmitForm) btnSubmitForm.textContent = "Thêm";
+        if (btnSubmitForm) btnSubmitForm.innerHTML = '<i class="fa-solid fa-check"></i> <span>Thêm</span>';
         if (productForm) {
             productForm.reset(); 
             // DÒNG QUAN TRỌNG: Gán hàm xử lý submit form
@@ -841,6 +1023,14 @@ function handleAddProductSubmit(event) {
     const name = document.getElementById("ProductName").value.trim();
     const type = document.getElementById("ProductType").value.trim();
     const price = parseInt(document.getElementById("ProductPrice").value); 
+    const stock = parseInt(document.getElementById("ProductStock").value) || 0;
+    const weight = document.getElementById("ProductWeight").value.trim();
+    const balance = document.getElementById("ProductBalance").value.trim();
+    const flexibility = document.getElementById("ProductFlexibility").value.trim();
+    const maxTension = document.getElementById("ProductMaxTension").value.trim();
+    const category = document.getElementById("ProductCategory").value.trim();
+    const madeIn = document.getElementById("ProductMadeIn").value.trim();
+    const description = document.getElementById("ProductDescription").value.trim();
     
     // KIỂM TRA DỮ LIỆU
     if (!name || !type || isNaN(price) || price <= 0) {
@@ -862,22 +1052,43 @@ function handleAddProductSubmit(event) {
         name: name,
         brand: type,
         price: price,
-        // THÊM: Giá vốn và Tồn kho mặc định (cần thiết cho các module khác)
+        originalPrice: price,
         importPrice: Math.round(price / 1.3),
-        stock: 0,
-        status: 1, 
+        stock: stock,
+        images: [],
+        description: description,
+        weight: weight,
+        weightGrams: 0, // Có thể tính từ weight nếu cần
+        balance: balance,
+        flexibility: flexibility,
+        maxTension: maxTension,
+        madeIn: madeIn,
+        category: category,
+        rating: 0,
+        status: stock > 5 ? 1 : stock === 0 ? 0 : 2 // Tự động set status dựa vào stock
     };
 
     // LƯU VÀO DANH SÁCH SẢN PHẨM (productList)
     productList.push(newProduct);
-    // [Giả định LS_KEY_PRODUCT_DATA đã được khai báo]
-    saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList); 
-    // ======================================
+    
+    // Chuyển đổi sang format grouped by brand để lưu
+    const dataProductsFormat = {};
+    productList.forEach(product => {
+        const brand = product.brand || 'Khác';
+        if (!dataProductsFormat[brand]) {
+            dataProductsFormat[brand] = [];
+        }
+        dataProductsFormat[brand].push(product);
+    });
+    
+    localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat));
 
     // CẬP NHẬT GIAO DIỆN VÀ ĐÓNG MODAL
     showProduct(); 
     closeModal('Modal');
-}   
+    alert(`Đã thêm sản phẩm "${name}" thành công!`);
+}
+
 // 3. Chức năng MỞ MODAL SỬA (Update)
 function openEditProductModal(productId) {
     const product = productList.find(p => p.id === productId);
@@ -892,7 +1103,7 @@ function openEditProductModal(productId) {
 
     // --- CÀI ĐẶT UI CHO CHẾ ĐỘ CHỈNH SỬA ---
     if (modalTitle) modalTitle.textContent = "Chỉnh Sửa Sản Phẩm";
-    if (btnSubmitForm) btnSubmitForm.textContent = "Lưu Thay Đổi";
+    if (btnSubmitForm) btnSubmitForm.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> <span>Lưu Thay Đổi</span>';
 
     // 3. Đổ dữ liệu sản phẩm vào Form
     if (productForm) {
@@ -903,6 +1114,14 @@ function openEditProductModal(productId) {
         document.getElementById('ProductName').value = product.name;
         document.getElementById('ProductType').value = product.brand; 
         document.getElementById('ProductPrice').value = product.price;
+        document.getElementById('ProductStock').value = product.stock || 0;
+        document.getElementById('ProductWeight').value = product.weight || '';
+        document.getElementById('ProductBalance').value = product.balance || '';
+        document.getElementById('ProductFlexibility').value = product.flexibility || '';
+        document.getElementById('ProductMaxTension').value = product.maxTension || '';
+        document.getElementById('ProductCategory').value = product.category || '';
+        document.getElementById('ProductMadeIn').value = product.madeIn || '';
+        document.getElementById('ProductDescription').value = product.description || '';
         
         // --- GÁN LOGIC CẬP NHẬT DỮ LIỆU VÀO onsubmit ---
         productForm.onsubmit = function(event) {
@@ -912,6 +1131,14 @@ function openEditProductModal(productId) {
             const updatedName = document.getElementById('ProductName').value.trim();
             const updatedType = document.getElementById('ProductType').value.trim();
             const updatedPrice = parseInt(document.getElementById('ProductPrice').value);
+            const updatedStock = parseInt(document.getElementById('ProductStock').value) || 0;
+            const updatedWeight = document.getElementById('ProductWeight').value.trim();
+            const updatedBalance = document.getElementById('ProductBalance').value.trim();
+            const updatedFlexibility = document.getElementById('ProductFlexibility').value.trim();
+            const updatedMaxTension = document.getElementById('ProductMaxTension').value.trim();
+            const updatedCategory = document.getElementById('ProductCategory').value.trim();
+            const updatedMadeIn = document.getElementById('ProductMadeIn').value.trim();
+            const updatedDescription = document.getElementById('ProductDescription').value.trim();
             
             // KIỂM TRA DỮ LIỆU BẮT BUỘC
             if (!updatedName || !updatedType || isNaN(updatedPrice) || updatedPrice <= 0) { 
@@ -926,6 +1153,16 @@ function openEditProductModal(productId) {
                 productList[productIndex].name = updatedName;
                 productList[productIndex].brand = updatedType;
                 productList[productIndex].price = updatedPrice;
+                productList[productIndex].originalPrice = updatedPrice;
+                productList[productIndex].stock = updatedStock;
+                productList[productIndex].weight = updatedWeight;
+                productList[productIndex].balance = updatedBalance;
+                productList[productIndex].flexibility = updatedFlexibility;
+                productList[productIndex].maxTension = updatedMaxTension;
+                productList[productIndex].category = updatedCategory;
+                productList[productIndex].madeIn = updatedMadeIn;
+                productList[productIndex].description = updatedDescription;
+                productList[productIndex].status = updatedStock > 5 ? 1 : updatedStock === 0 ? 0 : 2;
             }
 
             // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
@@ -953,6 +1190,9 @@ function openEditProductModal(productId) {
     // --- 2. LOGIC KHÁCH HÀNG (User) ---
 
     function showUser() {
+        // Load lại dữ liệu từ localStorage để đảm bảo đồng bộ
+        const userList = getUserListFromStore();
+        
         const tableBody = document.getElementById('show-user');
         const searchInput = document.getElementById('form-search-user').value.toLowerCase();
         const statusSelect = parseInt(document.getElementById('tinh-trang-user').value);
@@ -960,12 +1200,25 @@ function openEditProductModal(productId) {
         const timeEnd = document.getElementById('time-end-user').value;
 
         let filteredUsers = userList.filter(user => {
-            const searchMatch = user.account.toLowerCase().includes(searchInput) || user.email.includes(searchInput);
+            const searchMatch = user.fullname.toLowerCase().includes(searchInput) || user.phone.includes(searchInput);
             const statusMatch = statusSelect === 2 || 
                     (statusSelect === 1 && !user.isLocked) || 
                     (statusSelect === 0 && user.isLocked);
-            const dateMatchStart = !timeStart || user.joinDate >= timeStart;
-            const dateMatchEnd = !timeEnd || user.joinDate <= timeEnd;
+            
+            // ✅ Sửa lọc ngày: join có dạng ISO string hoặc dd/mm/yyyy
+            let userJoinDate = '';
+            if (user.join) {
+                // Nếu dạng dd/mm/yyyy, chuyển thành yyyy-mm-dd
+                if (user.join.includes('/')) {
+                    const parts = user.join.split('/');
+                    userJoinDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                } else {
+                    userJoinDate = user.join.split('T')[0];
+                }
+            }
+            
+            const dateMatchStart = !timeStart || userJoinDate >= timeStart;
+            const dateMatchEnd = !timeEnd || userJoinDate <= timeEnd;
 
             return searchMatch && statusMatch && dateMatchStart && dateMatchEnd;
         });
@@ -976,24 +1229,26 @@ function openEditProductModal(productId) {
             const statusClass = user.isLocked === false ? 'status-completed' : 'status-canceled';
             const actionButtonText = user.isLocked === false ? 'Khóa' : 'Mở khóa';
             const actionButtonClass = user.isLocked === false ? 'btn-delete' : 'btn-action';
+            
+            // ✅ Format ngày giờ hiển thị đẹp hơn
+            const displayDate = user.join || 'N/A';
 
             html += `
                 <tr>
                     <td>${index + 1}</td>
-                    <td>${user.account}</td>
-                    <td>${user.email}</td>
-                    <td>${user.joinDate}</td>
+                    <td>${user.fullname}</td>
+                    <td>${user.phone}</td>
+                    <td>${displayDate}</td>
                     <td><span class="${statusClass}">${statusText}</span></td>
                     <td>
-                        <button class="${actionButtonClass}" onclick="openStatusModal('${user.email}', ${user.isLocked})">${actionButtonText}</button>
-                        <button class="btn-detail" onclick="openResetPasswordModal(${user.email})">Reset MK</button>
+                        <button class="${actionButtonClass}" onclick="openStatusModal('${user.phone}', ${user.isLocked})">${actionButtonText}</button>
+                        <button class="btn-detail" onclick="openResetPasswordModal('${user.phone}')">Reset MK</button>
+                    </td>
                 </tr>
             `;
         });
 
         tableBody.innerHTML = html;
-        
-        // Cập nhật thẻ Tổng quan
         const totalRevenue = calculateTotalRevenue(orderList);
         updateOverviewCards(productList.length, userList.length, totalRevenue);
     }
@@ -1009,7 +1264,7 @@ function openEditProductModal(productId) {
 // Thay thế các hàm mẫu trong LOGIC KHÁCH HÀNG (User)
 
 // 1. Chức năng KHÓA/MỞ KHÓA (Toggle Status)
-function openStatusModal(userEmail, currentStatus) {
+function openStatusModal(userPhone, currentStatus) {
     const statusModal = document.getElementById('StatusModal');
     const confirmButton = document.getElementById('ConfirmStatusButton');
     const userDisplay = document.getElementById('UserToChangeStatus');
@@ -1020,8 +1275,8 @@ function openStatusModal(userEmail, currentStatus) {
         return;
     }
     
-    // Tìm khách hàng để lấy tên (Giả định userList là biến toàn cục)
-    const user = userList.find(u => u.email === userEmail);
+    // ✅ Tìm theo phone (key duy nhất trong localStorage)
+    const user = userList.find(u => u.phone === userPhone);
     if (!user) return alert("Không tìm thấy khách hàng.");
 
     // Xác định hành động và trạng thái MỚI
@@ -1031,26 +1286,36 @@ function openStatusModal(userEmail, currentStatus) {
     // Cập nhật nội dung Modal
     document.getElementById('StatusModalTitle').textContent = `Xác nhận ${action} khách hàng?`;
     actionText.textContent = action;
-    userDisplay.textContent = user.account;
+    userDisplay.textContent = user.fullname;
     
     // Khi người dùng bấm nút 'XÁC NHẬN', nó sẽ gọi hàm changeUserStatus
     confirmButton.onclick = function() {
-        changeUserStatus(userEmail, newStatus, action);
+        changeUserStatus(userPhone, newStatus, action);
     };
 
     //Hiển thị Modal
     statusModal.style.display = 'block';
 }
 
-function changeUserStatus(email, newStatus, actionText) {
-    // Giả định userList là biến toàn cục
-    const userIndex = userList.findIndex(u => u.email === email);
+function changeUserStatus(phone, newStatus, actionText) {
+    // ✅ Tìm theo phone
+    const userIndex = userList.findIndex(u => u.phone === phone);
     
     if (userIndex !== -1) {
-        // Cập nhật trạng thái
+        // ✅ Cập nhật cả isLocked VÀ status (để đồng bộ với localStorage)
         userList[userIndex].isLocked = newStatus; 
-        saveToLocalStorage(LS_KEY_USERS, userList);
-        // Cập nhật lại giao diện bảng Khách hàng
+        userList[userIndex].status = newStatus ? 0 : 1;  // status=0 là khóa, 1 là hoạt động
+        
+        // ✅ Lưu lại vào localStorage với cấu trúc gốc
+        const rawUsers = localStorage.getItem(LS_KEY_USERS);
+        const allUsers = rawUsers ? JSON.parse(rawUsers) : [];
+        const rawIndex = allUsers.findIndex(u => u.phone === phone);
+        
+        if (rawIndex !== -1) {
+            allUsers[rawIndex].status = newStatus ? 0 : 1;
+            localStorage.setItem(LS_KEY_USERS, JSON.stringify(allUsers));
+        }
+        
         showUser();
     }
     
@@ -1060,32 +1325,43 @@ function changeUserStatus(email, newStatus, actionText) {
 
 // --- LOGIC RESET MẬT KHẨU ---
 
-function openResetPasswordModal(userId) {
-    const user = userList.find(u => u.stt === userId);
+function openResetPasswordModal(userPhone) {
+    // ✅ Tìm theo phone
+    const user = userList.find(u => u.phone === userPhone);
     if (!user) return alert("Không tìm thấy khách hàng.");
 
     const resetModal = document.getElementById('ResetPasswordModal');
     const confirmButton = document.getElementById('ConfirmResetButton');
 
     if (resetModal && confirmButton) {
-        document.getElementById('UserToResetPassword').textContent = user.account;
+        document.getElementById('UserToResetPassword').textContent = user.fullname;
         
         confirmButton.onclick = function() {
-            resetUserPassword(userId);
+            resetUserPassword(userPhone);
         };
         resetModal.style.display = 'block';
     }
 }
 
-function resetUserPassword(id) {
-    const userIndex = userList.findIndex(u => u.stt === id);
+function resetUserPassword(phone) {
+    // ✅ Tìm theo phone
+    const userIndex = userList.findIndex(u => u.phone === phone);
     if (userIndex !== -1) {
-        userList[userIndex].password = 'hashed_123456'; 
-        saveToLocalStorage(LS_KEY_USERS, userList);
+        userList[userIndex].password = '123456';  // ✅ Đặt mật khẩu mặc định
+        
+        // ✅ Cập nhật vào localStorage
+        const rawUsers = localStorage.getItem(LS_KEY_USERS);
+        const allUsers = rawUsers ? JSON.parse(rawUsers) : [];
+        const rawIndex = allUsers.findIndex(u => u.phone === phone);
+        
+        if (rawIndex !== -1) {
+            allUsers[rawIndex].password = '123456';
+            localStorage.setItem(LS_KEY_USERS, JSON.stringify(allUsers));
+        }
         
         showUser();
         closeModal('ResetPasswordModal');
-        alert(`Đã RESET mật khẩu của ${userList[userIndex].account} thành công!`);
+        alert(`Đã RESET mật khẩu của ${userList[userIndex].fullname} thành công!`);
     }
 }
 
@@ -1116,29 +1392,66 @@ function openAddUserModal() {
             // LẤY DỮ LIỆU
             const name = document.getElementById('UserName').value.trim();
             const phone = document.getElementById('UserPhone').value.trim();
+            const email = document.getElementById('UserEmail').value.trim();
+            const password = document.getElementById('UserPassword').value.trim();
+            const userType = parseInt(document.getElementById('UserType').value);
+            const status = parseInt(document.getElementById('UserStatus').value);
             
             // KIỂM TRA DỮ LIỆU
-            if (!name || !phone) { 
-                alert("Vui lòng điền đầy đủ Tên và Số điện thoại.");
+            if (!name || !phone || !password) { 
+                alert("Vui lòng điền đầy đủ các trường bắt buộc (Tên, Số điện thoại, Mật khẩu).");
                 return; 
             }
-
-            // TÌM STT TIẾP THEO
-            const newStt = userList.length > 0 ? Math.max(...userList.map(u => u.stt)) + 1 : 1;
             
-            // TẠO ĐỐI TƯỢNG MỚI
+            // Kiểm tra số điện thoại hợp lệ (10 số)
+            if (!/^[0-9]{10}$/.test(phone)) {
+                alert("Số điện thoại phải có đúng 10 chữ số!");
+                return;
+            }
+            
+            // Kiểm tra mật khẩu tối thiểu 6 ký tự
+            if (password.length < 6) {
+                alert("Mật khẩu phải có tối thiểu 6 ký tự!");
+                return;
+            }
+            
+            // Kiểm tra số điện thoại đã tồn tại
+            const existingAccounts = JSON.parse(localStorage.getItem(LS_KEY_USERS) || '[]');
+            const phoneExists = existingAccounts.some(user => user.phone === phone);
+            
+            if (phoneExists) {
+                alert("Số điện thoại này đã được đăng ký!");
+                return;
+            }
+            
+            // TẠO ĐỐI TƯỢNG MỚI với cấu trúc đúng theo localStorage
             const newUser = {
-                stt: newStt,
-                fullName: name,
-                contact: phone,
-                joinDate: new Date().toISOString().slice(0, 10),
-                status: 1 // Mặc định là đang hoạt động
+                fullname: name,
+                phone: phone,
+                email: email || '',  // Email có thể để trống
+                password: password,  // Mật khẩu do admin nhập
+                join: new Date().toLocaleDateString('vi-VN'),  // Format: dd/mm/yyyy
+                status: status,  // 1 = hoạt động, 0 = bị khóa
+                userType: userType,  // 1 = khách thường, 2 = VIP
+                cart: []  // Giỏ hàng trống
             };
 
-            // LƯU VÀO DANH SÁCH & CẬP NHẬT GIAO DIỆN
-            userList.push(newUser);
-            saveToLocalStorage(LS_KEY_USERS, userList);
+            // LƯU VÀO localStorage (accounts)
+            existingAccounts.push(newUser);
+            localStorage.setItem(LS_KEY_USERS, JSON.stringify(existingAccounts));
+            
+            // CẬP NHẬT GIAO DIỆN
             showUser(); // Cập nhật bảng Khách hàng
+            
+            const userTypeText = userType === 2 ? 'VIP' : 'Thường';
+            const statusText = status === 1 ? 'Hoạt động' : 'Bị khóa';
+            alert(`✅ Đã thêm khách hàng thành công!\n\n` +
+                  `Tên: ${name}\n` +
+                  `SĐT: ${phone}\n` +
+                  `Email: ${email || '(Không có)'}\n` +
+                  `Mật khẩu: ${password}\n` +
+                  `Loại KH: ${userTypeText}\n` +
+                  `Trạng thái: ${statusText}`);
             closeModal('AddUserModal'); 
         };
     }
@@ -1516,45 +1829,180 @@ function calculateSellingPrice(importPrice, rate) {
     return Math.round(importPrice / (1 - rate));
 }
 
-// Hiển thị bảng Quản lý giá
+// Hiển thị bảng quản lý theo LOẠI sản phẩm
+function showBrandProfitManagement() {
+    const tableBody = document.getElementById('show-brand-profit');
+    
+    // Nhóm sản phẩm theo brand
+    const brandGroups = {};
+    productList.filter(p => p.status === 1).forEach(product => {
+        const brand = product.brand || product.type || 'Chưa phân loại';
+        if (!brandGroups[brand]) {
+            brandGroups[brand] = [];
+        }
+        brandGroups[brand].push(product);
+    });
+    
+    let html = '';
+    let index = 1;
+    
+    Object.keys(brandGroups).sort().forEach(brand => {
+        const products = brandGroups[brand];
+        const profitRateObj = profitRateList.find(r => r.type === brand);
+        const currentRate = profitRateObj ? (profitRateObj.rate * 100) : 15;
+        
+        html += `
+            <tr>
+                <td>${index++}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-layer-group" style="color: #dc3545;"></i>
+                        <span style="font-weight: 600; color: #000000;">${brand}</span>
+                    </div>
+                </td>
+                <td>${products.length} sản phẩm</td>
+                <td>
+                    <input type="number" 
+                           class="profit-input brand-profit-input" 
+                           data-brand="${brand}"
+                           value="${currentRate.toFixed(0)}" 
+                           step="1" min="0" max="99"> %
+                </td>
+                <td>
+                    <button class="btn-action" onclick="updateBrandProfit('${brand}')">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Áp dụng cho tất cả
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
+}
+
+// Cập nhật lợi nhuận cho TẤT CẢ sản phẩm của 1 loại
+function updateBrandProfit(brand) {
+    const inputElement = document.querySelector(`.brand-profit-input[data-brand="${brand}"]`);
+    const newProfitPercentage = parseFloat(inputElement.value) / 100;
+    
+    if (isNaN(newProfitPercentage) || newProfitPercentage < 0 || newProfitPercentage >= 1) {
+        alert("Tỷ lệ lợi nhuận không hợp lệ (Phải từ 0% đến 99%).");
+        return;
+    }
+    
+    // Lưu tỷ lệ vào profitRateList
+    const rateIndex = profitRateList.findIndex(r => r.type === brand);
+    if (rateIndex >= 0) {
+        profitRateList[rateIndex].rate = newProfitPercentage;
+    } else {
+        profitRateList.push({ type: brand, rate: newProfitPercentage });
+    }
+    
+    // Cập nhật giá cho TẤT CẢ sản phẩm của loại này
+    let updatedCount = 0;
+    productList.forEach((product, index) => {
+        const productBrand = product.brand || product.type || 'Chưa phân loại';
+        if (productBrand === brand && product.status === 1) {
+            const newPrice = calculateSellingPrice(product.importPrice, newProfitPercentage);
+            productList[index].price = newPrice;
+            updatedCount++;
+        }
+    });
+    
+    // Lưu vào localStorage
+    localStorage.setItem('profitRateList', JSON.stringify(profitRateList));
+    localStorage.setItem('dataProducts', JSON.stringify(productList));
+    
+    // Cập nhật giao diện
+    showBrandProfitManagement();
+    showPriceManagement();
+    showProduct();
+    
+    alert(`Đã cập nhật lợi nhuận ${(newProfitPercentage * 100).toFixed(2)}% cho ${updatedCount} sản phẩm loại ${brand}`);
+}
+
+// Hiển thị bảng quản lý TỪNG sản phẩm
 function showPriceManagement() {
     const tableBody = document.getElementById('show-profit-rate');
-    const defaultRate = 0.15; 
+    const searchValue = document.getElementById('form-search-price')?.value.toLowerCase() || '';
+    const filterBrand = document.getElementById('filter-brand-price')?.value || '';
+    
     let html = '';
+    let displayIndex = 1;
 
-    productList.filter(p => p.status === 1).forEach((product, index) => {
-        const profitRateObj = profitRateList.find(r => r.type === product.type);
-        const currentRate = profitRateObj ? profitRateObj.rate : defaultRate;
+    productList.filter(p => p.status === 1).forEach((product) => {
+        const brandName = product.brand || product.type || 'Chưa phân loại';
+        const productName = product.name.toLowerCase();
         
-        // Tính % lợi nhuận thực tế so với giá bán hiện tại (để hiển thị)
+        // Filter
+        if (searchValue && !productName.includes(searchValue) && !brandName.toLowerCase().includes(searchValue)) {
+            return;
+        }
+        if (filterBrand && brandName !== filterBrand) {
+            return;
+        }
+        
+        // Tính % lợi nhuận thực tế
         const profitPercentage = ((product.price - product.importPrice) / product.price) * 100;
         
         html += `
             <tr>
-                <td>${index + 1}</td>
-                <td>${product.type} - ${product.name}</td>
+                <td>${displayIndex++}</td>
+                <td>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-weight: 600; color: #000000;">${product.name}</span>
+                        <span style="font-size: 12px; color: #6c757d; font-weight: 500;">${brandName}</span>
+                    </div>
+                </td>
                 <td>${formatCurrency(product.importPrice)}</td>
                 <td>${formatCurrency(product.price)}</td>
                 <td>
                     <input type="number" 
                            class="profit-input" 
                            data-stt="${product.stt}"
-                           value="${profitPercentage.toFixed(2)}" 
-                           step="0.01" min="0" max="99"> %
+                           value="${profitPercentage.toFixed(0)}" 
+                           step="1" min="0" max="99"> %
                 </td>
                 <td>
                     <button class="btn-action update-price-btn" 
                             data-stt="${product.stt}" 
-                            onclick="updateProductPrice(${product.stt})">Áp dụng</button>
+                            onclick="updateProductPrice(${product.stt})">
+                        <i class="fa-solid fa-check"></i>
+                        Áp dụng
+                    </button>
                 </td>
             </tr>
         `;
     });
 
     tableBody.innerHTML = html;
+    
+    // Cập nhật dropdown filter brand
+    updateBrandFilter();
 }
 
-// Hàm Áp dụng giá mới (Sau khi Admin chỉnh % lợi nhuận và nhấn nút Áp dụng)
+// Cập nhật dropdown lọc theo brand
+function updateBrandFilter() {
+    const selectElement = document.getElementById('filter-brand-price');
+    if (!selectElement) return;
+    
+    const brands = new Set();
+    productList.filter(p => p.status === 1).forEach(product => {
+        const brand = product.brand || product.type || 'Chưa phân loại';
+        brands.add(brand);
+    });
+    
+    const currentValue = selectElement.value;
+    let options = '<option value="">Tất cả loại</option>';
+    Array.from(brands).sort().forEach(brand => {
+        options += `<option value="${brand}">${brand}</option>`;
+    });
+    selectElement.innerHTML = options;
+    selectElement.value = currentValue;
+}
+
+// Hàm Áp dụng giá mới cho TỪNG sản phẩm
 function updateProductPrice(stt) {
     const row = document.querySelector(`.update-price-btn[data-stt="${stt}"]`).closest('tr');
     const inputElement = row.querySelector('.profit-input');
@@ -1573,6 +2021,9 @@ function updateProductPrice(stt) {
         
         // Cập nhật giá bán mới vào productList
         productList[productIndex].price = newSellingPrice;
+        
+        // Lưu vào localStorage
+        localStorage.setItem('dataProducts', JSON.stringify(productList));
 
         // Cập nhật lại giao diện
         showPriceManagement(); 
@@ -1589,7 +2040,7 @@ function getProductOptions(selectedStt = null) {
     let options = '<option value="">-- Chọn sản phẩm --</option>';
     productList.filter(p => p.status === 1).forEach(p => {
         const isSelected = p.stt === selectedStt ? 'selected' : '';
-        options += `<option value="${p.stt}" ${isSelected}>${p.name} (${p.type})</option>`;
+        options += `<option value="${p.stt}" ${isSelected}>[ID: ${p.id}] ${p.name} (${p.brand})</option>`;
     });
     return options;
 }
@@ -1766,6 +2217,11 @@ function saveImport(isComplete) {
 
     // 4. LƯU & CẬP NHẬT GIAO DIỆN
     importList.push(newImport);
+    
+    // Lưu vào localStorage
+    saveToLocalStorage(LS_KEY_IMPORT, importList);
+    saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList); // Lưu cả thay đổi tồn kho
+    
     showImportList();
     showProduct(); 
     closeModal('ImportModal');
@@ -1986,6 +2442,7 @@ function completeImport(id) {
         // 2. CẬP NHẬT TRẠNG THÁI PHIẾU NHẬP
         importList[phieuIndex].status = 1;
         saveToLocalStorage(LS_KEY_IMPORT, importList);
+        saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList); // Lưu cập nhật tồn kho
 
         // 3. CẬP NHẬT GIAO DIỆN
         showImportList();
@@ -1995,6 +2452,31 @@ function completeImport(id) {
 }
 
     // --- LOGIC CHÍNH: KHỞI TẠO & CHUYỂN ĐỔI MENU ---
+
+    // Hàm điều hướng đến section từ overview cards
+    function navigateToSection(sectionId) {
+        const sections = document.querySelectorAll('.section');
+        const menuItems = document.querySelectorAll('.menu-item');
+        
+        // Ẩn tất cả sections
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Hiển thị section được chọn
+        const targetSection = document.querySelector(`.section#${sectionId}`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+        
+        // Cập nhật menu active
+        menuItems.forEach(menuItem => {
+            menuItem.classList.remove('active-menu');
+            if (menuItem.getAttribute('data-section') === sectionId) {
+                menuItem.classList.add('active-menu');
+            }
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
     // 1. Logic Chuyển đổi Menu
@@ -2029,7 +2511,10 @@ function completeImport(id) {
             if (targetSectionId === 'user') showUser();
             if (targetSectionId === 'order') findOrder();
             if (targetSectionId === 'statistical') thongke();
-            if (targetSectionId === 'price-mgt') showPriceManagement();
+            if (targetSectionId === 'price-mgt') {
+                showBrandProfitManagement();
+                showPriceManagement();
+            }
             if (targetSectionId === 'import-mgt') showImportList();
         });
     });

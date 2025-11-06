@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModalBtn = document.getElementById("close-modal-btn");
     const loginRegisterBtn = document.getElementById("login-register-btn");
 
+    // Kiểm tra xem có phải trang admin không (không có modal login)
+    if (!authModal || !closeModalBtn || !loginRegisterBtn) {
+        // Đang ở trang admin, không cần chạy code login/register
+        return;
+    }
+
     // Lấy các form
     const loginFormContainer = document.getElementById("login-form-container");
     const registerFormContainer = document.getElementById("register-form-container");

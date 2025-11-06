@@ -1,6 +1,10 @@
 h3
 {
     text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
 }
 
 button
@@ -18,31 +22,79 @@ button
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.5);
 }
 
 .modal_content 
 {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 8px;
+    background-color: #fff;
+    margin: 3% auto;
+    padding: 30px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
 }
 
 /*  Nút Đóng */
 .close_button {
     color: #aaa;
     float: right;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: bold;
+    line-height: 20px;
+    transition: color 0.2s;
 }
 .close_button:hover, .close_button:focus {
-    color: black;
+    color: #333;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Section Headers với icons */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 25px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.section-header:first-of-type {
+    margin-top: 10px;
+}
+
+.section-header i {
+    color: #28a745;
+    font-size: 18px;
+}
+
+.section-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Form Layout - 2 cột */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row .form_group {
+    flex: 1;
+}
+
+.form-row .form_group.col-2 {
+    flex: 1;
 }
 
 /* CSS cho Form */
@@ -50,74 +102,172 @@ button
 {
     margin-bottom: 15px;
 }
+
 .form_group label 
 {
     display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: black;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+    font-size: 14px;
 }
-.form_group input[type = "text"], .form_group input[type = "number"], .form_group textarea
+
+.form_group label .required {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+.form_group input[type = "text"], 
+.form_group input[type = "number"], 
+.form_group input[type = "email"],
+.form_group input[type = "tel"],
+.form_group input[type = "password"],
+.form_group textarea, 
+.form_group select
 {
     width: 100%;
-    padding: 10px;
-    border: 1px solid grey;
-    border-radius: 5px;
+    padding: 12px 15px;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
     box-sizing: border-box;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 46px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #fafafa;
+}
+
+.form_group select {
+    appearance: auto;
+    cursor: pointer;
+}
+
+.form_group input:focus,
+.form_group textarea:focus,
+.form_group select:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    background-color: #fff;
+}
+
+.form_group input::placeholder,
+.form_group textarea::placeholder {
+    color: #999;
+    font-style: italic;
+    font-size: 14px;
 }
 
 textarea
 {
-    resize: none;
+    resize: vertical;
+    min-height: 80px;
 }
 
-.button_submit
-{
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
+/* Form Actions */
+.form-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.button_submit,
+.btn-cancel {
     width: 100%;
+    color: white;
+    padding: 0 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+    height: 48px;
+    line-height: 1;
+    box-sizing: border-box;
+    white-space: nowrap;
 }
 
-.button_submit:hover
-{
-    background-color: #28a745;
+.button_submit {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.button_submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.button_submit:active,
+.btn-cancel:active {
+    transform: translateY(0);
 }
 
 .delete-button
 {
-    background-color: var(--red); /* Màu nền đỏ */
-    color: #fff; /* Chữ trắng */
+    background-color: var(--red);
+    color: #fff;
     padding: 10px 15px;
     border-radius: 5px;
     font-weight: 600;
-    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    gap: 8px;
     transition: background-color 0.2s;
 }
 
 .cancel-button
 {
     background-color: #888;
-    color: #fff; /* Chữ trắng */
+    color: #fff;
     padding: 10px 15px;
     border-radius: 5px;
     font-weight: 600;
-    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    gap: 8px;
     transition: background-color 0.2s;
 }
 
 .confirm-button
 {
     background-color: #28a745;
-    color: #fff; /* Chữ trắng */
+    color: #fff;
     padding: 10px 15px;
     border-radius: 5px;
     font-weight: 600;
-    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    gap: 8px;
     transition: background-color 0.2s;
+}
+
+/* Scrollbar styling */
+.modal_content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal_content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal_content::-webkit-scrollbar-thumb {
+    background: #28a745;
+    border-radius: 10px;
+}
+
+.modal_content::-webkit-scrollbar-thumb:hover {
+    background: #20c997;
 }
