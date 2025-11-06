@@ -790,14 +790,27 @@ function openDeleteModal(productId) {
 function deleteProduct(id) {
     const productIndex = productList.findIndex(p => p.id === id);
     if (productIndex !== -1) {
-        productList[productIndex].status = 0;
-        saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList);
+        // XÓA THẬT SỰ khỏi mảng
+        productList.splice(productIndex, 1);
+
+        // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
+        const dataProductsFormat = {};
+        productList.forEach(product => {
+            const brand = product.brand || product.type || 'Khác';
+            if (!dataProductsFormat[brand]) {
+                dataProductsFormat[brand] = [];
+            }
+            dataProductsFormat[brand].push(product);
+        });
+
+        // Lưu vào localStorage với định dạng đúng
+        localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
         
         showProduct();
         thongke();
+        alert(`Đã xóa sản phẩm thành công!`);
     }
 }
-
 // 2. Chức năng MỞ MODAL THÊM (Create)
 function openAddProductModal() {
     const modalToOpen = document.getElementById('Modal');
