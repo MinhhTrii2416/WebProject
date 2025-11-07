@@ -22,14 +22,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerSearchInput = document.querySelector('.search-container .search-input');
     const mobileSearchInput = document.getElementById('mobile-search-input');
     
-    // Lấy tất cả sản phẩm từ productsData
+    // Lấy tất cả sản phẩm từ localStorage
     function getAllProducts() {
         const allProducts = [];
-        if (typeof productsData !== 'undefined') {
-            for (const brand in productsData) {
-                allProducts.push(...productsData[brand]);
-            }
+        const LS_KEY_PRODUCT_DATA = 'dataProducts';
+        
+        // Lấy từ localStorage
+        const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+        
+        if (!rawData) {
+            return allProducts;
         }
+        
+        try {
+            const productsData = JSON.parse(rawData);
+            
+            // Duyệt qua tất cả các brand
+            for (const brand in productsData) {
+                if (Array.isArray(productsData[brand])) {
+                    productsData[brand].forEach(product => {
+                        // Thêm brand vào product nếu chưa có
+                        allProducts.push({
+                            ...product,
+                            brand: product.brand || brand
+                        });
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing products from localStorage:', e);
+        }
+        
         return allProducts;
     }
     
@@ -410,6 +433,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (hash.startsWith('#brand/')) {
             const brand = hash.replace('#brand/', '');
+            
+            // Kiểm tra brand có tồn tại trong localStorage
+            const LS_KEY_PRODUCT_DATA = 'dataProducts';
+            const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+            let productsData = null;
+            
+            if (rawData) {
+                try {
+                    productsData = JSON.parse(rawData);
+                } catch (e) {
+                    console.error('Error parsing products:', e);
+                }
+            }
             
             if (productsData && productsData[brand]) {
                 // Show home section

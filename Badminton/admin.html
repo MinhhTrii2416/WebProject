@@ -86,7 +86,6 @@
                            <option>Victor</option>
                            <option>Lining</option>
                            <option>Mizuno</option>
-                           <option>Đã xóa</option>
                          </select>
                     </div>
                     <div class="admin-control right">
@@ -549,26 +548,13 @@
                 </div>
 
                 <div class="form_group">
-                    <label for="UserPhone">Số điện thoại: <span style="color: red;">*</span></label>
-                    <input type="tel" id="UserPhone" name="phone" placeholder="Ví dụ: 0123456789" pattern="[0-9]{10}" required>
-                </div>
-
-                <div class="form_group">
-                    <label for="UserEmail">Email:</label>
-                    <input type="email" id="UserEmail" name="email" placeholder="example@email.com">
+                    <label for="UserEmail">Email: <span style="color: red;">*</span></label>
+                    <input type="email" id="UserEmail" name="email" placeholder="email">
                 </div>
 
                 <div class="form_group">
                     <label for="UserPassword">Mật khẩu: <span style="color: red;">*</span></label>
-                    <input type="password" id="UserPassword" name="password" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
-                </div>
-
-                <div class="form_group">
-                    <label for="UserType">Loại khách hàng:</label>
-                    <select id="UserType" name="userType">
-                        <option value="1">Khách hàng thường</option>
-                        <option value="2">Khách hàng VIP</option>
-                    </select>
+                    <input type="password" id="UserPassword" name="password" placeholder="Điền mật khẩu" required>
                 </div>
 
                 <div class="form_group">
@@ -716,15 +702,16 @@
 
     // Key cho Import (phiếu nhập). Bạn có thể đổi tên key này nếu cần đồng bộ với nơi khác.
     const LS_KEY_IMPORT = 'AllImports';
+    const LS_KEY_PROFIT_RATE = 'ProfitRates';
 
     function getImportListFromStore() {
         const raw = localStorage.getItem(LS_KEY_IMPORT);
         return raw ? JSON.parse(raw) : [];
     }
 
-    // Lấy danh sách tỷ lệ lợi nhuận (nếu có lưu ở LS, key mặc định 'ProfitRates')
+    // Lấy danh sách tỷ lệ lợi nhuận
     function getProfitRateListFromStore() {
-        const raw = localStorage.getItem('ProfitRates');
+        const raw = localStorage.getItem(LS_KEY_PROFIT_RATE);
         return raw ? JSON.parse(raw) : [];
     }
 
@@ -764,11 +751,14 @@
     }
 
     // --- KHAI BÁO KEY LOCAL STORAGE ---
-const LS_KEY_USERS = 'accounts'; // ✅ Key Khách hàng từ script.js (đúng tên là 'accounts')
+const LS_KEY_USERS = 'Users'; // ✅ Key Khách hàng từ script.js (đúng tên là 'accounts')
 const LS_KEY_ORDERS = 'AllOrders'; // Key Đơn hàng từ cart.js
 const LS_KEY_PRODUCT_DATA = 'dataProducts'; // Key Sản phẩm từ initProduct.js
 
 // --- HÀM LẤY DỮ LIỆU CHÍNH TỪ LOCAL STORAGE & PRODUCT.JS ---
+
+    const importList = getImportListFromStore();
+    const profitRateList = getProfitRateListFromStore();
 
 // 1. Lấy Product List (Nguồn chính)
 function getProductListFromStore() {
@@ -777,20 +767,25 @@ function getProductListFromStore() {
 
     const allProducts = [];
 
-    // productDataByBrand có thể là object grouped theo brand (như productsData)
-    // hoặc có thể là 1 mảng phẳng (productList) nếu admin đã lưu trực tiếp.
     if (Array.isArray(productDataByBrand)) {
         productDataByBrand.forEach(p => {
-            const price = p.price;
-            const importPrice = p.importPrice || Math.round(price / 1.3);
+            // ✅ Tìm profit rate từ localStorage theo brand
+            const bpr = profitRateList.find(prl => 
+                prl.type.toLowerCase() === (p.brand || '').toLowerCase()
+            );
+            const rate = bpr ? bpr.profitRate : 0.15;  // ✅ Fallback 15%
+            
+            // ✅ CÔNG THỨC ĐÚNG: Giá nhập = Giá bán × (1 - % lợi nhuận)
+            const importPrice = p.importPrice || (p.price * (1 - rate));
 
             allProducts.push({
                 id: p.id,
                 name: p.name,
                 brand: p.brand || 'Khác',
-                price: price,
+                price: p.price,
+                profitRate: rate,  // ✅ LẤY TỪ localStorage
+                importPrice: importPrice,  // ✅ ƯU TIÊN importPrice đã lưu
                 originalPrice: p.originalPrice,
-                importPrice: importPrice,
                 images: p.images,
                 description: p.description,
                 weight: p.weight,
@@ -808,16 +803,23 @@ function getProductListFromStore() {
     } else {
         for (const brandKey in productDataByBrand) {
             productDataByBrand[brandKey].forEach(p => {
-                const price = p.price;
-                const importPrice = p.importPrice || Math.round(price / 1.3);
+                // ✅ Tìm profit rate từ localStorage theo brand
+                const bpr = profitRateList.find(prl => 
+                    prl.type.toLowerCase() === brandKey.toLowerCase()
+                );
+                const rate = bpr ? bpr.profitRate : 0.15;
+                
+                // ✅ CÔNG THỨC ĐÚNG: Giá nhập = Giá bán × (1 - % lợi nhuận)
+                const importPrice = p.importPrice || (p.price * (1 - rate));
 
                 allProducts.push({
                     id: p.id,
                     name: p.name,
-                    brand: p.brand || 'Khác',
-                    price: price,
+                    brand: p.brand || brandKey,
+                    price: p.price,
+                    profitRate: rate,  // ✅ LẤY TỪ localStorage
+                    importPrice: importPrice,  // ✅ ƯU TIÊN importPrice đã lưu
                     originalPrice: p.originalPrice,
-                    importPrice: importPrice,
                     images: p.images,
                     description: p.description,
                     weight: p.weight,
@@ -840,17 +842,7 @@ function getProductListFromStore() {
 // 2. Lấy User List (Từ localStorage)
 function getUserListFromStore() {
     const users = localStorage.getItem(LS_KEY_USERS);
-    // Sử dụng userListDefault (Mock Data cũ) nếu LS trống
-    return users ? JSON.parse(users).map((u) => ({
-        fullname: u.fullname || 'N/A',  // ✅ Dùng fullname thay vì account
-        email: u.email || u.phone || 'N/A',  // ✅ Ưu tiên email, fallback phone
-        phone: u.phone || 'N/A',
-        password: u.password,
-        join: u.join || 'N/A',  // ✅ Dùng join thay vì joinDate
-        status: u.status || 1,  // ✅ Giữ status gốc
-        userType: u.userType || 1,
-        isLocked: u.status === 0 ? true : false  // ✅ status=0 là bị khóa
-    })) : userListDefault; 
+    return users ? JSON.parse(users) : [];
 }
 
 // 3. Lấy Order List (Từ localStorage)
@@ -885,8 +877,6 @@ function getOrderDetailsListFromStore() {
     const userList = getUserListFromStore();
     const orderList = getOrderListFromStore();
     const orderDetailsList = getOrderDetailsListFromStore();
-    const importList = getImportListFromStore();
-    const profitRateList = getProfitRateListFromStore();
     
     // ✅ DEBUG: Kiểm tra dữ liệu
     console.log('=== KIỂM TRA DỮ LIỆU KHÁCH HÀNG ===');
@@ -902,10 +892,10 @@ function getOrderDetailsListFromStore() {
 
         let filteredProducts = productList.filter(product => {
             const nameMatch = product.name.toLowerCase().includes(searchInput);
-            const categoryMatch = categorySelect === 'Tất cả' || product.brand === categorySelect || (categorySelect === 'Đã xóa' && product.status === 0);
-            const statusMatch = categorySelect === 'Đã xóa' || product.status;
+            const categoryMatch = categorySelect === 'Tất cả' || product.brand === categorySelect;
+            const statusMatch = product.status;
 
-            return nameMatch && categoryMatch && statusMatch;
+            return nameMatch && categoryMatch && statusMatch; 
         });
 
         let html = '';
@@ -947,7 +937,7 @@ function getOrderDetailsListFromStore() {
 // *** LOGIC CRUD SẢN PHẨM BỔ SUNG ***
 // ***********************************
 
-// 1. Chức năng XÓA SẢN PHẨM (Soft Delete: Đổi status = 0)
+// 1. Chức năng XÓA SẢN PHẨM
 function openDeleteModal(productId) {
     const deleteModal = document.getElementById('DeleteModal');
     const confirmButton = document.getElementById('ConfirmDeleteButton');
@@ -956,7 +946,7 @@ function openDeleteModal(productId) {
     if (!deleteModal || !confirmButton) return;  
 
     const product = productList.find(p => p.id === productId);
-    productNameDisplay.textContent = product.name;
+    productNameDisplay.textContent = `${product.name} (${product.id})`;
     
     // GÁN HÀM XÓA KHI NHẤN NÚT XÁC NHẬN
     // Khi người dùng bấm nút 'XÓA', nó sẽ gọi hàm confirmDelete với ID của sản phẩm
@@ -978,7 +968,9 @@ function deleteProduct(id) {
         // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
         const dataProductsFormat = {};
         productList.forEach(product => {
-            const brand = product.brand || product.type || 'Khác';
+            let pr_Brand = product.brand || 'Khác';
+            pr_Brand = pr_Brand.toLowerCase();
+            const brand =  pr_Brand;
             if (!dataProductsFormat[brand]) {
                 dataProductsFormat[brand] = [];
             }
@@ -1021,7 +1013,7 @@ function handleAddProductSubmit(event) {
 
     // LẤY DỮ LIỆU TỪ CÁC TRƯỜNG INPUT
     const name = document.getElementById("ProductName").value.trim();
-    const type = document.getElementById("ProductType").value.trim();
+    let type = document.getElementById("ProductType").value.trim();
     const price = parseInt(document.getElementById("ProductPrice").value); 
     const stock = parseInt(document.getElementById("ProductStock").value) || 0;
     const weight = document.getElementById("ProductWeight").value.trim();
@@ -1038,14 +1030,26 @@ function handleAddProductSubmit(event) {
         return; 
     }
 
-    // TÌM ID TIẾP THEO (Tối ưu: Chỉ cần tìm Max ID hiện tại)
-    const existingIds = productList.map(p => {
-        const match = p.id.match(/\d+$/);
-        return match ? parseInt(match[0]) : 0;
-    });
-    const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 0;
-    const newId = `${type}-${maxId + 1}`;
-    
+    // Tạo ID mới cho sản phẩm
+    const brandPrefix = type.charAt(0).toUpperCase(); // "Y", "V", "L", "M"
+
+    // Tìm các ID hiện có của cùng brand
+    const sameTypeIds = productList
+        .filter(p => p.id.startsWith(brandPrefix))
+        .map(p => {
+            // Tách phần số giữa prefix và weight
+            // VD: "Y001-3U" -> ["Y", "001", "3U"] -> lấy "001"
+            const parts = p.id.match(/^([A-Z])(\d+)-(.+)$/);
+            return parts ? parseInt(parts[2]) : 0;
+        });
+
+    // Tìm số lớn nhất
+    const maxIdNumber = sameTypeIds.length > 0 ? Math.max(...sameTypeIds) : 0;
+
+    // Tạo ID mới với padding 3 chữ số
+    const newIdNumber = String(maxIdNumber + 1).padStart(3, '0');
+    const newId = `${brandPrefix}${newIdNumber}-${weight}`;
+
     // TẠO ĐỐI TƯỢNG SẢN PHẨM MỚI
     const newProduct = {
         id: newId,
@@ -1053,18 +1057,17 @@ function handleAddProductSubmit(event) {
         brand: type,
         price: price,
         originalPrice: price,
-        importPrice: Math.round(price / 1.3),
         stock: stock,
         images: [],
         description: description,
         weight: weight,
-        weightGrams: 0, // Có thể tính từ weight nếu cần
+        weightGrams: weight.includes('2U') ? 92 : weight.includes('3U') ? 87 : weight.includes('4U') ? 82 : 79, // Có thể tính từ weight nếu cần
         balance: balance,
         flexibility: flexibility,
         maxTension: maxTension,
         madeIn: madeIn,
         category: category,
-        rating: 0,
+        rating: 5,
         status: stock > 5 ? 1 : stock === 0 ? 0 : 2 // Tự động set status dựa vào stock
     };
 
@@ -1073,15 +1076,18 @@ function handleAddProductSubmit(event) {
     
     // Chuyển đổi sang format grouped by brand để lưu
     const dataProductsFormat = {};
-    productList.forEach(product => {
-        const brand = product.brand || 'Khác';
-        if (!dataProductsFormat[brand]) {
-            dataProductsFormat[brand] = [];
-        }
-        dataProductsFormat[brand].push(product);
-    });
-    
-    localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat));
+        productList.forEach(product => {
+            let pr_Brand = product.brand || 'Khác';
+            pr_Brand = pr_Brand.toLowerCase();
+            const brand =  pr_Brand;
+            if (!dataProductsFormat[brand]) {
+                dataProductsFormat[brand] = [];
+            }
+            dataProductsFormat[brand].push(product);
+        });
+
+    // Lưu vào localStorage với định dạng đúng
+    localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
 
     // CẬP NHẬT GIAO DIỆN VÀ ĐÓNG MODAL
     showProduct(); 
@@ -1116,10 +1122,10 @@ function openEditProductModal(productId) {
         document.getElementById('ProductPrice').value = product.price;
         document.getElementById('ProductStock').value = product.stock || 0;
         document.getElementById('ProductWeight').value = product.weight || '';
-        document.getElementById('ProductBalance').value = product.balance || '';
-        document.getElementById('ProductFlexibility').value = product.flexibility || '';
+        document.getElementById('ProductBalance').value = product.balance || '-- Chọn --';
+        document.getElementById('ProductFlexibility').value = product.flexibility || '-- Chọn --';
         document.getElementById('ProductMaxTension').value = product.maxTension || '';
-        document.getElementById('ProductCategory').value = product.category || '';
+        document.getElementById('ProductCategory').value = product.category || '-- Chọn --';
         document.getElementById('ProductMadeIn').value = product.madeIn || '';
         document.getElementById('ProductDescription').value = product.description || '';
         
@@ -1168,7 +1174,9 @@ function openEditProductModal(productId) {
             // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
             const dataProductsFormat = {};
             productList.forEach(product => {
-                const brand = product.brand || product.type || 'Khác';
+                let pr_Brand = product.brand || 'Khác';
+                pr_Brand = pr_Brand.toLowerCase();
+                const brand =  pr_Brand;
                 if (!dataProductsFormat[brand]) {
                     dataProductsFormat[brand] = [];
                 }
@@ -1189,69 +1197,57 @@ function openEditProductModal(productId) {
 
     // --- 2. LOGIC KHÁCH HÀNG (User) ---
 
-    function showUser() {
-        // Load lại dữ liệu từ localStorage để đảm bảo đồng bộ
-        const userList = getUserListFromStore();
+function showUser() {
+    // Load lại dữ liệu từ localStorage để đảm bảo đồng bộ
+    const userList = getUserListFromStore();
+    
+    const tableBody = document.getElementById('show-user');
+    const searchInput = document.getElementById('form-search-user').value.toLowerCase();
+    const statusSelect = parseInt(document.getElementById('tinh-trang-user').value);
+    const timeStart = document.getElementById('time-start-user').value;
+    const timeEnd = document.getElementById('time-end-user').value;
+
+    let filteredUsers = userList.filter(user => {
+        const searchMatch = user.account.toLowerCase().includes(searchInput) || user.email.includes(searchInput);
+        const statusMatch = statusSelect === 2 || 
+                (statusSelect === 1 && !user.isLocked) || 
+                (statusSelect === 0 && user.isLocked);
         
-        const tableBody = document.getElementById('show-user');
-        const searchInput = document.getElementById('form-search-user').value.toLowerCase();
-        const statusSelect = parseInt(document.getElementById('tinh-trang-user').value);
-        const timeStart = document.getElementById('time-start-user').value;
-        const timeEnd = document.getElementById('time-end-user').value;
+        const dateMatchStart = !timeStart || userJoinDate >= timeStart;
+        const dateMatchEnd = !timeEnd || userJoinDate <= timeEnd;
 
-        let filteredUsers = userList.filter(user => {
-            const searchMatch = user.fullname.toLowerCase().includes(searchInput) || user.phone.includes(searchInput);
-            const statusMatch = statusSelect === 2 || 
-                    (statusSelect === 1 && !user.isLocked) || 
-                    (statusSelect === 0 && user.isLocked);
-            
-            // ✅ Sửa lọc ngày: join có dạng ISO string hoặc dd/mm/yyyy
-            let userJoinDate = '';
-            if (user.join) {
-                // Nếu dạng dd/mm/yyyy, chuyển thành yyyy-mm-dd
-                if (user.join.includes('/')) {
-                    const parts = user.join.split('/');
-                    userJoinDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                } else {
-                    userJoinDate = user.join.split('T')[0];
-                }
-            }
-            
-            const dateMatchStart = !timeStart || userJoinDate >= timeStart;
-            const dateMatchEnd = !timeEnd || userJoinDate <= timeEnd;
+        return searchMatch && statusMatch && dateMatchStart && dateMatchEnd;
+    });
 
-            return searchMatch && statusMatch && dateMatchStart && dateMatchEnd;
-        });
+    let html = '';
+    filteredUsers.forEach((user, index) => {
+        const statusText = user.isLocked === false ? 'Hoạt động' : 'Bị khóa';
+        const statusClass = user.isLocked === false ? 'status-completed' : 'status-canceled';
+        const actionButtonText = user.isLocked === false ? 'Khóa' : 'Mở khóa';
+        const actionButtonClass = user.isLocked === false ? 'btn-delete' : 'btn-action';
+        
+        // ✅ Format ngày giờ hiển thị đẹp hơn
+        const displayDate = user.joinDate || 'N/A';
 
-        let html = '';
-        filteredUsers.forEach((user, index) => {
-            const statusText = user.isLocked === false ? 'Hoạt động' : 'Bị khóa';
-            const statusClass = user.isLocked === false ? 'status-completed' : 'status-canceled';
-            const actionButtonText = user.isLocked === false ? 'Khóa' : 'Mở khóa';
-            const actionButtonClass = user.isLocked === false ? 'btn-delete' : 'btn-action';
-            
-            // ✅ Format ngày giờ hiển thị đẹp hơn
-            const displayDate = user.join || 'N/A';
+        html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${user.account}</td>
+                <td>${user.email}</td>
+                <td>${displayDate}</td>
+                <td><span class="${statusClass}">${statusText}</span></td>
+                <td>
+                    <button class="${actionButtonClass}" onclick="openStatusModal('${user.email}', ${user.isLocked})">${actionButtonText}</button>
+                    <button class="btn-detail" onclick="openResetPasswordModal('${user.email}')">Reset MK</button>
+                </td>
+            </tr>
+        `;
+    });
 
-            html += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${user.fullname}</td>
-                    <td>${user.phone}</td>
-                    <td>${displayDate}</td>
-                    <td><span class="${statusClass}">${statusText}</span></td>
-                    <td>
-                        <button class="${actionButtonClass}" onclick="openStatusModal('${user.phone}', ${user.isLocked})">${actionButtonText}</button>
-                        <button class="btn-detail" onclick="openResetPasswordModal('${user.phone}')">Reset MK</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        tableBody.innerHTML = html;
-        const totalRevenue = calculateTotalRevenue(orderList);
-        updateOverviewCards(productList.length, userList.length, totalRevenue);
-    }
+    tableBody.innerHTML = html;
+    const totalRevenue = calculateTotalRevenue(orderList);
+    updateOverviewCards(productList.length, userList.length, totalRevenue);
+}
 
     function cancelSearchUser() {
         document.getElementById('form-search-user').value = '';
@@ -1263,8 +1259,9 @@ function openEditProductModal(productId) {
 
 // Thay thế các hàm mẫu trong LOGIC KHÁCH HÀNG (User)
 
-// 1. Chức năng KHÓA/MỞ KHÓA (Toggle Status)
-function openStatusModal(userPhone, currentStatus) {
+// 1. Chức năng KHÓA/MỞ KHÓA (Toggle Status) 
+
+function openStatusModal(userEmail, currentStatus) {
     const statusModal = document.getElementById('StatusModal');
     const confirmButton = document.getElementById('ConfirmStatusButton');
     const userDisplay = document.getElementById('UserToChangeStatus');
@@ -1275,8 +1272,8 @@ function openStatusModal(userPhone, currentStatus) {
         return;
     }
     
-    // ✅ Tìm theo phone (key duy nhất trong localStorage)
-    const user = userList.find(u => u.phone === userPhone);
+    // ✅ Tìm theo email (key duy nhất trong localStorage)
+    const user = userList.find(u => u.email === userEmail);
     if (!user) return alert("Không tìm thấy khách hàng.");
 
     // Xác định hành động và trạng thái MỚI
@@ -1286,33 +1283,32 @@ function openStatusModal(userPhone, currentStatus) {
     // Cập nhật nội dung Modal
     document.getElementById('StatusModalTitle').textContent = `Xác nhận ${action} khách hàng?`;
     actionText.textContent = action;
-    userDisplay.textContent = user.fullname;
+    userDisplay.textContent = user.account;
     
     // Khi người dùng bấm nút 'XÁC NHẬN', nó sẽ gọi hàm changeUserStatus
     confirmButton.onclick = function() {
-        changeUserStatus(userPhone, newStatus, action);
+        changeUserStatus(userEmail, newStatus, action);
     };
 
     //Hiển thị Modal
     statusModal.style.display = 'block';
 }
 
-function changeUserStatus(phone, newStatus, actionText) {
-    // ✅ Tìm theo phone
-    const userIndex = userList.findIndex(u => u.phone === phone);
+function changeUserStatus(email, newStatus, actionText) {
+    // ✅ Tìm theo email
+    const userIndex = userList.findIndex(u => u.email === email);
     
     if (userIndex !== -1) {
         // ✅ Cập nhật cả isLocked VÀ status (để đồng bộ với localStorage)
         userList[userIndex].isLocked = newStatus; 
-        userList[userIndex].status = newStatus ? 0 : 1;  // status=0 là khóa, 1 là hoạt động
         
         // ✅ Lưu lại vào localStorage với cấu trúc gốc
         const rawUsers = localStorage.getItem(LS_KEY_USERS);
         const allUsers = rawUsers ? JSON.parse(rawUsers) : [];
-        const rawIndex = allUsers.findIndex(u => u.phone === phone);
+        const rawIndex = allUsers.findIndex(u => u.email === email);
         
         if (rawIndex !== -1) {
-            allUsers[rawIndex].status = newStatus ? 0 : 1;
+            allUsers[rawIndex].isLocked = newStatus;
             localStorage.setItem(LS_KEY_USERS, JSON.stringify(allUsers));
         }
         
@@ -1325,43 +1321,43 @@ function changeUserStatus(phone, newStatus, actionText) {
 
 // --- LOGIC RESET MẬT KHẨU ---
 
-function openResetPasswordModal(userPhone) {
-    // ✅ Tìm theo phone
-    const user = userList.find(u => u.phone === userPhone);
+function openResetPasswordModal(userEmail) {
+    // ✅ Tìm theo email
+    const user = userList.find(u => u.email === userEmail);
     if (!user) return alert("Không tìm thấy khách hàng.");
 
     const resetModal = document.getElementById('ResetPasswordModal');
     const confirmButton = document.getElementById('ConfirmResetButton');
 
     if (resetModal && confirmButton) {
-        document.getElementById('UserToResetPassword').textContent = user.fullname;
+        document.getElementById('UserToResetPassword').textContent = user.account;
         
         confirmButton.onclick = function() {
-            resetUserPassword(userPhone);
+            resetUserPassword(userEmail);
         };
         resetModal.style.display = 'block';
     }
 }
 
-function resetUserPassword(phone) {
-    // ✅ Tìm theo phone
-    const userIndex = userList.findIndex(u => u.phone === phone);
+function resetUserPassword(email) {
+    // ✅ Tìm theo email
+    const userIndex = userList.findIndex(u => u.email === email);
     if (userIndex !== -1) {
-        userList[userIndex].password = '123456';  // ✅ Đặt mật khẩu mặc định
+        userList[userIndex].password = 'hashed_123456';  // ✅ Đặt mật khẩu mặc định
         
         // ✅ Cập nhật vào localStorage
         const rawUsers = localStorage.getItem(LS_KEY_USERS);
         const allUsers = rawUsers ? JSON.parse(rawUsers) : [];
-        const rawIndex = allUsers.findIndex(u => u.phone === phone);
+        const rawIndex = allUsers.findIndex(u => u.email === email);
         
         if (rawIndex !== -1) {
-            allUsers[rawIndex].password = '123456';
+            allUsers[rawIndex].password = 'hashed_123456';
             localStorage.setItem(LS_KEY_USERS, JSON.stringify(allUsers));
         }
         
         showUser();
         closeModal('ResetPasswordModal');
-        alert(`Đã RESET mật khẩu của ${userList[userIndex].fullname} thành công!`);
+        alert(`Đã RESET mật khẩu của ${userList[userIndex].email} thành công!`);
     }
 }
 
@@ -1391,49 +1387,34 @@ function openAddUserModal() {
 
             // LẤY DỮ LIỆU
             const name = document.getElementById('UserName').value.trim();
-            const phone = document.getElementById('UserPhone').value.trim();
             const email = document.getElementById('UserEmail').value.trim();
             const password = document.getElementById('UserPassword').value.trim();
-            const userType = parseInt(document.getElementById('UserType').value);
             const status = parseInt(document.getElementById('UserStatus').value);
+            const islock = status === 1 ? false : true;
             
             // KIỂM TRA DỮ LIỆU
-            if (!name || !phone || !password) { 
-                alert("Vui lòng điền đầy đủ các trường bắt buộc (Tên, Số điện thoại, Mật khẩu).");
+            if (!name || !email || !password) { 
+                alert("Vui lòng điền đầy đủ các trường bắt buộc (Tên, Email, Mật khẩu).");
                 return; 
             }
             
-            // Kiểm tra số điện thoại hợp lệ (10 số)
-            if (!/^[0-9]{10}$/.test(phone)) {
-                alert("Số điện thoại phải có đúng 10 chữ số!");
-                return;
-            }
             
-            // Kiểm tra mật khẩu tối thiểu 6 ký tự
-            if (password.length < 6) {
-                alert("Mật khẩu phải có tối thiểu 6 ký tự!");
-                return;
-            }
-            
-            // Kiểm tra số điện thoại đã tồn tại
+            // Kiểm tra email đã tồn tại
             const existingAccounts = JSON.parse(localStorage.getItem(LS_KEY_USERS) || '[]');
-            const phoneExists = existingAccounts.some(user => user.phone === phone);
+            const emailExists = existingAccounts.some(user => user.email.toLowerCase() === email.toLowerCase());
             
-            if (phoneExists) {
-                alert("Số điện thoại này đã được đăng ký!");
+            if (emailExists) {
+                alert("Email này đã được đăng ký!");
                 return;
             }
             
             // TẠO ĐỐI TƯỢNG MỚI với cấu trúc đúng theo localStorage
             const newUser = {
-                fullname: name,
-                phone: phone,
-                email: email || '',  // Email có thể để trống
+                account: name,
+                email: email,
                 password: password,  // Mật khẩu do admin nhập
-                join: new Date().toLocaleDateString('vi-VN'),  // Format: dd/mm/yyyy
-                status: status,  // 1 = hoạt động, 0 = bị khóa
-                userType: userType,  // 1 = khách thường, 2 = VIP
-                cart: []  // Giỏ hàng trống
+                joinDate: new Date().toISOString().slice(0,10),
+                isLocked: islock
             };
 
             // LƯU VÀO localStorage (accounts)
@@ -1443,15 +1424,12 @@ function openAddUserModal() {
             // CẬP NHẬT GIAO DIỆN
             showUser(); // Cập nhật bảng Khách hàng
             
-            const userTypeText = userType === 2 ? 'VIP' : 'Thường';
-            const statusText = status === 1 ? 'Hoạt động' : 'Bị khóa';
+            const statusText = islock === false ? 'Hoạt động' : 'Bị khóa';
             alert(`✅ Đã thêm khách hàng thành công!\n\n` +
-                  `Tên: ${name}\n` +
-                  `SĐT: ${phone}\n` +
-                  `Email: ${email || '(Không có)'}\n` +
-                  `Mật khẩu: ${password}\n` +
-                  `Loại KH: ${userTypeText}\n` +
-                  `Trạng thái: ${statusText}`);
+                    `Tên: ${name}\n` +
+                    `Email: ${email}\n` +
+                    `Mật khẩu: ${password}\n` +
+                    `Trạng thái: ${statusText}`);
             closeModal('AddUserModal'); 
         };
     }
@@ -1468,7 +1446,7 @@ function viewUserDetail(id) {
 
     // --- 3. LOGIC ĐƠN HÀNG (Order) ---
 
-    function findOrder() {
+function findOrder() {
         const tableBody = document.getElementById('show-order');
         const searchInput = document.getElementById('form-search-order').value.toLowerCase();
         const statusSelect = parseInt(document.getElementById('tinh-trang-order').value);
@@ -1522,17 +1500,17 @@ function viewUserDetail(id) {
         
     }
 
-    function cancelSearchOrder() {
-        document.getElementById('form-search-order').value = '';
-        document.getElementById('tinh-trang-order').value = 2;
-        document.getElementById('time-start').value = '';
-        document.getElementById('time-end').value = '';
-        findOrder();
-    }
+function cancelSearchOrder() {
+    document.getElementById('form-search-order').value = '';
+    document.getElementById('tinh-trang-order').value = 2;
+    document.getElementById('time-start').value = '';
+    document.getElementById('time-end').value = '';
+    findOrder();
+}
 
     // 1. Chức năng XỬ LÝ/HỦY ĐƠN HÀNG (Toggle Status)
 function showConfirmStatusModal(id, currentStatus) {
-    const order = orderList.find(o => o.id === id);
+    const order = orderList.find(o => o.orderId === id);
     if (!order) {
         alert("Không tìm thấy đơn hàng này.");
         return;
@@ -1672,7 +1650,7 @@ function changeOrderStatus(id, newStatus) {
         const phieu = rawOrders[rawIndex];
         if (Array.isArray(phieu.items)) {
             phieu.items.forEach(item => {
-                const prodIndex = productList.findIndex(p => p.id == item.productId || p.stt == item.productId);
+                const prodIndex = productList.findIndex(p => p.id == item.productId);
                 if (prodIndex !== -1) {
                     productList[prodIndex].stock = (productList[prodIndex].stock || 0) - (item.quantity || 0);
                     if (productList[prodIndex].stock < 0) productList[prodIndex].stock = 0;
@@ -1681,7 +1659,9 @@ function changeOrderStatus(id, newStatus) {
             // persist product list
             const dataProductsFormat = {};
             productList.forEach(product => {
-                const brand = product.brand || product.type || 'Khác';
+                let pr_Brand = product.brand || 'Khác';
+                pr_Brand = pr_Brand.toLowerCase();
+                const brand = pr_Brand;
                 if (!dataProductsFormat[brand]) {
                     dataProductsFormat[brand] = [];
                 }
@@ -1816,6 +1796,44 @@ function cancelSearchThongKe() {
 
     // --- LOGIC QUẢN LÝ GIÁ BÁN & LỢI NHUẬN (PRICE-MGT) ---
 
+// tạo objs BrandProfitRate
+const BPR = [{
+        type: "yonex",
+        profitRate: 0.23
+    }, 
+    {
+        type: "lining",
+        profitRate: 0.20
+    },
+    {
+        type: "victor",
+        profitRate: 0.17
+    },
+    {
+        type: "mizuno",
+        profitRate: 0.14
+}];
+
+function initBrandProfitRate() {
+    const existingBPR = localStorage.getItem(LS_KEY_PROFIT_RATE);
+
+    if(existingBPR) {
+        console.log("Đã tồn tại profit rate trong local Storage");
+        return;
+    }
+
+    if(typeof BPR !== 'undefined') {
+        localStorage.setItem(LS_KEY_PROFIT_RATE, JSON.stringify(BPR));
+    }
+
+    updateBrandProfit('yonex');
+    updateBrandProfit('lining');
+    updateBrandProfit('victor');
+    updateBrandProfit('mizuno');
+}
+initBrandProfitRate();
+
+
 // Hàm tìm tỷ lệ lợi nhuận theo loại sản phẩm
 function getProfitRateByType(productType) {
     const rateObj = profitRateList.find(r => r.type === productType);
@@ -1835,8 +1853,8 @@ function showBrandProfitManagement() {
     
     // Nhóm sản phẩm theo brand
     const brandGroups = {};
-    productList.filter(p => p.status === 1).forEach(product => {
-        const brand = product.brand || product.type || 'Chưa phân loại';
+    productList.forEach(product => {
+        const brand = product.brand;
         if (!brandGroups[brand]) {
             brandGroups[brand] = [];
         }
@@ -1846,10 +1864,10 @@ function showBrandProfitManagement() {
     let html = '';
     let index = 1;
     
-    Object.keys(brandGroups).sort().forEach(brand => {
+    Object.keys(brandGroups).forEach(brand => {
         const products = brandGroups[brand];
-        const profitRateObj = profitRateList.find(r => r.type === brand);
-        const currentRate = profitRateObj ? (profitRateObj.rate * 100) : 15;
+        const profitRateObj = profitRateList.find(r => r.type === brand.toLowerCase());
+        const currentRate = profitRateObj ? (profitRateObj.profitRate * 100) : 15;
         
         html += `
             <tr>
@@ -1864,12 +1882,12 @@ function showBrandProfitManagement() {
                 <td>
                     <input type="number" 
                            class="profit-input brand-profit-input" 
-                           data-brand="${brand}"
+                           data-brand="${brand.toLowerCase()}"
                            value="${currentRate.toFixed(0)}" 
                            step="1" min="0" max="99"> %
                 </td>
                 <td>
-                    <button class="btn-action" onclick="updateBrandProfit('${brand}')">
+                    <button class="btn-action" onclick="updateBrandProfit('${brand.toLowerCase()}')">
                         <i class="fa-solid fa-layer-group"></i>
                         Áp dụng cho tất cả
                     </button>
@@ -1894,25 +1912,42 @@ function updateBrandProfit(brand) {
     // Lưu tỷ lệ vào profitRateList
     const rateIndex = profitRateList.findIndex(r => r.type === brand);
     if (rateIndex >= 0) {
-        profitRateList[rateIndex].rate = newProfitPercentage;
+        profitRateList[rateIndex].profitRate = newProfitPercentage;
     } else {
-        profitRateList.push({ type: brand, rate: newProfitPercentage });
+        console.log("Không tìm thấy index của profit rate mới");
+        return;
     }
     
     // Cập nhật giá cho TẤT CẢ sản phẩm của loại này
     let updatedCount = 0;
     productList.forEach((product, index) => {
-        const productBrand = product.brand || product.type || 'Chưa phân loại';
-        if (productBrand === brand && product.status === 1) {
+        const productBrand = product.brand.toLowerCase();
+        if (productBrand === brand) {
             const newPrice = calculateSellingPrice(product.importPrice, newProfitPercentage);
+
             productList[index].price = newPrice;
+            productList[index].profitRate = newProfitPercentage;
             updatedCount++;
         }
     });
     
     // Lưu vào localStorage
-    localStorage.setItem('profitRateList', JSON.stringify(profitRateList));
-    localStorage.setItem('dataProducts', JSON.stringify(productList));
+    localStorage.setItem(LS_KEY_PROFIT_RATE, JSON.stringify(profitRateList));
+
+    const dataProductsFormat = {};
+    productList.forEach(product => {
+        let pr_Brand = product.brand || 'Khác';
+        pr_Brand = pr_Brand.toLowerCase();
+        const brand =  pr_Brand;
+        if (!dataProductsFormat[brand]) {
+            dataProductsFormat[brand] = [];
+        }
+        dataProductsFormat[brand].push(product);
+    });
+
+    // Lưu vào localStorage với định dạng đúng
+    localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat));  
+
     
     // Cập nhật giao diện
     showBrandProfitManagement();
@@ -1926,13 +1961,13 @@ function updateBrandProfit(brand) {
 function showPriceManagement() {
     const tableBody = document.getElementById('show-profit-rate');
     const searchValue = document.getElementById('form-search-price')?.value.toLowerCase() || '';
-    const filterBrand = document.getElementById('filter-brand-price')?.value || '';
+    const filterBrand = document.getElementById('filter-brand-price')?.value.toLowerCase() || '';
     
     let html = '';
     let displayIndex = 1;
 
-    productList.filter(p => p.status === 1).forEach((product) => {
-        const brandName = product.brand || product.type || 'Chưa phân loại';
+    productList.forEach((product) => {
+        const brandName = product.brand.toLowerCase();
         const productName = product.name.toLowerCase();
         
         // Filter
@@ -1944,7 +1979,7 @@ function showPriceManagement() {
         }
         
         // Tính % lợi nhuận thực tế
-        const profitPercentage = ((product.price - product.importPrice) / product.price) * 100;
+        const profitPercentage = product.profitRate * 100;
         
         html += `
             <tr>
@@ -1952,7 +1987,7 @@ function showPriceManagement() {
                 <td>
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <span style="font-weight: 600; color: #000000;">${product.name}</span>
-                        <span style="font-size: 12px; color: #6c757d; font-weight: 500;">${brandName}</span>
+                        <span style="font-size: 12px; color: #6c757d; font-weight: 500;">${product.id}</span>
                     </div>
                 </td>
                 <td>${formatCurrency(product.importPrice)}</td>
@@ -1960,14 +1995,14 @@ function showPriceManagement() {
                 <td>
                     <input type="number" 
                            class="profit-input" 
-                           data-stt="${product.stt}"
+                           data-stt="${product.id}"
                            value="${profitPercentage.toFixed(0)}" 
                            step="1" min="0" max="99"> %
                 </td>
                 <td>
                     <button class="btn-action update-price-btn" 
-                            data-stt="${product.stt}" 
-                            onclick="updateProductPrice(${product.stt})">
+                            data-stt="${product.id}" 
+                            onclick="updateProductPrice('${product.id}')">
                         <i class="fa-solid fa-check"></i>
                         Áp dụng
                     </button>
@@ -1988,8 +2023,8 @@ function updateBrandFilter() {
     if (!selectElement) return;
     
     const brands = new Set();
-    productList.filter(p => p.status === 1).forEach(product => {
-        const brand = product.brand || product.type || 'Chưa phân loại';
+    productList.forEach(product => {
+        const brand = product.brand;
         brands.add(brand);
     });
     
@@ -2003,8 +2038,8 @@ function updateBrandFilter() {
 }
 
 // Hàm Áp dụng giá mới cho TỪNG sản phẩm
-function updateProductPrice(stt) {
-    const row = document.querySelector(`.update-price-btn[data-stt="${stt}"]`).closest('tr');
+function updateProductPrice(id) {
+    const row = document.querySelector(`.update-price-btn[data-stt="${id}"]`).closest('tr');
     const inputElement = row.querySelector('.profit-input');
     const newProfitPercentage = parseFloat(inputElement.value) / 100;
 
@@ -2013,7 +2048,7 @@ function updateProductPrice(stt) {
         return;
     }
 
-    const productIndex = productList.findIndex(p => p.stt === stt);
+    const productIndex = productList.findIndex(p => p.id === id);
     const product = productList[productIndex];
 
     if (product) {
@@ -2021,9 +2056,22 @@ function updateProductPrice(stt) {
         
         // Cập nhật giá bán mới vào productList
         productList[productIndex].price = newSellingPrice;
+        productList[productIndex].profitRate = newProfitPercentage;
         
         // Lưu vào localStorage
-        localStorage.setItem('dataProducts', JSON.stringify(productList));
+        const dataProductsFormat = {};
+        productList.forEach(product => {
+            let pr_Brand = product.brand || 'Khác';
+            pr_Brand = pr_Brand.toLowerCase();
+            const brand =  pr_Brand;
+            if (!dataProductsFormat[brand]) {
+                dataProductsFormat[brand] = [];
+            }
+            dataProductsFormat[brand].push(product);
+        });
+
+        // Lưu vào localStorage với định dạng đúng
+        localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat));  
 
         // Cập nhật lại giao diện
         showPriceManagement(); 
