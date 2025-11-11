@@ -30,11 +30,11 @@
     color: #d8dc72;
 }
 .logout-btn {
-    color: #e74c3c; 
+    color: #d8dc72; 
 }
 .logout-btn:hover {
-    background-color: #eed1ce;
-    color: #e74c3c;
+    background-color: #f5f6e8;
+    color: #d8dc72;
 }
 
 .modal-overlay {

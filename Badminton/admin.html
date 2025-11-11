@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sidebar Quản lý</title>
-  <link rel="stylesheet" href="css/admin.css?v=1700.0">
+  <link rel="stylesheet" href="css/admin.css?v=1900.0">
   <link rel="stylesheet" href="css/modal_add_products_style.css">
   <link rel="stylesheet" href="css/modal_detail_order.css">
 
@@ -93,9 +93,13 @@
                             <i class="fa-solid fa-rotate-right"></i>
                             <span>Làm mới</span>
                         </button>
+                        <button class="control" id="fix-data-btn" style="background: #ffc107; color: #000; display: none;" onclick="fixProductData()">
+                            <i class="fa-solid fa-wrench"></i>
+                            <span>Sửa Dữ Liệu</span>
+                        </button>
                         <button class="control" id="add-product" onclick="openAddProductModal()">
                             <i class="fa-solid fa-plus"></i>
-                            <span>Thêm vợt mới</span>
+                            <span>Thêm sản phẩm</span>
                             
                         </button>
                     </div>
@@ -442,6 +446,35 @@
                     </div>
                 </div>
 
+                <!-- Hình ảnh sản phẩm -->
+                <div class="section-header">
+                    <i class="fa-solid fa-image"></i>
+                    <h4>Hình ảnh sản phẩm</h4>
+                </div>
+
+                <div class="form-row">
+                    <div class="form_group">
+                        <label for="ProductImage">Chọn ảnh sản phẩm <span class="required">*</span></label>
+                        <input type="file" id="ProductImage" name="image" accept="image/*" multiple required>
+                        <small style="color: #6c757d; font-size: 12px; display: block; margin-top: 5px;">
+                            <i class="fa-solid fa-circle-info"></i> Định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB/ảnh. Tối đa 3 ảnh.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form_group">
+                        <div id="ImagePreviewContainer" style="display: none; margin-top: 10px;">
+                            <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">
+                                <i class="fa-solid fa-eye"></i> Xem trước (<span id="ImageCount">0</span>/3):
+                            </label>
+                            <div id="ImagePreviewList" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                <!-- Ảnh preview sẽ được thêm vào đây -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Thông số kỹ thuật -->
                 <div class="section-header">
                     <i class="fa-solid fa-sliders"></i>
@@ -543,22 +576,44 @@
                 <input type="hidden" id="UserID" name="id" value="">
 
                 <div class="form_group">
-                    <label for="UserName">Tên khách hàng: <span style="color: red;">*</span></label>
+                    <label for="UserName">
+                        <i class="fa-solid fa-user"></i> Tên khách hàng: <span style="color: red;">*</span>
+                    </label>
                     <input type="text" id="UserName" name="name" placeholder="Nhập tên đầy đủ" required>
                 </div>
 
                 <div class="form_group">
-                    <label for="UserEmail">Email: <span style="color: red;">*</span></label>
+                    <label for="UserEmail">
+                        <i class="fa-solid fa-envelope"></i> Email: <span style="color: red;">*</span>
+                    </label>
                     <input type="email" id="UserEmail" name="email" placeholder="email">
                 </div>
 
                 <div class="form_group">
-                    <label for="UserPassword">Mật khẩu: <span style="color: red;">*</span></label>
+                    <label for="UserPhone">
+                        <i class="fa-solid fa-phone"></i> Số điện thoại:
+                    </label>
+                    <input type="tel" id="UserPhone" name="phone" placeholder="Nhập số điện thoại">
+                </div>
+
+                <div class="form_group">
+                    <label for="UserPassword">
+                        <i class="fa-solid fa-lock"></i> Mật khẩu: <span style="color: red;">*</span>
+                    </label>
                     <input type="password" id="UserPassword" name="password" placeholder="Điền mật khẩu" required>
                 </div>
 
                 <div class="form_group">
-                    <label for="UserStatus">Trạng thái:</label>
+                    <label for="UserJoinDate">
+                        <i class="fa-regular fa-calendar"></i> Ngày tham gia:
+                    </label>
+                    <input type="date" id="UserJoinDate" name="joindate">
+                </div>
+
+                <div class="form_group">
+                    <label for="UserStatus">
+                        <i class="fa-solid fa-toggle-on"></i> Trạng thái:
+                    </label>
                     <select id="UserStatus" name="status">
                         <option value="1" selected>Hoạt động</option>
                         <option value="0">Bị khóa</option>
@@ -985,6 +1040,139 @@ function deleteProduct(id) {
         alert(`Đã xóa sản phẩm thành công!`);
     }
 }
+
+// Image Preview Handler - Hỗ trợ nhiều ảnh
+let selectedImages = []; // Mảng lưu trữ các ảnh đã chọn
+
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('ProductImage');
+    const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
+    const imagePreviewList = document.getElementById('ImagePreviewList');
+    const imageCount = document.getElementById('ImageCount');
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            
+            if (files.length === 0) return;
+            
+            // Kiểm tra số lượng ảnh (tối đa 3)
+            if (selectedImages.length + files.length > 3) {
+                alert('Chỉ được chọn tối đa 3 ảnh!');
+                imageInput.value = '';
+                return;
+            }
+            
+            // Xử lý từng file
+            files.forEach(file => {
+                // Validate kích thước (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} quá lớn! Kích thước tối đa là 5MB.`);
+                    return;
+                }
+                
+                // Validate loại file
+                if (!file.type.startsWith('image/')) {
+                    alert(`File ${file.name} không phải là ảnh!`);
+                    return;
+                }
+                
+                // Đọc file và hiển thị preview
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = {
+                        file: file,
+                        dataUrl: event.target.result,
+                        id: Date.now() + Math.random() // ID duy nhất
+                    };
+                    
+                    selectedImages.push(imageData);
+                    addImagePreview(imageData);
+                    updateImageCount();
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // Reset input để có thể chọn lại
+            imageInput.value = '';
+            
+            // Hiển thị container
+            if (imagePreviewContainer) {
+                imagePreviewContainer.style.display = 'block';
+            }
+        });
+    }
+});
+
+// Thêm preview ảnh vào danh sách
+function addImagePreview(imageData) {
+    const imagePreviewList = document.getElementById('ImagePreviewList');
+    if (!imagePreviewList) return;
+    
+    const previewDiv = document.createElement('div');
+    previewDiv.className = 'image-preview-item';
+    previewDiv.dataset.imageId = imageData.id;
+    previewDiv.style.cssText = 'position: relative; display: inline-block;';
+    
+    previewDiv.innerHTML = `
+        <img src="${imageData.dataUrl}" alt="Preview" 
+             style="width: 150px; height: 150px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <button type="button" class="remove-image-btn" onclick="removeImagePreview('${imageData.id}')" 
+                style="position: absolute; top: 5px; right: 5px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4); transition: all 0.3s ease; font-size: 14px;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    `;
+    
+    imagePreviewList.appendChild(previewDiv);
+}
+
+// Xóa một ảnh preview
+function removeImagePreview(imageId) {
+    // Xóa khỏi mảng
+    selectedImages = selectedImages.filter(img => img.id != imageId);
+    
+    // Xóa khỏi DOM
+    const previewItem = document.querySelector(`.image-preview-item[data-image-id="${imageId}"]`);
+    if (previewItem) {
+        previewItem.remove();
+    }
+    
+    updateImageCount();
+    
+    // Ẩn container nếu không còn ảnh
+    if (selectedImages.length === 0) {
+        const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
+        if (imagePreviewContainer) {
+            imagePreviewContainer.style.display = 'none';
+        }
+    }
+}
+
+// Cập nhật số lượng ảnh
+function updateImageCount() {
+    const imageCount = document.getElementById('ImageCount');
+    if (imageCount) {
+        imageCount.textContent = selectedImages.length;
+    }
+}
+
+// Function để xóa tất cả ảnh đã chọn (cho nút reset form)
+function removeSelectedImage() {
+    selectedImages = [];
+    const imagePreviewList = document.getElementById('ImagePreviewList');
+    const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
+    
+    if (imagePreviewList) {
+        imagePreviewList.innerHTML = '';
+    }
+    
+    if (imagePreviewContainer) {
+        imagePreviewContainer.style.display = 'none';
+    }
+    
+    updateImageCount();
+}
+
 // 2. Chức năng MỞ MODAL THÊM (Create)
 function openAddProductModal() {
     const modalToOpen = document.getElementById('Modal');
@@ -998,6 +1186,14 @@ function openAddProductModal() {
         if (btnSubmitForm) btnSubmitForm.innerHTML = '<i class="fa-solid fa-check"></i> <span>Thêm</span>';
         if (productForm) {
             productForm.reset(); 
+            // Reset image preview và mảng selectedImages
+            selectedImages = [];
+            const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
+            const imagePreviewList = document.getElementById('ImagePreviewList');
+            if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+            if (imagePreviewList) imagePreviewList.innerHTML = '';
+            updateImageCount();
+            
             // DÒNG QUAN TRỌNG: Gán hàm xử lý submit form
             productForm.onsubmit = handleAddProductSubmit;
         }
@@ -1023,11 +1219,18 @@ function handleAddProductSubmit(event) {
     const category = document.getElementById("ProductCategory").value.trim();
     const madeIn = document.getElementById("ProductMadeIn").value.trim();
     const description = document.getElementById("ProductDescription").value.trim();
+    const imageInput = document.getElementById("ProductImage");
     
     // KIỂM TRA DỮ LIỆU
     if (!name || !type || isNaN(price) || price <= 0) {
         alert("Vui lòng điền đầy đủ Tên, Hãng và Giá bán hợp lệ (> 0).");
         return; 
+    }
+    
+    // KIỂM TRA ẢNH - phải có ít nhất 1 ảnh từ selectedImages
+    if (selectedImages.length === 0) {
+        alert("Vui lòng chọn ít nhất 1 ảnh sản phẩm!");
+        return;
     }
 
     // Tạo ID mới cho sản phẩm
@@ -1049,50 +1252,51 @@ function handleAddProductSubmit(event) {
     // Tạo ID mới với padding 3 chữ số
     const newIdNumber = String(maxIdNumber + 1).padStart(3, '0');
     const newId = `${brandPrefix}${newIdNumber}-${weight}`;
-
-    // TẠO ĐỐI TƯỢNG SẢN PHẨM MỚI
+    
+    // Lấy tất cả ảnh base64 từ selectedImages
+    const imagesBase64 = selectedImages.map(img => img.dataUrl);
+    
+    // TẠO ĐỐI TƯỢNG SẢN PHẨM MỚI với đầy đủ thông tin
     const newProduct = {
+        stt: productList.length > 0 ? Math.max(...productList.map(p => p.stt || 0)) + 1 : 1,
         id: newId,
         name: name,
         brand: type,
         price: price,
         originalPrice: price,
         stock: stock,
-        images: [],
+        images: imagesBase64, // Lưu TẤT CẢ ảnh base64 vào mảng images
         description: description,
         weight: weight,
-        weightGrams: weight.includes('2U') ? 92 : weight.includes('3U') ? 87 : weight.includes('4U') ? 82 : 79, // Có thể tính từ weight nếu cần
+        weightGrams: weight.includes('2U') ? 92 : weight.includes('3U') ? 87 : weight.includes('4U') ? 82 : 79,
         balance: balance,
         flexibility: flexibility,
         maxTension: maxTension,
         madeIn: madeIn,
         category: category,
         rating: 5,
-        status: stock > 5 ? 1 : stock === 0 ? 0 : 2 // Tự động set status dựa vào stock
+        status: stock > 5 ? 1 : stock === 0 ? 0 : 2
     };
 
     // LƯU VÀO DANH SÁCH SẢN PHẨM (productList)
     productList.push(newProduct);
     
-    // Chuyển đổi sang format grouped by brand để lưu
-    const dataProductsFormat = {};
-        productList.forEach(product => {
-            let pr_Brand = product.brand || 'Khác';
-            pr_Brand = pr_Brand.toLowerCase();
-            const brand =  pr_Brand;
-            if (!dataProductsFormat[brand]) {
-                dataProductsFormat[brand] = [];
-            }
-            dataProductsFormat[brand].push(product);
-        });
-
-    // Lưu vào localStorage với định dạng đúng
-    localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
+    // Lưu vào localStorage với format đúng (grouped by brand)
+    saveProductListToLocalStorage(productList);
 
     // CẬP NHẬT GIAO DIỆN VÀ ĐÓNG MODAL
     showProduct(); 
     closeModal('Modal');
     alert(`Đã thêm sản phẩm "${name}" thành công!`);
+    
+    // Reset form và ảnh đã chọn
+    document.getElementById('ProductForm').reset();
+    selectedImages = [];
+    const imagePreviewList = document.getElementById('ImagePreviewList');
+    const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
+    if (imagePreviewList) imagePreviewList.innerHTML = '';
+    if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+    updateImageCount();
 }
 
 // 3. Chức năng MỞ MODAL SỬA (Update)
@@ -1208,11 +1412,18 @@ function showUser() {
     const timeEnd = document.getElementById('time-end-user').value;
 
     let filteredUsers = userList.filter(user => {
-        const searchMatch = user.account.toLowerCase().includes(searchInput) || user.email.includes(searchInput);
-        const statusMatch = statusSelect === 2 || 
-                (statusSelect === 1 && !user.isLocked) || 
-                (statusSelect === 0 && user.isLocked);
+        // Hỗ trợ cả 2 cấu trúc: account (cũ) và fullname (mới)
+        const userName = user.fullname || user.account || '';
+        const searchMatch = userName.toLowerCase().includes(searchInput) || user.email.toLowerCase().includes(searchInput);
         
+        // Hỗ trợ cả 2 cấu trúc: isLocked (cũ) và status (mới)
+        const isLocked = (user.status !== undefined) ? (user.status === 0) : (user.isLocked === true);
+        const statusMatch = statusSelect === 2 || 
+                (statusSelect === 1 && !isLocked) || 
+                (statusSelect === 0 && isLocked);
+        
+        // Hỗ trợ cả 2 format ngày: joinDate (ISO) và join (dd/mm/yyyy)
+        const userJoinDate = user.join || user.joinDate || '';
         const dateMatchStart = !timeStart || userJoinDate >= timeStart;
         const dateMatchEnd = !timeEnd || userJoinDate <= timeEnd;
 
@@ -1221,23 +1432,26 @@ function showUser() {
 
     let html = '';
     filteredUsers.forEach((user, index) => {
-        const statusText = user.isLocked === false ? 'Hoạt động' : 'Bị khóa';
-        const statusClass = user.isLocked === false ? 'status-completed' : 'status-canceled';
-        const actionButtonText = user.isLocked === false ? 'Khóa' : 'Mở khóa';
-        const actionButtonClass = user.isLocked === false ? 'btn-delete' : 'btn-action';
+        // Hỗ trợ cả 2 cấu trúc
+        const userName = user.fullname || user.account || 'N/A';
+        const isLocked = (user.status !== undefined) ? (user.status === 0) : (user.isLocked === true);
+        const statusText = !isLocked ? 'Hoạt động' : 'Bị khóa';
+        const statusClass = !isLocked ? 'status-completed' : 'status-canceled';
+        const actionButtonText = !isLocked ? 'Khóa' : 'Mở khóa';
+        const actionButtonClass = !isLocked ? 'btn-delete' : 'btn-action';
         
-        // ✅ Format ngày giờ hiển thị đẹp hơn
-        const displayDate = user.joinDate || 'N/A';
+        // Format ngày giờ hiển thị
+        const displayDate = user.join || user.joinDate || 'N/A';
 
         html += `
             <tr>
                 <td>${index + 1}</td>
-                <td>${user.account}</td>
+                <td>${userName}</td>
                 <td>${user.email}</td>
                 <td>${displayDate}</td>
                 <td><span class="${statusClass}">${statusText}</span></td>
                 <td>
-                    <button class="${actionButtonClass}" onclick="openStatusModal('${user.email}', ${user.isLocked})">${actionButtonText}</button>
+                    <button class="${actionButtonClass}" onclick="openStatusModal('${user.email}', ${isLocked})">${actionButtonText}</button>
                     <button class="btn-detail" onclick="openResetPasswordModal('${user.email}')">Reset MK</button>
                 </td>
             </tr>
@@ -1365,6 +1579,62 @@ function saveToLocalStorage(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
 }
 
+// Helper function: Chuyển đổi productList sang format grouped by brand
+function convertProductListToGroupedFormat(productList) {
+    const dataProductsFormat = {};
+    productList.forEach(product => {
+        let pr_Brand = product.brand || 'Khác';
+        pr_Brand = pr_Brand.toLowerCase();
+        const brand = pr_Brand;
+        if (!dataProductsFormat[brand]) {
+            dataProductsFormat[brand] = [];
+        }
+        dataProductsFormat[brand].push(product);
+    });
+    return dataProductsFormat;
+}
+
+// Helper function: Lưu productList với format đúng
+function saveProductListToLocalStorage(productList) {
+    const dataProductsFormat = convertProductListToGroupedFormat(productList);
+    saveToLocalStorage(LS_KEY_PRODUCT_DATA, dataProductsFormat);
+}
+
+// Debug function: Sửa lại dữ liệu localStorage nếu bị sai format
+function fixProductData() {
+    if (!confirm('Bạn có chắc muốn sửa lại dữ liệu sản phẩm? Hành động này sẽ convert dữ liệu về format đúng.')) {
+        return;
+    }
+    
+    try {
+        const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+        console.log('Raw data:', rawData);
+        
+        if (!rawData) {
+            alert('Không có dữ liệu trong localStorage!');
+            return;
+        }
+        
+        const data = JSON.parse(rawData);
+        console.log('Parsed data:', data);
+        console.log('Is Array?', Array.isArray(data));
+        
+        // Nếu đang là Array (format sai), convert về Object (format đúng)
+        if (Array.isArray(data)) {
+            console.log('Đang ở format Array (SAI) → Converting to Object (ĐÚNG)');
+            const fixedData = convertProductListToGroupedFormat(data);
+            localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(fixedData));
+            alert('Đã sửa lại dữ liệu thành công! Reload trang để xem kết quả.');
+            location.reload();
+        } else {
+            alert('Dữ liệu đã đúng format rồi! (Object grouped by brand)');
+        }
+    } catch (error) {
+        console.error('Lỗi khi sửa dữ liệu:', error);
+        alert('Lỗi: ' + error.message);
+    }
+}
+
 // 2. Chức năng MỞ MODAL THÊM (Create)
 function openAddUserModal() {
     const userModal = document.getElementById('AddUserModal');
@@ -1381,6 +1651,11 @@ function openAddUserModal() {
     if (userForm) {
         userForm.reset(); 
         
+        // Đặt giá trị mặc định cho ngày tham gia là hôm nay
+        const today = new Date().toISOString().split('T')[0];
+        const joinDateInput = document.getElementById('UserJoinDate');
+        if (joinDateInput) joinDateInput.value = today; 
+        
         // --- GÁN LOGIC LƯU DỮ LIỆU VÀO onsubmit ---
         userForm.onsubmit = function(event) {
             event.preventDefault(); // Ngăn trình duyệt tải lại trang
@@ -1388,16 +1663,16 @@ function openAddUserModal() {
             // LẤY DỮ LIỆU
             const name = document.getElementById('UserName').value.trim();
             const email = document.getElementById('UserEmail').value.trim();
+            const phone = document.getElementById('UserPhone').value.trim();
             const password = document.getElementById('UserPassword').value.trim();
+            const joinDateInput = document.getElementById('UserJoinDate').value;
             const status = parseInt(document.getElementById('UserStatus').value);
-            const islock = status === 1 ? false : true;
             
             // KIỂM TRA DỮ LIỆU
             if (!name || !email || !password) { 
                 alert("Vui lòng điền đầy đủ các trường bắt buộc (Tên, Email, Mật khẩu).");
                 return; 
             }
-            
             
             // Kiểm tra email đã tồn tại
             const existingAccounts = JSON.parse(localStorage.getItem(LS_KEY_USERS) || '[]');
@@ -1408,13 +1683,26 @@ function openAddUserModal() {
                 return;
             }
             
-            // TẠO ĐỐI TƯỢNG MỚI với cấu trúc đúng theo localStorage
+            // Xử lý ngày tham gia: Nếu không nhập thì lấy ngày hiện tại
+            let joinDate;
+            if (joinDateInput) {
+                // Chuyển từ YYYY-MM-DD sang dd/mm/yyyy
+                const [year, month, day] = joinDateInput.split('-');
+                joinDate = `${day}/${month}/${year}`;
+            } else {
+                joinDate = new Date().toLocaleDateString('vi-VN');
+            }
+            
+            // TẠO ĐỐI TƯỢNG MỚI với cấu trúc ĐỒNG BỘ với script.js
             const newUser = {
-                account: name,
-                email: email,
-                password: password,  // Mật khẩu do admin nhập
-                joinDate: new Date().toISOString().slice(0,10),
-                isLocked: islock
+                fullname: name,              // Tên đầy đủ
+                phone: phone,                // Số điện thoại từ input
+                email: email,                // Email
+                password: password,          // Mật khẩu gốc (không hash)
+                join: joinDate,              // Format: dd/mm/yyyy
+                status: status,              // 1 = hoạt động, 0 = bị khóa
+                userType: 1,                 // 1 = khách thường (không phải admin)
+                cart: []                     // Giỏ hàng rỗng
             };
 
             // LƯU VÀO localStorage (accounts)
@@ -1424,7 +1712,7 @@ function openAddUserModal() {
             // CẬP NHẬT GIAO DIỆN
             showUser(); // Cập nhật bảng Khách hàng
             
-            const statusText = islock === false ? 'Hoạt động' : 'Bị khóa';
+            const statusText = status === 1 ? 'Hoạt động' : 'Bị khóa';
             alert(`✅ Đã thêm khách hàng thành công!\n\n` +
                     `Tên: ${name}\n` +
                     `Email: ${email}\n` +
@@ -2268,7 +2556,7 @@ function saveImport(isComplete) {
     
     // Lưu vào localStorage
     saveToLocalStorage(LS_KEY_IMPORT, importList);
-    saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList); // Lưu cả thay đổi tồn kho
+    saveProductListToLocalStorage(productList); // Lưu theo format grouped
     
     showImportList();
     showProduct(); 
@@ -2327,8 +2615,9 @@ function updateImport(id, isComplete) {
     
     // 5. THAY THẾ PHIẾU CŨ
     importList[phieuIndex] = updatedImport;
+    
     saveToLocalStorage(LS_KEY_IMPORT, importList); 
-    saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList); // Cần lưu cả thay đổi product
+    saveProductListToLocalStorage(productList); // Lưu theo format grouped
 
     // 6. CẬP NHẬT GIAO DIỆN
     showImportList();
@@ -2489,8 +2778,9 @@ function completeImport(id) {
 
         // 2. CẬP NHẬT TRẠNG THÁI PHIẾU NHẬP
         importList[phieuIndex].status = 1;
+        
         saveToLocalStorage(LS_KEY_IMPORT, importList);
-        saveToLocalStorage(LS_KEY_PRODUCT_DATA, productList); // Lưu cập nhật tồn kho
+        saveProductListToLocalStorage(productList); // Lưu theo format grouped
 
         // 3. CẬP NHẬT GIAO DIỆN
         showImportList();

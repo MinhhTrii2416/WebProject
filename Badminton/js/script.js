@@ -5,7 +5,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- Khai báo các biến ---
-    const USERS_KEY = 'Users';
+    const USERS_KEY = 'accounts'; // ✅ Đổi từ 'Users' sang 'accounts' để đồng bộ với admin
     const CURRENT_USER_KEY = 'CurrentUser';
 
     // Lấy các phần tử modal
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Xử lý Đăng ký
     function handleRegister(event) {
         event.preventDefault();
-        const account = document.getElementById("register-account").value;
+        const fullname = document.getElementById("register-account").value;
         const email = document.getElementById("register-email").value;
         const password = document.getElementById("register-password").value;
         const confirmPassword = document.getElementById("register-confirm-password").value;
@@ -169,16 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Mã hóa mật khẩu (đơn giản, không an toàn cho sản phẩm thật)
-        const hashedPassword = "hashed_" + password; 
-        
-        // Tạo user mới với isLocked = false
+        // ✅ Tạo user mới với cấu trúc đồng bộ với admin
         const newUser = {
-            account: account,
+            fullname: fullname,
+            phone: '', // Để trống, có thể cập nhật sau
             email: email,
-            password: hashedPassword,
-            joinDate: new Date().toISOString().slice(0, 10), // Định dạng: YYYY-MM-DD
-            isLocked: false
+            password: password, // ✅ Lưu mật khẩu gốc (không hash)
+            join: new Date().toLocaleDateString('vi-VN'), // Format: dd/mm/yyyy
+            status: 1, // 1 = hoạt động
+            userType: 1, // 1 = khách thường
+            cart: []
         };
         
         users.push(newUser);
