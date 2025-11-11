@@ -374,8 +374,9 @@ select option:checked {
 }
 
 .admin-control .center {
-    flex: 0 1 200px;
-    justify-content: flex-start;
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: 15px;
 }
 
 .admin-control .right {

@@ -41,11 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const brand in productsData) {
                 if (Array.isArray(productsData[brand])) {
                     productsData[brand].forEach(product => {
-                        // Thêm brand vào product nếu chưa có
-                        allProducts.push({
-                            ...product,
-                            brand: product.brand || brand
-                        });
+                        // ✅ Tính status từ stock nếu chưa có
+                        const status = product.status !== undefined 
+                            ? product.status 
+                            : (product.stock > 5 ? 1 : product.stock === 0 ? 0 : 2);
+                        
+                        // ✅ Chỉ thêm sản phẩm có status !== 0 (không hết hàng)
+                        if (status !== 0) {
+                            // Thêm brand vào product nếu chưa có
+                            allProducts.push({
+                                ...product,
+                                brand: product.brand || brand,
+                                status: status // ✅ Thêm status vào product
+                            });
+                        }
                     });
                 }
             }

@@ -79,7 +79,16 @@ h2 {
 .featured-brands img {
     max-height: 40px;
     max-width: 120px;
-    filter: grayscale(100%);
+    /* filter: grayscale(100%); */
+    transition: transform 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.featured-brands img:hover {
+    transform: scale(1.15);
+    border: 2px solid var(--primary-color);
 }
 @media (max-width: 500px) {
     .featured-brands .container {

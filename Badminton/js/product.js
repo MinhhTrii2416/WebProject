@@ -225,9 +225,9 @@ const productsData = {
             price: 4200000,
             originalPrice: 4800000,
             images: [
-                "img/Lining/aeronaut900.jpg",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Aeronaut+9000+Front",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Aeronaut+9000+Side",
+                "img/Lining/Lining Aeronaut 9000/Lining.png",
+                "img/Lining/LiningLining Aeronaut 9000/OP1.png ",
+                "img/Lining/LiningLining Aeronaut 9000/OI2.png",
             ],
             description: "Vợt cao cấp nhất của Lining với công nghệ Wing Stabilizer",
             weight: "3U",
@@ -247,9 +247,9 @@ const productsData = {
             price: 4200000,
             originalPrice: 4800000,
             images: [
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Aeronaut+9000",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Aeronaut+9000+4U",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Aeronaut+9000+4U+Side"
+                "img/Lining/Lining Aeronaut 9000/Lining.png",
+                "img/Lining/Lining Aeronaut 9000/OP1.png",
+                "img/Lining/Lining Aeronaut 9000/OI2.png"
             ],
             description: "Vợt cao cấp của Lining. Phiên bản 4U nhẹ và nhanh hơn.",
             weight: "4U",
@@ -269,9 +269,9 @@ const productsData = {
             price: 3500000,
             originalPrice: 4000000,
             images: [
-                "https://placehold.co/400x400/e74c3c/ffffff?text=N99",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=N99+Front",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=N99+Side",
+                "img/Lining/Lining N99/vot-cau-long-lining-n99-blue-chinh-hang-2.webp",
+                "img/Lining/Lining N99/vot-cau-long-lining-n99-blue-2.webp",
+                "img/Lining/Lining N99/vot-lining-air-stream-N99-than-1.webp",
             ],
             description: "Vợt của Lin Dan, kiểm soát và tấn công hoàn hảo",
             weight: "4U",
@@ -291,9 +291,9 @@ const productsData = {
             price: 3200000,
             originalPrice: 3700000,
             images: [
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Windstorm+78",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Windstorm+78+Front",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=Windstorm+78+Side"
+                "img/Lining/Windstorm 78/BLACKGOLD1_c4d85e21-31d7-4207-8c12-afbe11698868.webp",
+                "img/Lining/Windstorm 78/buy-lining-windstorm-78-black-badminton.webp",
+                "img/Lining/Windstorm 78/li-ning-6630-6035292-4.webp",
             ],
             description: "Tốc độ swing nhanh với công nghệ Aerotec-Beam System",
             weight: "5U",
@@ -313,9 +313,9 @@ const productsData = {
             price: 4000000,
             originalPrice: 4500000,
             images: [
-                "https://placehold.co/400x400/e74c3c/ffffff?text=3D+Calibar+900",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=3D+Calibar+900+Front",
-                "https://placehold.co/400x400/e74c3c/ffffff?text=3D+Calibar+900+Side",
+                "img/Lining/3D Calibar 900/74d67d9d-901e-4e24-a6eb-1bad9ec381d6_2048x2048.webp",
+                "img/Lining/3D Calibar 900/3efbcdf0-03ea-42c7-965c-cccbfe3e3c53_x700.webp",
+                "img/Lining/3D Calibar 900/images-007001481-48915_4.j",
             ],
             description: "Khung vợt 3D độc đáo, tăng vùng ngọt khi đánh",
             weight: "4U",
@@ -337,9 +337,9 @@ const productsData = {
             price: 4100000,
             originalPrice: 4700000,
             images: [
-                "https://placehold.co/400x400/3498db/ffffff?text=TK+Falcon",
-                "https://placehold.co/400x400/3498db/ffffff?text=TK+Falcon+Front",
-                "https://placehold.co/400x400/3498db/ffffff?text=TK+Falcon+Side",
+                "img/Victor/Thruster K Falcon/808911356889995269.jpg",
+                "img/Victor/Thruster K Falcon/OIP (1).jpg",
+                "img/Victor/Thruster K Falcon/OIP.jpg",
             ],
             description: "Vợt của Axelsen, công nghệ PYROFIL độc quyền",
             weight: "3U",
@@ -359,9 +359,9 @@ const productsData = {
             price: 4100000,
             originalPrice: 4700000,
             images: [
-                "https://placehold.co/400x400/3498db/ffffff?text=TK+Falcon",
-                "https://placehold.co/400x400/3498db/ffffff?text=TK+Falcon+4U",
-                "https://placehold.co/400x400/3498db/ffffff?text=TK+Falcon+4U+Side"
+                "img/Victor/Thruster K Falcon/T1.jpg",
+                "img/Victor/Thruster K Falcon/T2.jpg",
+                "img/Victor/Thruster K Falcon/T3.jpg"
             ],
             description: "Vợt của Axelsen. Phiên bản 4U cân bằng lực và tốc độ.",
             weight: "4U",
@@ -381,9 +381,9 @@ const productsData = {
             price: 3700000,
             originalPrice: 4200000,
             images: [
-                "https://placehold.co/400x400/3498db/ffffff?text=ARS+90K",
-                "https://placehold.co/400x400/3498db/ffffff?text=ARS+90K+Front",
-                "https://placehold.co/400x400/3498db/ffffff?text=ARS+90K+Side"
+                "img/Victor/Auraspeed 90K/OP(1).jpg",
+                "img/Victor/Auraspeed 90K/OP(2).jpg",
+                "img/Victor/Auraspeed 90K/OP.jpg"
             ],
             description: "Tốc độ đỉnh cao với công nghệ Nano Fortify",
             weight: "5U",
@@ -403,9 +403,9 @@ const productsData = {
             price: 3900000,
             originalPrice: 4400000,
             images: [
-                "https://placehold.co/400x400/3498db/ffffff?text=JS+S12",
-                "https://placehold.co/400x400/3498db/ffffff?text=JS+S12+Front",
-                "https://placehold.co/400x400/3498db/ffffff?text=JS+S12+Side",
+                "img/Victor/Jetspeed S12/132_1_6_victor_jetspeed_s12_blue.webp",
+                "img/Victor/Jetspeed S12/jetspeeds12_1024x1024.webp",
+                "img/Victor/Jetspeed S12/jetspeeds122_1024x1024.webp",
             ],
             description: "Aerodynamic Frame giảm sức cản không khí tối đa",
             weight: "4U",
@@ -425,9 +425,9 @@ const productsData = {
             price: 3500000,
             originalPrice: 4000000,
             images: [
-                "https://placehold.co/400x400/3498db/ffffff?text=BS+12",
-                "https://placehold.co/400x400/3498db/ffffff?text=BS+12+Front",
-                "https://placehold.co/400x400/3498db/ffffff?text=BS+12+Side",
+                "img/Victor/Bravesword 12/72c5abfa-a19b-4e8b-b3b6-edb36d4ac189_2048x2048.webp",
+                "img/Victor/Bravesword 12/BRS-12-3__71649_1800x1800.webp",
+                "img/Victor/Bravesword 12/Victor-Brave-Sword-12.webp",
             ],
             description: "Sword concept, chém cầu mạnh mẽ và chính xác",
             weight: "4U",
@@ -449,9 +449,9 @@ const productsData = {
             price: 3900000,
             originalPrice: 4500000,
             images: [
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Tour+F",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Tour+F+Front",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Tour+F+Side",
+                "img/Mizuno/Fortius Tour F/80109_02-250x250.jpg",
+                "img/Mizuno/Fortius Tour F/OIP (2).jpg",
+                "img/Mizuno/Fortius Tour F/OIP.jpg",
             ],
             description: "Vợt cao cấp nhất Mizuno với Hot Melt Tech",
             weight: "3U",
@@ -471,9 +471,9 @@ const productsData = {
             price: 3900000,
             originalPrice: 4500000,
             images: [
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Tour+F",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Tour+F+4U",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Tour+F+4U+Side"
+                "img/Mizuno/Fortius Tour F/80109_02-250x250.jpg",
+                "img/Mizuno/Fortius Tour F/OIP (2).jpg",
+                "img/Mizuno/Fortius Tour F/OIP.jpg"
             ],
             description: "Vợt cao cấp nhất Mizuno. Phiên bản 4U nhẹ hơn.",
             weight: "4U",
@@ -493,9 +493,9 @@ const productsData = {
             price: 3300000,
             originalPrice: 3800000,
             images: [
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Caliber+Regnas",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Caliber+Regnas+Front",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Caliber+Regnas+Side"
+                "img/Mizuno/Caliber Regnas/mizuno_caliber_reg_badminton_racket_1538486171_3df34478.jpg",
+                "img/Mizuno/Caliber Regnas/vot-cau-long-mizuno-caliber-reg-chu-ky-nozomi-okuhara--1.webp",
+                "img/Mizuno/Caliber Regnas/vot-cau-long-mizuno-carliber-vs-tour-1.webp"
             ],
             description: "Độ ổn định cao với công nghệ Sonic Metal",
             weight: "4U",
@@ -515,9 +515,9 @@ const productsData = {
             price: 3100000,
             originalPrice: 3600000,
             images: [
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Altius+03",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Altius+03+Front",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Altius+03+Side",
+                "img/Mizuno/Altius 03 Speed/file.png",
+                "img/Mizuno/Altius 03 Speed/OIP (1).jpg",
+                "img/Mizuno/Altius 03 Speed/PXL_20230424_130233622.webp",
             ],
             description: "Tốc độ cao với trọng lượng cực nhẹ",
             weight: "5U",
@@ -537,9 +537,9 @@ const productsData = {
             price: 3500000,
             originalPrice: 4000000,
             images: [
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Pro",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Pro+Front",
-                "https://placehold.co/400x400/9b59b6/ffffff?text=Fortius+Pro+Side",
+                "img/Mizuno/Fortius Pro/fortius50swift_ecomm_2000x2000_-02.webp",
+                "img/Mizuno/Fortius Pro/OIP.jpg",
+                "img/Mizuno/Fortius Pro/vot-cau-long-mizuno-fortius-50-swift-dexd.jpg",
             ],
             description: "Công nghệ Wave Rib Frame độc quyền của Mizuno",
             weight: "4U",

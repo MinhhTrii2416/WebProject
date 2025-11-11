@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Pro Badminton Store</title>
+    <link rel="stylesheet" href="css/admin-login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-box">
+            <!-- Logo Section -->
+            <div class="admin-logo-section">
+                <i class="fas fa-user-shield admin-icon"></i>
+                <h1>Quản Trị Viên</h1>
+                <p>Pro Badminton Store</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="admin-login-form" class="admin-form">
+                <h2>Đăng nhập</h2>
+                
+                <div class="form-group">
+                    <label for="admin-email">
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="admin-email" 
+                        placeholder="admin@probadminton.vn"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-password">
+                        <i class="fas fa-lock"></i>
+                        Mật khẩu
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input 
+                            type="password" 
+                            id="admin-password" 
+                            placeholder="••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="toggle-password" id="toggle-password">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="admin-login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Đăng nhập
+                </button>
+
+                <p id="admin-error-msg" class="error-msg hidden"></p>
+            </form>
+
+            <!-- Back to Home Link -->
+            <div class="back-to-home">
+                <a href="index.html">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại trang chủ
+                </a>
+            </div>
+        </div>
+
+        <!-- Background Decoration -->
+        <div class="admin-bg-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="admin-toast" class="admin-toast" role="status" aria-live="polite"></div>
+
+    <script src="js/admin-login.js"></script>
+</body>
+</html>

@@ -13,7 +13,7 @@
 <body>
     <div class="sidebar">
     <div class="top-sidebar">
-      <div class="logo"><img src="img/logo.png" alt="Logo"></div>
+      <div class="logo"><img src="img/ShopWe.png" alt="Logo"></div>
     </div>
 
     <div class="middle-sidebar">
@@ -27,10 +27,10 @@
     </div>
 
     <div class="bottom-sidebar">
-      <p>Xin chào, <strong>Admin</strong></p>
+      <p>Xin chào, <strong id="admin-name-display">Admin</strong></p>
       <div class="admin-buttons">
-        <button class="btn-home" onclick="window.location.href='index.html'">Trang chủ</button>
-        <button class="btn-logout">Đăng xuất</button>
+        <button class="btn-home" onclick="window.open('index.html', '_blank')">Trang chủ</button>
+        <button class="btn-logout" onclick="handleAdminLogout()">Đăng xuất</button>
       </div>
     </div>
   </div>
@@ -86,6 +86,12 @@
                            <option>Victor</option>
                            <option>Lining</option>
                            <option>Mizuno</option>
+                         </select>
+                         <select name="tinh-trang-product" id="tinh-trang-product" onchange="showProduct()">
+                           <option value="3" selected>Tất cả trạng thái</option>
+                           <option value="1">Còn hàng</option>
+                           <option value="2">Sắp hết hàng</option>
+                           <option value="0">Hết hàng</option>
                          </select>
                     </div>
                     <div class="admin-control right">
@@ -454,8 +460,8 @@
 
                 <div class="form-row">
                     <div class="form_group">
-                        <label for="ProductImage">Chọn ảnh sản phẩm <span class="required">*</span></label>
-                        <input type="file" id="ProductImage" name="image" accept="image/*" multiple required>
+                        <label for="ProductImage">Chọn ảnh sản phẩm (Tùy chọn)</label>
+                        <input type="file" id="ProductImage" name="image" accept="image/*" multiple>
                         <small style="color: #6c757d; font-size: 12px; display: block; margin-top: 5px;">
                             <i class="fa-solid fa-circle-info"></i> Định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB/ảnh. Tối đa 3 ảnh.
                         </small>
@@ -590,24 +596,10 @@
                 </div>
 
                 <div class="form_group">
-                    <label for="UserPhone">
-                        <i class="fa-solid fa-phone"></i> Số điện thoại:
-                    </label>
-                    <input type="tel" id="UserPhone" name="phone" placeholder="Nhập số điện thoại">
-                </div>
-
-                <div class="form_group">
                     <label for="UserPassword">
                         <i class="fa-solid fa-lock"></i> Mật khẩu: <span style="color: red;">*</span>
                     </label>
                     <input type="password" id="UserPassword" name="password" placeholder="Điền mật khẩu" required>
-                </div>
-
-                <div class="form_group">
-                    <label for="UserJoinDate">
-                        <i class="fa-regular fa-calendar"></i> Ngày tham gia:
-                    </label>
-                    <input type="date" id="UserJoinDate" name="joindate">
                 </div>
 
                 <div class="form_group">
@@ -745,7 +737,38 @@
     <script src="js/cart.js"></script>
     <script>
 
+    // --- KIỂM TRA ĐĂNG NHẬP ADMIN & HIỂN THỊ TÊN ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy thông tin admin từ sessionStorage
+        const currentAdmin = sessionStorage.getItem('currentAdmin');
+        
+        if (!currentAdmin) {
+            // Nếu chưa đăng nhập, chuyển về trang login
+            alert('Vui lòng đăng nhập để truy cập trang quản trị!');
+            window.location.href = 'admin-login.html';
+            return;
+        }
+        
+        // Parse thông tin admin
+        const adminInfo = JSON.parse(currentAdmin);
+        
+        // Hiển thị tên admin
+        const adminNameDisplay = document.getElementById('admin-name-display');
+        if (adminNameDisplay) {
+            adminNameDisplay.textContent = adminInfo.name;
+        }
+    });
 
+    // --- HÀM XỬ LÝ ĐĂNG XUẤT ---
+    function handleAdminLogout() {
+        if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+            // Xóa thông tin admin khỏi sessionStorage
+            sessionStorage.removeItem('currentAdmin');
+            
+            // Chuyển về trang login
+            window.location.href = 'admin-login.html';
+        }
+    }
 
     // --- Các Hàm Chung & Tiện ích ---
     // -- Fallback / Default data & helpers (tránh ReferenceError khi thiếu file dữ liệu) --
@@ -771,7 +794,17 @@
     }
 
     function closeModal(id) {
-        document.getElementById(id).style.display = "none"; 
+        document.getElementById(id).style.display = "none";
+        
+        // ✅ Reset selectedImages khi đóng modal sản phẩm
+        if (id === 'Modal') {
+            selectedImages = [];
+            const imagePreviewList = document.getElementById('ImagePreviewList');
+            const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
+            if (imagePreviewList) imagePreviewList.innerHTML = '';
+            if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+            updateImageCount();
+        }
     }
 
     function formatCurrency(amount) {
@@ -806,7 +839,7 @@
     }
 
     // --- KHAI BÁO KEY LOCAL STORAGE ---
-const LS_KEY_USERS = 'Users'; // ✅ Key Khách hàng từ script.js (đúng tên là 'accounts')
+const LS_KEY_USERS = 'Users'; // ✅ Key Khách hàng từ script.js
 const LS_KEY_ORDERS = 'AllOrders'; // Key Đơn hàng từ cart.js
 const LS_KEY_PRODUCT_DATA = 'dataProducts'; // Key Sản phẩm từ initProduct.js
 
@@ -944,13 +977,18 @@ function getOrderDetailsListFromStore() {
         const tableBody = document.getElementById('show-product');
         const searchInput = document.getElementById('form-search-product').value.toLowerCase();
         const categorySelect = document.getElementById('the-loai').value;
+        const statusSelect = parseInt(document.getElementById('tinh-trang-product').value);
 
         let filteredProducts = productList.filter(product => {
+            const idMatch = product.id.toLowerCase().includes(searchInput);
             const nameMatch = product.name.toLowerCase().includes(searchInput);
             const categoryMatch = categorySelect === 'Tất cả' || product.brand === categorySelect;
-            const statusMatch = product.status;
+            
+            // ✅ Lọc theo trạng thái: 3 = Tất cả, 1 = Còn hàng, 2 = Sắp hết, 0 = Hết hàng
+            const statusMatch = statusSelect === 3 || product.status === statusSelect;
 
-            return nameMatch && categoryMatch && statusMatch; 
+            // ✅ Tìm theo ID HOẶC tên (chỉ cần 1 trong 2 match)
+            return (nameMatch || idMatch) && categoryMatch && statusMatch; 
         });
 
         let html = '';
@@ -984,6 +1022,7 @@ function getOrderDetailsListFromStore() {
     function resetSearchProduct() {
         document.getElementById('form-search-product').value = '';
         document.getElementById('the-loai').value = 'Tất cả';
+        document.getElementById('tinh-trang-product').value = '3'; // Reset về "Tất cả trạng thái"
         showProduct();
     }
 
@@ -1226,12 +1265,6 @@ function handleAddProductSubmit(event) {
         alert("Vui lòng điền đầy đủ Tên, Hãng và Giá bán hợp lệ (> 0).");
         return; 
     }
-    
-    // KIỂM TRA ẢNH - phải có ít nhất 1 ảnh từ selectedImages
-    if (selectedImages.length === 0) {
-        alert("Vui lòng chọn ít nhất 1 ảnh sản phẩm!");
-        return;
-    }
 
     // Tạo ID mới cho sản phẩm
     const brandPrefix = type.charAt(0).toUpperCase(); // "Y", "V", "L", "M"
@@ -1256,9 +1289,17 @@ function handleAddProductSubmit(event) {
     // Lấy tất cả ảnh base64 từ selectedImages
     const imagesBase64 = selectedImages.map(img => img.dataUrl);
     
+    // ✅ Lấy tỷ lệ lợi nhuận từ localStorage theo brand
+    const brandProfitRate = profitRateList.find(prl => 
+        prl.type.toLowerCase() === type.toLowerCase()
+    );
+    const profitRate = brandProfitRate ? brandProfitRate.profitRate : 0.15; // Fallback 15%
+    
+    // ✅ Tính giá nhập = Giá bán × (1 - % lợi nhuận)
+    const importPrice = price * (1 - profitRate);
+    
     // TẠO ĐỐI TƯỢNG SẢN PHẨM MỚI với đầy đủ thông tin
     const newProduct = {
-        stt: productList.length > 0 ? Math.max(...productList.map(p => p.stt || 0)) + 1 : 1,
         id: newId,
         name: name,
         brand: type,
@@ -1275,7 +1316,9 @@ function handleAddProductSubmit(event) {
         madeIn: madeIn,
         category: category,
         rating: 5,
-        status: stock > 5 ? 1 : stock === 0 ? 0 : 2
+        status: stock > 5 ? 1 : stock === 0 ? 0 : 2,
+        importPrice: importPrice,
+        profitRate: profitRate    
     };
 
     // LƯU VÀO DANH SÁCH SẢN PHẨM (productList)
@@ -1373,6 +1416,12 @@ function openEditProductModal(productId) {
                 productList[productIndex].madeIn = updatedMadeIn;
                 productList[productIndex].description = updatedDescription;
                 productList[productIndex].status = updatedStock > 5 ? 1 : updatedStock === 0 ? 0 : 2;
+                
+                // ✅ CẬP NHẬT ẢNH: Nếu có chọn ảnh mới thì cập nhật, không thì giữ nguyên ảnh cũ
+                if (selectedImages.length > 0) {
+                    const updatedImages = selectedImages.map(img => img.dataUrl);
+                    productList[productIndex].images = updatedImages;
+                }
             }
 
             // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
@@ -1653,9 +1702,6 @@ function openAddUserModal() {
         
         // Đặt giá trị mặc định cho ngày tham gia là hôm nay
         const today = new Date().toISOString().split('T')[0];
-        const joinDateInput = document.getElementById('UserJoinDate');
-        if (joinDateInput) joinDateInput.value = today; 
-        
         // --- GÁN LOGIC LƯU DỮ LIỆU VÀO onsubmit ---
         userForm.onsubmit = function(event) {
             event.preventDefault(); // Ngăn trình duyệt tải lại trang
@@ -1663,9 +1709,7 @@ function openAddUserModal() {
             // LẤY DỮ LIỆU
             const name = document.getElementById('UserName').value.trim();
             const email = document.getElementById('UserEmail').value.trim();
-            const phone = document.getElementById('UserPhone').value.trim();
             const password = document.getElementById('UserPassword').value.trim();
-            const joinDateInput = document.getElementById('UserJoinDate').value;
             const status = parseInt(document.getElementById('UserStatus').value);
             
             // KIỂM TRA DỮ LIỆU
@@ -1683,26 +1727,14 @@ function openAddUserModal() {
                 return;
             }
             
-            // Xử lý ngày tham gia: Nếu không nhập thì lấy ngày hiện tại
-            let joinDate;
-            if (joinDateInput) {
-                // Chuyển từ YYYY-MM-DD sang dd/mm/yyyy
-                const [year, month, day] = joinDateInput.split('-');
-                joinDate = `${day}/${month}/${year}`;
-            } else {
-                joinDate = new Date().toLocaleDateString('vi-VN');
-            }
-            
+            const hash_password = "hashed_" + password;
             // TẠO ĐỐI TƯỢNG MỚI với cấu trúc ĐỒNG BỘ với script.js
             const newUser = {
-                fullname: name,              // Tên đầy đủ
-                phone: phone,                // Số điện thoại từ input
+                account: name,                // Số điện thoại từ input
                 email: email,                // Email
-                password: password,          // Mật khẩu gốc (không hash)
-                join: joinDate,              // Format: dd/mm/yyyy
-                status: status,              // 1 = hoạt động, 0 = bị khóa
-                userType: 1,                 // 1 = khách thường (không phải admin)
-                cart: []                     // Giỏ hàng rỗng
+                password: hash_password,         
+                joinDate: today,      
+                isLocked: status === 1 ? false : true,   // 1 = hoạt động, 0 = bị khóa
             };
 
             // LƯU VÀO localStorage (accounts)
@@ -1966,7 +1998,7 @@ function changeOrderStatus(id, newStatus) {
         const phieu = rawOrders[rawIndex];
         if (Array.isArray(phieu.items)) {
             phieu.items.forEach(item => {
-                const prodIndex = productList.findIndex(p => p.id == item.productId || p.stt == item.productId);
+                const prodIndex = productList.findIndex(p => p.id == item.productId);
                 if (prodIndex !== -1) {
                     productList[prodIndex].stock = (productList[prodIndex].stock || 0) + (item.quantity || 0);
                 }
@@ -2257,9 +2289,12 @@ function showPriceManagement() {
     productList.forEach((product) => {
         const brandName = product.brand.toLowerCase();
         const productName = product.name.toLowerCase();
+        const productID = product.id.toLowerCase();
         
         // Filter
-        if (searchValue && !productName.includes(searchValue) && !brandName.toLowerCase().includes(searchValue)) {
+        if (searchValue && !productName.includes(searchValue) 
+            && !brandName.toLowerCase().includes(searchValue) 
+            && !productID.toLowerCase().includes(searchValue)) {
             return;
         }
         if (filterBrand && brandName !== filterBrand) {
@@ -2372,57 +2407,64 @@ function updateProductPrice(id) {
 // --- LOGIC QUẢN LÝ NHẬP HÀNG (IMPORT-MGT) ---
 
 // Hàm tạo HTML cho danh sách sản phẩm (dropdown)
-function getProductOptions(selectedStt = null) {
+function getProductOptions(selectedProductId = null) {
     let options = '<option value="">-- Chọn sản phẩm --</option>';
-    productList.filter(p => p.status === 1).forEach(p => {
-        const isSelected = p.stt === selectedStt ? 'selected' : '';
-        options += `<option value="${p.stt}" ${isSelected}>[ID: ${p.id}] ${p.name} (${p.brand})</option>`;
+    // Hiển thị tất cả sản phẩm, không filter theo status
+    productList.forEach(p => {
+        const isSelected = p.id === selectedProductId ? 'selected' : '';
+        // Thêm thông tin status để dễ nhận biết
+        let statusInfo = '';
+        if (p.status === 0) statusInfo = ' [Hết hàng]';
+        else if (p.status === 2) statusInfo = ' [Sắp hết]';
+        
+        options += `<option value="${p.id}" ${isSelected}>[ID: ${p.id}] ${p.name} (${p.brand})${statusInfo}</option>`;
     });
     return options;
 }
 
 // Hàm tạo một dòng sản phẩm mới trong form nhập hàng
 function createImportItemRow(item = null) {
-    const stt = item ? item.productId : Date.now(); // Sử dụng timestamp làm ID tạm thời cho row mới
-    const productName = item ? productList.find(p => p.stt === item.productId)?.name : '';
+    // Luôn tạo unique ID cho row (dùng timestamp), KHÔNG dùng productId để tránh trùng lặp
+    const rowId = Date.now() + Math.random(); // Thêm random để đảm bảo unique ngay cả khi tạo nhiều row cùng lúc
+    const productName = item ? productList.find(p => p.id === item.productId)?.name : '';
     const initialPrice = item ? item.importPrice : 0;
     const initialQuantity = item ? item.quantity : 1;
-    const isEditing = item !== null;
+    const selectedProductId = item ? item.productId : null;
     
     // Gán dữ liệu sản phẩm gốc để hiển thị/tính toán
-    const productOptions = getProductOptions(item ? item.productId : null);
+    const productOptions = getProductOptions(selectedProductId);
 
     return `
-        <div class="import-item-row" data-row-id="${stt}">
+        <div class="import-item-row" data-row-id="${rowId}">
             <div class="form_group" style="display: flex; gap: 10px; align-items: flex-end; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
                 
                 <div style="flex-grow: 3;">
                     <label>Sản phẩm:</label>
                     <select class="import-product-select" 
-                            data-stt="${stt}"
-                            onchange="updateImportItem(${stt}, this.value, 'select')">${productOptions}</select>
+                            data-row-id="${rowId}"
+                            onchange="updateImportItem(${rowId}, this.value, 'select')">${productOptions}</select>
                 </div>
 
                 <div style="flex-grow: 1;">
                     <label>Giá nhập:</label>
                     <input type="number" 
                            class="import-price-input" 
-                           data-stt="${stt}" 
+                           data-row-id="${rowId}" 
                            value="${initialPrice}" min="0" required
-                           oninput="updateImportItem(${stt}, this.value, 'price')">
+                           oninput="updateImportItem(${rowId}, this.value, 'price')">
                 </div>
 
                 <div style="flex-grow: 1;">
                     <label>Số lượng:</label>
                     <input type="number" 
                            class="import-quantity-input" 
-                           data-stt="${stt}" 
+                           data-row-id="${rowId}" 
                            value="${initialQuantity}" min="1" required
-                           oninput="updateImportItem(${stt}, this.value, 'quantity')">
+                           oninput="updateImportItem(${rowId}, this.value, 'quantity')">
                 </div>
 
                 <div style="flex-grow: 0;">
-                    <button type="button" class="btn-delete" onclick="removeImportItemRow(${stt})" title="Xóa sản phẩm">
+                    <button type="button" class="btn-delete" onclick="removeImportItemRow(${rowId})" title="Xóa sản phẩm">
                         <i class="fa-solid fa-times"></i>
                     </button>
                 </div>
@@ -2464,14 +2506,14 @@ function calculateImportTotal() {
 }
 
 // Hàm cập nhật dữ liệu khi thay đổi (select/price/quantity)
-function updateImportItem(stt, value, type) {
+function updateImportItem(rowId, value, type) {
     // Nếu thay đổi sản phẩm, cập nhật giá nhập mặc định
     if (type === 'select') {
-        const productId = parseInt(value);
-        const product = productList.find(p => p.stt === productId);
+        const productId = value; // productId là string (vd: "Y001-5U"), không cần parseInt
+        const product = productList.find(p => p.id === productId);
         
         if (product) {
-            const priceInput = document.querySelector(`.import-item-row[data-row-id="${stt}"] .import-price-input`);
+            const priceInput = document.querySelector(`.import-item-row[data-row-id="${rowId}"] .import-price-input`);
             if (priceInput) priceInput.value = product.importPrice;
         }
     }
@@ -2489,19 +2531,19 @@ function collectImportFormData() {
 
     itemRows.forEach(row => {
         // Lấy dữ liệu từ các trường trong dòng
-        const stt = parseInt(row.querySelector('.import-product-select').value);
+        const productId = row.querySelector('.import-product-select').value; // productId là string, không parseInt
         const price = parseInt(row.querySelector('.import-price-input').value);
         const quantity = parseInt(row.querySelector('.import-quantity-input').value);
 
-        if (!stt || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
+        if (!productId || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
             isValid = false;
         }
         
-        const product = productList.find(p => p.stt === stt);
+        const product = productList.find(p => p.id === productId);
         if (product) {
             totalAmount += price * quantity;
             items.push({
-                productId: stt,
+                productId: productId,
                 name: product.name,
                 importPrice: price,
                 quantity: quantity
@@ -2543,10 +2585,19 @@ function saveImport(isComplete) {
     // ... [Logic Tồn kho (Dùng newImport.items thay vì items (biến cục bộ))] ...
     if (isComplete) {
         newImport.items.forEach(item => { // SỬ DỤNG newImport.items
-            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity;
-                productList[productIndex].importPrice = item.importPrice; 
+                // Cập nhật status dựa trên stock mới
+                const newStock = productList[productIndex].stock;
+                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
+                
+                // Cập nhật giá nhập
+                productList[productIndex].importPrice = item.importPrice;
+                
+                // Tính lại giá bán dựa trên giá nhập mới và profitRate
+                const profitRate = productList[productIndex].profitRate || 0.15;
+                productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
         });
     }
@@ -2586,9 +2637,12 @@ function updateImport(id, isComplete) {
     // Nếu phiếu cũ là 'Hoàn thành' (1), ta trừ đi lượng cũ trước khi áp dụng lượng mới
     if (oldPhieu.status === 1) {
         oldPhieu.items.forEach(item => {
-            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
-                productList[productIndex].stock -= item.quantity; 
+                productList[productIndex].stock -= item.quantity;
+                // Cập nhật status dựa trên stock mới sau khi trừ
+                const newStock = productList[productIndex].stock;
+                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
             }
         });
     }
@@ -2605,10 +2659,19 @@ function updateImport(id, isComplete) {
     // 4. Áp dụng tồn kho mới nếu HOÀN THÀNH
     if (isComplete) {
         updatedImport.items.forEach(item => {
-            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity; // Tăng tồn kho mới
-                productList[productIndex].importPrice = item.importPrice; // Cập nhật giá vốn
+                // Cập nhật status dựa trên stock mới
+                const newStock = productList[productIndex].stock;
+                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
+                
+                // Cập nhật giá nhập
+                productList[productIndex].importPrice = item.importPrice;
+                
+                // Tính lại giá bán dựa trên giá nhập mới và profitRate
+                const profitRate = productList[productIndex].profitRate || 0.15;
+                productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
         });
     }
@@ -2769,10 +2832,19 @@ function completeImport(id) {
     if (confirm(`Xác nhận HOÀN THÀNH phiếu nhập ${id}? Tồn kho sẽ được cập nhật.`)) {
         // 1. CẬP NHẬT TỒN KHO
         phieu.items.forEach(item => {
-            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity;
-                productList[productIndex].importPrice = item.importPrice; // Cập nhật giá vốn mới
+                // Cập nhật status dựa trên stock mới
+                const newStock = productList[productIndex].stock;
+                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
+                
+                // Cập nhật giá nhập
+                productList[productIndex].importPrice = item.importPrice;
+                
+                // Tính lại giá bán dựa trên giá nhập mới và profitRate
+                const profitRate = productList[productIndex].profitRate || 0.15;
+                productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
         });
 
