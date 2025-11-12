@@ -3,7 +3,7 @@
     --lightest-gray: rgb(249, 249, 249);
     --lighter-gray: rgb(240, 240, 240);
     --dark-gray: rgb(13, 13, 13);
-    --sidebar-width: 240px; 
+    --sidebar-width: 200px; 
 }
 *,
 *::before,
@@ -770,7 +770,7 @@ h3
 .modal_content 
 {
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 5% var(--sidebar-width);
     padding: 20px;
     border: 1px solid #888;
     width: 90%;
@@ -1302,32 +1302,11 @@ tbody .btn-edit:hover {
     box-shadow: 0 2px 6px rgba(255, 193, 7, 0.2);
 }
 
-/* RESPONSIVE TABLE */
-@media (max-width: 768px) {
-    .table {
-        overflow-x: auto;
-    }
-    
-    tbody tr:hover {
-        transform: none;
-    }
-}
 
 /* ===========================
    RESPONSIVE DESIGN - MOBILE & TABLET
    =========================== */
 
-/* Tablet - Large (1024px - 1200px) */
-@media (max-width: 1200px) {
-    .overview_container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-    
-    .order-statistical {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
 /* Tablet - Medium (768px - 1024px) */
 @media (max-width: 1024px) {
@@ -1339,12 +1318,13 @@ tbody .btn-edit:hover {
         width: var(--sidebar-width);
     }
     
-    .sidebar .sidebar_item span {
+    .sidebar .menu-item span {
         font-size: 13px;
     }
     
-    .main-content {
+    .content {
         margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
     }
     
     .header {
@@ -1366,60 +1346,10 @@ tbody .btn-edit:hover {
         justify-content: flex-start;
     }
 }
-
-/* Tablet - Small & Mobile Landscape (600px - 768px) */
-@media (max-width: 768px) {
-    .overview_container {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        padding: 0 12px;
-    }
-    
-    .order-statistical {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .order-statistical-card {
-        padding: 16px;
-    }
-    
-    .table-wrapper {
-        padding: 0 12px;
-    }
-    
-    .section-title {
-        font-size: 18px;
-        padding: 0 12px;
-    }
-    
-    /* Buttons responsive */
-    .btn-action, .btn-detail, .btn-delete {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-    
-    /* Form controls */
-    select, .form-control-date {
-        margin-left: 0;
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    .fill-date {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .fill-date label {
-        margin-bottom: 4px;
-    }
-}
-
-/* Mobile - Medium (480px - 600px) */
-@media (max-width: 600px) {
+/* Landscape orientation cho mobile */
+@media (max-width: 900px) and (orientation: landscape) {
     :root {
-        --sidebar-width: 60px;
+        --sidebar-width: 70px;
     }
     
     body {
@@ -1470,149 +1400,119 @@ tbody .btn-edit:hover {
     .bottom-sidebar .admin-buttons button::before {
         font-family: "Font Awesome 6 Free";
         font-weight: 900;
-        font-size: 16px;
+        font-size: 14px;
     }
     
     .bottom-sidebar .btn-home::before {
-        content: "\f015"; /* home icon */
+        content: "\f015";
     }
     
     .bottom-sidebar .btn-logout::before {
-        content: "\f2f5"; /* sign-out icon */
+        content: "\f2f5";
     }
     
-    .sidebar .sidebar_item i {
-        margin-right: 0;
-        font-size: 20px;
-    }
-    
-    .sidebar_item {
-        justify-content: center;
-        padding: 12px 8px;
-    }
-    
-    .main-content {
+    /* Content area - để main content chiếm toàn bộ không gian còn lại */
+    .content {
         margin-left: var(--sidebar-width);
-        padding: 12px 0;
+        width: calc(100% - var(--sidebar-width));
+        padding: 0;
     }
     
-    .header {
-        padding: 10px 12px;
+    .section {
+        padding: 16px 12px;
     }
     
-    .header h2 {
+    .section-title {
         font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    /* Header responsive */
+    .header .title h1 {
+        font-size: 20px;
     }
     
     /* Overview cards */
-    .overview_card h3 {
-        font-size: 14px;
+    .overview_container {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
     
-    .overview_card .number {
-        font-size: 24px;
-    }
-    
-    .overview_card i {
-        font-size: 32px;
-    }
-    
-    /* Statistical cards */
-    .order-statistical-card h4 {
-        font-size: 14px;
-    }
-    
-    .order-statistical-card .stat-value {
-        font-size: 20px;
-    }
-    
-    /* Table responsive */
-    .table {
-        font-size: 12px;
-    }
-    
-    .table thead th {
-        padding: 10px 8px;
-        font-size: 12px;
-    }
-    
-    .table tbody td {
-        padding: 10px 8px;
-        font-size: 12px;
-    }
-    
-    /* Modal responsive */
-    .modal_content {
-        width: 95%;
-        max-width: 95%;
-        padding: 16px;
-        margin: 20px auto;
-    }
-    
-    .modal h3 {
-        font-size: 18px;
-    }
-    
-    .form_group label {
-        font-size: 13px;
-    }
-    
-    .form_group input,
-    .form_group select {
-        font-size: 13px;
-        padding: 10px 14px;
-    }
-    
-    .button_submit {
-        font-size: 14px;
-        padding: 10px 16px;
-    }
-    
-    /* Search box */
-    .search {
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    .search input {
-        font-size: 13px;
-    }
-}
-
-/* Mobile - Small (320px - 480px) */
-@media (max-width: 480px) {
-    .header h2 {
-        font-size: 16px;
-    }
-    
-    .overview_card {
+    .overview_item {
         padding: 12px;
     }
     
-    .overview_card .number {
-        font-size: 20px;
-    }
-    
-    .overview_card i {
-        font-size: 28px;
+    /* Order statistical */
+    .order-statistical {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
     
     .order-statistical-card {
         padding: 12px;
     }
     
-    .order-statistical-card .stat-value {
-        font-size: 18px;
+    /* Table responsive */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .table {
-        font-size: 11px;
+        min-width: 600px;
+        font-size: 13px;
+        overflow-x: auto;
+        display: block;
     }
     
-    .table thead th,
-    .table tbody td {
+    .table th,
+    .table td {
         padding: 8px 6px;
-        font-size: 11px;
+        font-size: 13px;
+    }
+    
+    /* Actions column */
+    .control {
+        min-width: 120px;
+    }
+    
+    /* Buttons */
+    .btn-action,
+    .btn-detail,
+    .btn-delete {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    /* Form controls */
+    .form-control,
+    .form-control-small,
+    .form-control-date {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    
+    /* Modal responsive */
+    .modal_content {
+        width: 85%;
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 16px;
+    }
+    
+    .modal_header h2 {
+        font-size: 18px;
+    }
+    
+    .close_button {
+        font-size: 28px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    /* Form groups trong modal */
+    .modal_form .form_group {
+        margin-bottom: 12px;
     }
     
     /* Import item row responsive */
@@ -1626,45 +1526,61 @@ tbody .btn-edit:hover {
         flex-grow: 1 !important;
     }
     
-    /* Modal form responsive */
-    .modal_content {
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-    
-    .close_button {
-        font-size: 32px;
-        top: 8px;
-        right: 12px;
+    /* Hover effects tắt trên mobile */
+    tbody tr:hover {
+        transform: none;
     }
 }
 
-/* Landscape orientation cho mobile */
-@media (max-width: 900px) and (orientation: landscape) {
-    .sidebar {
-        width: 60px;
+/* Tablet - Small & Mobile Landscape (600px - 768px) */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 70px;
     }
     
-    /* Logo landscape mode */
+    body {
+        font-size: 14px;
+    }
+    
+    /* Sidebar collapse - chỉ hiện icon */
+    .sidebar {
+        width: var(--sidebar-width);
+    }
+    
+    /* Logo responsive */
     .top-sidebar {
-        padding: 8px 5px;
+        padding: 10px 5px;
     }
     
     .top-sidebar .logo {
-        max-width: 40px;
+        max-width: 45px;
     }
     
     .menu-item span {
         display: none;
     }
     
+    /* Bottom sidebar responsive */
+    .bottom-sidebar {
+        padding: 10px 5px;
+    }
+    
     .bottom-sidebar p {
         display: none;
     }
     
+    .bottom-sidebar .admin-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
     .bottom-sidebar .admin-buttons button {
         font-size: 0;
-        padding: 6px;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .bottom-sidebar .admin-buttons button::before {
@@ -1681,19 +1597,113 @@ tbody .btn-edit:hover {
         content: "\f2f5";
     }
     
-    .sidebar .sidebar_item span {
-        display: none;
+    /* Content area */
+    .content {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        padding: 0;
     }
     
-    .main-content {
-        margin-left: 60px;
+    .section {
+        padding: 16px 12px;
     }
     
+    .section-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    /* Overview cards */
+    .overview_container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .overview_item {
+        padding: 12px;
+    }
+    
+    /* Order statistical */
+    .order-statistical {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .order-statistical-card {
+        padding: 16px;
+    }
+    
+    /* Table responsive */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        min-width: 600px;
+        font-size: 13px;
+        overflow-x: auto;
+        display: block;
+    }
+    
+    .table th,
+    .table td {
+        padding: 8px 6px;
+        font-size: 13px;
+    }
+    
+    /* Buttons responsive */
+    .btn-action, .btn-detail, .btn-delete {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    /* Form controls */
+    .form-control,
+    .form-control-small,
+    .form-control-date {
+        font-size: 13px;
+        padding: 8px 10px;
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .fill-date {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .fill-date label {
+        margin-bottom: 4px;
+    }
+    
+    /* Modal responsive */
     .modal_content {
+        width: 90%;
         max-height: 85vh;
         overflow-y: auto;
+        padding: 16px;
+    }
+    
+    .modal_header h2 {
+        font-size: 18px;
+    }
+    
+    .close_button {
+        font-size: 28px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    /* Hover effects tắt trên mobile */
+    tbody tr:hover {
+        transform: none;
     }
 }
+
+
+
 
 /* Print styles */
 @media print {
@@ -1705,8 +1715,12 @@ tbody .btn-edit:hover {
         display: none !important;
     }
     
-    .main-content {
+    .content {
         margin-left: 0;
+        width: 100%;
+    }
+    
+    .section {
         padding: 0;
     }
     
