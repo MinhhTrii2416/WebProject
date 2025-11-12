@@ -170,7 +170,9 @@
 }
 
 .modal-content.order-review {
+    overflow-y: auto;
     background: #fff;
+    max-height: 90vh;
 }
 
 .modal-content.order-review h2 {
