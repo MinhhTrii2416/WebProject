@@ -381,9 +381,9 @@ const productsData = {
             price: 3700000,
             originalPrice: 4200000,
             images: [
-                "img/Victor/Auraspeed 90K/OP(1).jpg",
-                "img/Victor/Auraspeed 90K/OP(2).jpg",
-                "img/Victor/Auraspeed 90K/OP.jpg"
+                "img/Victor/Auraspeed 90K/OIP-2.jpg",
+                "img/Victor/Auraspeed 90K/OIP-1.jpg",
+                "img/Victor/Auraspeed 90K/OIP.jpg"
             ],
             description: "Tốc độ đỉnh cao với công nghệ Nano Fortify",
             weight: "5U",
