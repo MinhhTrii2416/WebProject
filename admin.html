@@ -76,7 +76,7 @@
                     <div class ="admin-control left">
                         <form action="" class="form-search">
                             <span class="search"><i class="fa-solid fa-magnifying-glass"></i></span>
-                            <input id="form-search-product" type="text" class="form-search-input" placeholder="Tìm kiếm tên vợt..." oninput="showProduct()">
+                            <input id="form-search-product" type="text" class="form-search-input" placeholder="Tìm kiếm tên sản phẩm..." oninput="showProduct()">
                         </form>
                     </div>
                     <div class="admin-control center">
@@ -743,16 +743,11 @@
         const currentAdmin = sessionStorage.getItem('currentAdmin');
         
         if (!currentAdmin) {
-            // Nếu chưa đăng nhập, chuyển về trang login
             alert('Vui lòng đăng nhập để truy cập trang quản trị!');
             window.location.href = 'admin-login.html';
             return;
         }
-        
-        // Parse thông tin admin
         const adminInfo = JSON.parse(currentAdmin);
-        
-        // Hiển thị tên admin
         const adminNameDisplay = document.getElementById('admin-name-display');
         if (adminNameDisplay) {
             adminNameDisplay.textContent = adminInfo.name;
@@ -762,32 +757,24 @@
     // --- HÀM XỬ LÝ ĐĂNG XUẤT ---
     function handleAdminLogout() {
         if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-            // Xóa thông tin admin khỏi sessionStorage
             sessionStorage.removeItem('currentAdmin');
-            
-            // Chuyển về trang login
             window.location.href = 'admin-login.html';
         }
     }
 
     // --- Các Hàm Chung & Tiện ích ---
-    // -- Fallback / Default data & helpers (tránh ReferenceError khi thiếu file dữ liệu) --
-    // Các biến mặc định (nếu chưa được cung cấp bởi các file khác)
     const productListDefault = [];
     const userListDefault = [];
     const orderListDefault = [];
     const orderDetailsListDefault = [];
 
-    // Key cho Import (phiếu nhập). Bạn có thể đổi tên key này nếu cần đồng bộ với nơi khác.
     const LS_KEY_IMPORT = 'AllImports';
     const LS_KEY_PROFIT_RATE = 'ProfitRates';
-
     function getImportListFromStore() {
         const raw = localStorage.getItem(LS_KEY_IMPORT);
         return raw ? JSON.parse(raw) : [];
     }
 
-    // Lấy danh sách tỷ lệ lợi nhuận
     function getProfitRateListFromStore() {
         const raw = localStorage.getItem(LS_KEY_PROFIT_RATE);
         return raw ? JSON.parse(raw) : [];
@@ -795,8 +782,6 @@
 
     function closeModal(id) {
         document.getElementById(id).style.display = "none";
-        
-        // ✅ Reset selectedImages khi đóng modal sản phẩm
         if (id === 'Modal') {
             selectedImages = [];
             const imagePreviewList = document.getElementById('ImagePreviewList');
@@ -808,21 +793,18 @@
     }
 
     function formatCurrency(amount) {
-        // Nếu số quá lớn (trên 1 tỷ), hiển thị dạng rút gọn
         if (amount >= 1000000000) {
             return (amount / 1000000000).toLocaleString('vi-VN', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2
             }) + ' tỷ';
         }
-        // Nếu trên 1 triệu, hiển thị dạng rút gọn
         else if (amount >= 1000000) {
             return (amount / 1000000).toLocaleString('vi-VN', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 1
             }) + ' tr';
         }
-        // Số nhỏ hơn 1 triệu, hiển thị đầy đủ
         return amount.toLocaleString('vi-VN') + ' đ';
     }
 
@@ -839,31 +821,24 @@
     }
 
     // --- KHAI BÁO KEY LOCAL STORAGE ---
-const LS_KEY_USERS = 'Users'; // ✅ Key Khách hàng từ script.js
-const LS_KEY_ORDERS = 'AllOrders'; // Key Đơn hàng từ cart.js
-const LS_KEY_PRODUCT_DATA = 'dataProducts'; // Key Sản phẩm từ initProduct.js
+const LS_KEY_USERS = 'Users';
+const LS_KEY_ORDERS = 'AllOrders'; 
+const LS_KEY_PRODUCT_DATA = 'dataProducts';
 
 // --- HÀM LẤY DỮ LIỆU CHÍNH TỪ LOCAL STORAGE & PRODUCT.JS ---
-
     const importList = getImportListFromStore();
     const profitRateList = getProfitRateListFromStore();
-
-// 1. Lấy Product List (Nguồn chính)
 function getProductListFromStore() {
     let rawProductsData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
     let productDataByBrand = rawProductsData ? JSON.parse(rawProductsData) : (typeof productsData !== 'undefined' ? productsData : {});
 
     const allProducts = [];
-
     if (Array.isArray(productDataByBrand)) {
         productDataByBrand.forEach(p => {
-            // ✅ Tìm profit rate từ localStorage theo brand
             const bpr = profitRateList.find(prl => 
                 prl.type.toLowerCase() === (p.brand || '').toLowerCase()
             );
-            const rate = bpr ? bpr.profitRate : 0.15;  // ✅ Fallback 15%
-            
-            // ✅ CÔNG THỨC ĐÚNG: Giá nhập = Giá bán × (1 - % lợi nhuận)
+            const rate = bpr ? bpr.profitRate : 0.15; 
             const importPrice = p.importPrice || (p.price * (1 - rate));
 
             allProducts.push({
@@ -871,8 +846,8 @@ function getProductListFromStore() {
                 name: p.name,
                 brand: p.brand || 'Khác',
                 price: p.price,
-                profitRate: rate,  // ✅ LẤY TỪ localStorage
-                importPrice: importPrice,  // ✅ ƯU TIÊN importPrice đã lưu
+                profitRate: rate, 
+                importPrice: importPrice, 
                 originalPrice: p.originalPrice,
                 images: p.images,
                 description: p.description,
@@ -891,13 +866,10 @@ function getProductListFromStore() {
     } else {
         for (const brandKey in productDataByBrand) {
             productDataByBrand[brandKey].forEach(p => {
-                // ✅ Tìm profit rate từ localStorage theo brand
                 const bpr = profitRateList.find(prl => 
                     prl.type.toLowerCase() === brandKey.toLowerCase()
                 );
                 const rate = bpr ? bpr.profitRate : 0.15;
-                
-                // ✅ CÔNG THỨC ĐÚNG: Giá nhập = Giá bán × (1 - % lợi nhuận)
                 const importPrice = p.importPrice || (p.price * (1 - rate));
 
                 allProducts.push({
@@ -905,8 +877,8 @@ function getProductListFromStore() {
                     name: p.name,
                     brand: p.brand || brandKey,
                     price: p.price,
-                    profitRate: rate,  // ✅ LẤY TỪ localStorage
-                    importPrice: importPrice,  // ✅ ƯU TIÊN importPrice đã lưu
+                    profitRate: rate, 
+                    importPrice: importPrice, 
                     originalPrice: p.originalPrice,
                     images: p.images,
                     description: p.description,
@@ -927,19 +899,18 @@ function getProductListFromStore() {
     return allProducts.length > 0 ? allProducts : productListDefault;
 }
 
-// 2. Lấy User List (Từ localStorage)
+
 function getUserListFromStore() {
     const users = localStorage.getItem(LS_KEY_USERS);
     return users ? JSON.parse(users) : [];
 }
 
-// 3. Lấy Order List (Từ localStorage)
+
 function getOrderListFromStore() {
     const orders = localStorage.getItem(LS_KEY_ORDERS);
     return orders ? JSON.parse(orders) : orderListDefault;
 }
 
-// 4. Lấy Order Details List (Sử dụng Orders để tái tạo chi tiết đơn giản)
 function getOrderDetailsListFromStore() {
     const orders = localStorage.getItem(LS_KEY_ORDERS);
     if (!orders) return [];
@@ -960,19 +931,18 @@ function getOrderDetailsListFromStore() {
     });
     return details.length > 0 ? details : orderDetailsListDefault;
 }
-    // --- KHỞI TẠO BIẾN TOÀN CỤC CHÍNH (LẤY TỪ STORE/LS) ---
+
     const productList = getProductListFromStore();
     const userList = getUserListFromStore();
     const orderList = getOrderListFromStore();
     const orderDetailsList = getOrderDetailsListFromStore();
     
-    // ✅ DEBUG: Kiểm tra dữ liệu
     console.log('=== KIỂM TRA DỮ LIỆU KHÁCH HÀNG ===');
     console.log('localStorage Users:', localStorage.getItem('Users'));
     console.log('userList loaded:', userList);
     console.log('Số lượng users:', userList.length);
-    // --- 1. LOGIC SẢN PHẨM (Product) ---
-
+   
+    // SẢN PHẨM
     function showProduct() {
         const tableBody = document.getElementById('show-product');
         const searchInput = document.getElementById('form-search-product').value.toLowerCase();
@@ -983,11 +953,7 @@ function getOrderDetailsListFromStore() {
             const idMatch = product.id.toLowerCase().includes(searchInput);
             const nameMatch = product.name.toLowerCase().includes(searchInput);
             const categoryMatch = categorySelect === 'Tất cả' || product.brand === categorySelect;
-            
-            // ✅ Lọc theo trạng thái: 3 = Tất cả, 1 = Còn hàng, 2 = Sắp hết, 0 = Hết hàng
             const statusMatch = statusSelect === 3 || product.status === statusSelect;
-
-            // ✅ Tìm theo ID HOẶC tên (chỉ cần 1 trong 2 match)
             return (nameMatch || idMatch) && categoryMatch && statusMatch; 
         });
 
@@ -1013,8 +979,6 @@ function getOrderDetailsListFromStore() {
         });
 
         tableBody.innerHTML = html;
-        
-        // Cập nhật thẻ Tổng quan
         const totalRevenue = calculateTotalRevenue(orderList);
         updateOverviewCards(productList.length, userList.length, totalRevenue);
     }
@@ -1022,16 +986,10 @@ function getOrderDetailsListFromStore() {
     function resetSearchProduct() {
         document.getElementById('form-search-product').value = '';
         document.getElementById('the-loai').value = 'Tất cả';
-        document.getElementById('tinh-trang-product').value = '3'; // Reset về "Tất cả trạng thái"
+        document.getElementById('tinh-trang-product').value = '3';
         showProduct();
     }
-
-
-// ***********************************
-// *** LOGIC CRUD SẢN PHẨM BỔ SUNG ***
-// ***********************************
-
-// 1. Chức năng XÓA SẢN PHẨM
+// XÓA SẢN PHẨM
 function openDeleteModal(productId) {
     const deleteModal = document.getElementById('DeleteModal');
     const confirmButton = document.getElementById('ConfirmDeleteButton');
@@ -1041,25 +999,17 @@ function openDeleteModal(productId) {
 
     const product = productList.find(p => p.id === productId);
     productNameDisplay.textContent = `${product.name} (${product.id})`;
-    
-    // GÁN HÀM XÓA KHI NHẤN NÚT XÁC NHẬN
-    // Khi người dùng bấm nút 'XÓA', nó sẽ gọi hàm confirmDelete với ID của sản phẩm
     confirmButton.onclick = function() {
         deleteProduct(productId);
         closeModal('DeleteModal');
     };
-
-    // Hiển thị Modal
     deleteModal.style.display = 'block';
 }
 
 function deleteProduct(id) {
     const productIndex = productList.findIndex(p => p.id === id);
     if (productIndex !== -1) {
-        // XÓA THẬT SỰ khỏi mảng
         productList.splice(productIndex, 1);
-
-        // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
         const dataProductsFormat = {};
         productList.forEach(product => {
             let pr_Brand = product.brand || 'Khác';
@@ -1070,8 +1020,6 @@ function deleteProduct(id) {
             }
             dataProductsFormat[brand].push(product);
         });
-
-        // Lưu vào localStorage với định dạng đúng
         localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
         
         showProduct();
@@ -1079,9 +1027,7 @@ function deleteProduct(id) {
         alert(`Đã xóa sản phẩm thành công!`);
     }
 }
-
-// Image Preview Handler - Hỗ trợ nhiều ảnh
-let selectedImages = []; // Mảng lưu trữ các ảnh đã chọn
+let selectedImages = [];
 
 document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('ProductImage');
@@ -1094,35 +1040,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const files = Array.from(e.target.files);
             
             if (files.length === 0) return;
-            
-            // Kiểm tra số lượng ảnh (tối đa 3)
             if (selectedImages.length + files.length > 3) {
                 alert('Chỉ được chọn tối đa 3 ảnh!');
                 imageInput.value = '';
                 return;
             }
-            
-            // Xử lý từng file
             files.forEach(file => {
-                // Validate kích thước (5MB)
                 if (file.size > 5 * 1024 * 1024) {
                     alert(`File ${file.name} quá lớn! Kích thước tối đa là 5MB.`);
                     return;
                 }
-                
-                // Validate loại file
                 if (!file.type.startsWith('image/')) {
                     alert(`File ${file.name} không phải là ảnh!`);
                     return;
                 }
-                
-                // Đọc file và hiển thị preview
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     const imageData = {
                         file: file,
                         dataUrl: event.target.result,
-                        id: Date.now() + Math.random() // ID duy nhất
+                        id: Date.now() + Math.random()
                     };
                     
                     selectedImages.push(imageData);
@@ -1132,10 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 reader.readAsDataURL(file);
             });
             
-            // Reset input để có thể chọn lại
             imageInput.value = '';
-            
-            // Hiển thị container
             if (imagePreviewContainer) {
                 imagePreviewContainer.style.display = 'block';
             }
@@ -1143,7 +1077,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Thêm preview ảnh vào danh sách
 function addImagePreview(imageData) {
     const imagePreviewList = document.getElementById('ImagePreviewList');
     if (!imagePreviewList) return;
@@ -1167,18 +1100,13 @@ function addImagePreview(imageData) {
 
 // Xóa một ảnh preview
 function removeImagePreview(imageId) {
-    // Xóa khỏi mảng
     selectedImages = selectedImages.filter(img => img.id != imageId);
-    
-    // Xóa khỏi DOM
     const previewItem = document.querySelector(`.image-preview-item[data-image-id="${imageId}"]`);
     if (previewItem) {
         previewItem.remove();
     }
     
     updateImageCount();
-    
-    // Ẩn container nếu không còn ảnh
     if (selectedImages.length === 0) {
         const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
         if (imagePreviewContainer) {
@@ -1186,16 +1114,12 @@ function removeImagePreview(imageId) {
         }
     }
 }
-
-// Cập nhật số lượng ảnh
 function updateImageCount() {
     const imageCount = document.getElementById('ImageCount');
     if (imageCount) {
         imageCount.textContent = selectedImages.length;
     }
 }
-
-// Function để xóa tất cả ảnh đã chọn (cho nút reset form)
 function removeSelectedImage() {
     selectedImages = [];
     const imagePreviewList = document.getElementById('ImagePreviewList');
@@ -1212,7 +1136,6 @@ function removeSelectedImage() {
     updateImageCount();
 }
 
-// 2. Chức năng MỞ MODAL THÊM (Create)
 function openAddProductModal() {
     const modalToOpen = document.getElementById('Modal');
     const btnSubmitForm = document.getElementById('ButtonSubmitForm');
@@ -1220,33 +1143,24 @@ function openAddProductModal() {
     const productForm = document.getElementById('ProductForm');
     
     if (modalToOpen) {
-        // --- CÀI ĐẶT CHẾ ĐỘ THÊM ---
         if (modalTitle) modalTitle.textContent = "Thêm Sản Phẩm Mới";
         if (btnSubmitForm) btnSubmitForm.innerHTML = '<i class="fa-solid fa-check"></i> <span>Thêm</span>';
         if (productForm) {
             productForm.reset(); 
-            // Reset image preview và mảng selectedImages
             selectedImages = [];
             const imagePreviewContainer = document.getElementById('ImagePreviewContainer');
             const imagePreviewList = document.getElementById('ImagePreviewList');
             if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
             if (imagePreviewList) imagePreviewList.innerHTML = '';
             updateImageCount();
-            
-            // DÒNG QUAN TRỌNG: Gán hàm xử lý submit form
             productForm.onsubmit = handleAddProductSubmit;
         }
-
-        // --- HIỂN THỊ MODAL ---   
         modalToOpen.style.display = 'block';
     }
 }
 
 function handleAddProductSubmit(event) {
-    // NGĂN TRÌNH DUYỆT TẢI LẠI TRANG KHI SUBMIT
     event.preventDefault(); 
-
-    // LẤY DỮ LIỆU TỪ CÁC TRƯỜNG INPUT
     const name = document.getElementById("ProductName").value.trim();
     let type = document.getElementById("ProductType").value.trim();
     const price = parseInt(document.getElementById("ProductPrice").value); 
@@ -1259,46 +1173,27 @@ function handleAddProductSubmit(event) {
     const madeIn = document.getElementById("ProductMadeIn").value.trim();
     const description = document.getElementById("ProductDescription").value.trim();
     const imageInput = document.getElementById("ProductImage");
-    
-    // KIỂM TRA DỮ LIỆU
     if (!name || !type || isNaN(price) || price <= 0) {
         alert("Vui lòng điền đầy đủ Tên, Hãng và Giá bán hợp lệ (> 0).");
         return; 
     }
-
-    // Tạo ID mới cho sản phẩm
-    const brandPrefix = type.charAt(0).toUpperCase(); // "Y", "V", "L", "M"
-
-    // Tìm các ID hiện có của cùng brand
+    const brandPrefix = type.charAt(0).toUpperCase(); 
     const sameTypeIds = productList
         .filter(p => p.id.startsWith(brandPrefix))
         .map(p => {
-            // Tách phần số giữa prefix và weight
-            // VD: "Y001-3U" -> ["Y", "001", "3U"] -> lấy "001"
             const parts = p.id.match(/^([A-Z])(\d+)-(.+)$/);
             return parts ? parseInt(parts[2]) : 0;
         });
 
-    // Tìm số lớn nhất
     const maxIdNumber = sameTypeIds.length > 0 ? Math.max(...sameTypeIds) : 0;
-
-    // Tạo ID mới với padding 3 chữ số
     const newIdNumber = String(maxIdNumber + 1).padStart(3, '0');
     const newId = `${brandPrefix}${newIdNumber}-${weight}`;
-    
-    // Lấy tất cả ảnh base64 từ selectedImages
     const imagesBase64 = selectedImages.map(img => img.dataUrl);
-    
-    // ✅ Lấy tỷ lệ lợi nhuận từ localStorage theo brand
     const brandProfitRate = profitRateList.find(prl => 
         prl.type.toLowerCase() === type.toLowerCase()
     );
-    const profitRate = brandProfitRate ? brandProfitRate.profitRate : 0.15; // Fallback 15%
-    
-    // ✅ Tính giá nhập = Giá bán × (1 - % lợi nhuận)
+    const profitRate = brandProfitRate ? brandProfitRate.profitRate : 0.15;
     const importPrice = price * (1 - profitRate);
-    
-    // TẠO ĐỐI TƯỢNG SẢN PHẨM MỚI với đầy đủ thông tin
     const newProduct = {
         id: newId,
         name: name,
@@ -1306,7 +1201,7 @@ function handleAddProductSubmit(event) {
         price: price,
         originalPrice: price,
         stock: stock,
-        images: imagesBase64, // Lưu TẤT CẢ ảnh base64 vào mảng images
+        images: imagesBase64, 
         description: description,
         weight: weight,
         weightGrams: weight.includes('2U') ? 92 : weight.includes('3U') ? 87 : weight.includes('4U') ? 82 : 79,
@@ -1320,18 +1215,11 @@ function handleAddProductSubmit(event) {
         importPrice: importPrice,
         profitRate: profitRate    
     };
-
-    // LƯU VÀO DANH SÁCH SẢN PHẨM (productList)
     productList.push(newProduct);
-    
-    // Lưu vào localStorage với format đúng (grouped by brand)
     saveProductListToLocalStorage(productList);
-
-    // CẬP NHẬT GIAO DIỆN VÀ ĐÓNG MODAL
     showProduct(); 
     closeModal('Modal');
     alert(`Đã thêm sản phẩm "${name}" thành công!`);
-    
     // Reset form và ảnh đã chọn
     document.getElementById('ProductForm').reset();
     selectedImages = [];
@@ -1342,7 +1230,6 @@ function handleAddProductSubmit(event) {
     updateImageCount();
 }
 
-// 3. Chức năng MỞ MODAL SỬA (Update)
 function openEditProductModal(productId) {
     const product = productList.find(p => p.id === productId);
     if (!product) return alert("Không tìm thấy sản phẩm này.");
@@ -1353,17 +1240,10 @@ function openEditProductModal(productId) {
     const productForm = document.getElementById('ProductForm');
 
     if (!modalToOpen) return;
-
-    // --- CÀI ĐẶT UI CHO CHẾ ĐỘ CHỈNH SỬA ---
     if (modalTitle) modalTitle.textContent = "Chỉnh Sửa Sản Phẩm";
     if (btnSubmitForm) btnSubmitForm.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> <span>Lưu Thay Đổi</span>';
-
-    // 3. Đổ dữ liệu sản phẩm vào Form
     if (productForm) {
-        // Gán ID sản phẩm vào trường hidden để biết đang sửa sản phẩm nào
         document.getElementById('ProductID').value = product.id; 
-        
-        // Đổ dữ liệu vào các trường nhập liệu
         document.getElementById('ProductName').value = product.name;
         document.getElementById('ProductType').value = product.brand; 
         document.getElementById('ProductPrice').value = product.price;
@@ -1375,12 +1255,8 @@ function openEditProductModal(productId) {
         document.getElementById('ProductCategory').value = product.category || '-- Chọn --';
         document.getElementById('ProductMadeIn').value = product.madeIn || '';
         document.getElementById('ProductDescription').value = product.description || '';
-        
-        // --- GÁN LOGIC CẬP NHẬT DỮ LIỆU VÀO onsubmit ---
         productForm.onsubmit = function(event) {
-            event.preventDefault(); // Ngăn trình duyệt tải lại trang
-
-            // LẤY DỮ LIỆU MỚI TỪ FORM
+            event.preventDefault(); 
             const updatedName = document.getElementById('ProductName').value.trim();
             const updatedType = document.getElementById('ProductType').value.trim();
             const updatedPrice = parseInt(document.getElementById('ProductPrice').value);
@@ -1392,14 +1268,10 @@ function openEditProductModal(productId) {
             const updatedCategory = document.getElementById('ProductCategory').value.trim();
             const updatedMadeIn = document.getElementById('ProductMadeIn').value.trim();
             const updatedDescription = document.getElementById('ProductDescription').value.trim();
-            
-            // KIỂM TRA DỮ LIỆU BẮT BUỘC
             if (!updatedName || !updatedType || isNaN(updatedPrice) || updatedPrice <= 0) { 
                 alert("LỖI CẬP NHẬT: Vui lòng điền đầy đủ Tên, Loại Sản phẩm và Giá bán hợp lệ (> 0).");
                 return; 
             }
-
-            // TÌM SẢN PHẨM TRONG MẢNG VÀ CẬP NHẬT THUỘC TÍNH
             const productIndex = productList.findIndex(p => p.id === productId);
 
             if (productIndex !== -1) {
@@ -1416,15 +1288,11 @@ function openEditProductModal(productId) {
                 productList[productIndex].madeIn = updatedMadeIn;
                 productList[productIndex].description = updatedDescription;
                 productList[productIndex].status = updatedStock > 5 ? 1 : updatedStock === 0 ? 0 : 2;
-                
-                // ✅ CẬP NHẬT ẢNH: Nếu có chọn ảnh mới thì cập nhật, không thì giữ nguyên ảnh cũ
                 if (selectedImages.length > 0) {
                     const updatedImages = selectedImages.map(img => img.dataUrl);
                     productList[productIndex].images = updatedImages;
                 }
             }
-
-            // Chuyển đổi productList sang định dạng dataProducts (grouped by brand)
             const dataProductsFormat = {};
             productList.forEach(product => {
                 let pr_Brand = product.brand || 'Khác';
@@ -1435,11 +1303,7 @@ function openEditProductModal(productId) {
                 }
                 dataProductsFormat[brand].push(product);
             });
-
-            // Lưu vào localStorage với định dạng đúng
             localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
-
-            // LƯU VÀ CẬP NHẬT GIAO DIỆN
             showProduct(); 
             closeModal('Modal');
         };
@@ -1448,10 +1312,9 @@ function openEditProductModal(productId) {
 }
 
 
-    // --- 2. LOGIC KHÁCH HÀNG (User) ---
+    // KHÁCH HÀNG
 
 function showUser() {
-    // Load lại dữ liệu từ localStorage để đảm bảo đồng bộ
     const userList = getUserListFromStore();
     
     const tableBody = document.getElementById('show-user');
@@ -1461,17 +1324,12 @@ function showUser() {
     const timeEnd = document.getElementById('time-end-user').value;
 
     let filteredUsers = userList.filter(user => {
-        // Hỗ trợ cả 2 cấu trúc: account (cũ) và fullname (mới)
         const userName = user.fullname || user.account || '';
         const searchMatch = userName.toLowerCase().includes(searchInput) || user.email.toLowerCase().includes(searchInput);
-        
-        // Hỗ trợ cả 2 cấu trúc: isLocked (cũ) và status (mới)
         const isLocked = (user.status !== undefined) ? (user.status === 0) : (user.isLocked === true);
         const statusMatch = statusSelect === 2 || 
                 (statusSelect === 1 && !isLocked) || 
                 (statusSelect === 0 && isLocked);
-        
-        // Hỗ trợ cả 2 format ngày: joinDate (ISO) và join (dd/mm/yyyy)
         const userJoinDate = user.join || user.joinDate || '';
         const dateMatchStart = !timeStart || userJoinDate >= timeStart;
         const dateMatchEnd = !timeEnd || userJoinDate <= timeEnd;
@@ -1481,15 +1339,12 @@ function showUser() {
 
     let html = '';
     filteredUsers.forEach((user, index) => {
-        // Hỗ trợ cả 2 cấu trúc
         const userName = user.fullname || user.account || 'N/A';
         const isLocked = (user.status !== undefined) ? (user.status === 0) : (user.isLocked === true);
         const statusText = !isLocked ? 'Hoạt động' : 'Bị khóa';
         const statusClass = !isLocked ? 'status-completed' : 'status-canceled';
         const actionButtonText = !isLocked ? 'Khóa' : 'Mở khóa';
         const actionButtonClass = !isLocked ? 'btn-delete' : 'btn-action';
-        
-        // Format ngày giờ hiển thị
         const displayDate = user.join || user.joinDate || 'N/A';
 
         html += `
@@ -1520,9 +1375,8 @@ function showUser() {
         showUser();
     }
 
-// Thay thế các hàm mẫu trong LOGIC KHÁCH HÀNG (User)
 
-// 1. Chức năng KHÓA/MỞ KHÓA (Toggle Status) 
+// Chức năng KHÓA/MỞ KHÓA 
 
 function openStatusModal(userEmail, currentStatus) {
     const statusModal = document.getElementById('StatusModal');
@@ -1535,37 +1389,24 @@ function openStatusModal(userEmail, currentStatus) {
         return;
     }
     
-    // ✅ Tìm theo email (key duy nhất trong localStorage)
     const user = userList.find(u => u.email === userEmail);
     if (!user) return alert("Không tìm thấy khách hàng.");
-
-    // Xác định hành động và trạng thái MỚI
     const action = currentStatus === false ? "KHÓA" : "MỞ KHÓA";
     const newStatus = currentStatus === false ? true : false;
-    
-    // Cập nhật nội dung Modal
     document.getElementById('StatusModalTitle').textContent = `Xác nhận ${action} khách hàng?`;
     actionText.textContent = action;
     userDisplay.textContent = user.account;
-    
-    // Khi người dùng bấm nút 'XÁC NHẬN', nó sẽ gọi hàm changeUserStatus
     confirmButton.onclick = function() {
         changeUserStatus(userEmail, newStatus, action);
     };
-
-    //Hiển thị Modal
     statusModal.style.display = 'block';
 }
 
 function changeUserStatus(email, newStatus, actionText) {
-    // ✅ Tìm theo email
     const userIndex = userList.findIndex(u => u.email === email);
     
     if (userIndex !== -1) {
-        // ✅ Cập nhật cả isLocked VÀ status (để đồng bộ với localStorage)
         userList[userIndex].isLocked = newStatus; 
-        
-        // ✅ Lưu lại vào localStorage với cấu trúc gốc
         const rawUsers = localStorage.getItem(LS_KEY_USERS);
         const allUsers = rawUsers ? JSON.parse(rawUsers) : [];
         const rawIndex = allUsers.findIndex(u => u.email === email);
@@ -1577,15 +1418,12 @@ function changeUserStatus(email, newStatus, actionText) {
         
         showUser();
     }
-    
-    // Đóng Modal
     closeModal('StatusModal');
 }
 
-// --- LOGIC RESET MẬT KHẨU ---
+//  RESET MẬT KHẨU
 
 function openResetPasswordModal(userEmail) {
-    // ✅ Tìm theo email
     const user = userList.find(u => u.email === userEmail);
     if (!user) return alert("Không tìm thấy khách hàng.");
 
@@ -1603,12 +1441,9 @@ function openResetPasswordModal(userEmail) {
 }
 
 function resetUserPassword(email) {
-    // ✅ Tìm theo email
     const userIndex = userList.findIndex(u => u.email === email);
     if (userIndex !== -1) {
-        userList[userIndex].password = 'hashed_123456';  // ✅ Đặt mật khẩu mặc định
-        
-        // ✅ Cập nhật vào localStorage
+        userList[userIndex].password = 'hashed_123456';
         const rawUsers = localStorage.getItem(LS_KEY_USERS);
         const allUsers = rawUsers ? JSON.parse(rawUsers) : [];
         const rawIndex = allUsers.findIndex(u => u.email === email);
@@ -1627,8 +1462,6 @@ function resetUserPassword(email) {
 function saveToLocalStorage(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
 }
-
-// Helper function: Chuyển đổi productList sang format grouped by brand
 function convertProductListToGroupedFormat(productList) {
     const dataProductsFormat = {};
     productList.forEach(product => {
@@ -1643,13 +1476,11 @@ function convertProductListToGroupedFormat(productList) {
     return dataProductsFormat;
 }
 
-// Helper function: Lưu productList với format đúng
 function saveProductListToLocalStorage(productList) {
     const dataProductsFormat = convertProductListToGroupedFormat(productList);
     saveToLocalStorage(LS_KEY_PRODUCT_DATA, dataProductsFormat);
 }
 
-// Debug function: Sửa lại dữ liệu localStorage nếu bị sai format
 function fixProductData() {
     if (!confirm('Bạn có chắc muốn sửa lại dữ liệu sản phẩm? Hành động này sẽ convert dữ liệu về format đúng.')) {
         return;
@@ -1667,8 +1498,6 @@ function fixProductData() {
         const data = JSON.parse(rawData);
         console.log('Parsed data:', data);
         console.log('Is Array?', Array.isArray(data));
-        
-        // Nếu đang là Array (format sai), convert về Object (format đúng)
         if (Array.isArray(data)) {
             console.log('Đang ở format Array (SAI) → Converting to Object (ĐÚNG)');
             const fixedData = convertProductListToGroupedFormat(data);
@@ -1684,7 +1513,7 @@ function fixProductData() {
     }
 }
 
-// 2. Chức năng MỞ MODAL THÊM (Create)
+
 function openAddUserModal() {
     const userModal = document.getElementById('AddUserModal');
     const btnSubmitForm = document.getElementById('ButtonSubmitUserForm');
@@ -1692,33 +1521,22 @@ function openAddUserModal() {
     const userForm = document.getElementById('AddUserForm');
 
     if (!userModal) return; 
-
-    // --- CÀI ĐẶT UI CHO CHẾ ĐỘ THÊM ---
     if (modalTitle) modalTitle.textContent = "Thêm Khách Hàng Mới";
     if (btnSubmitForm) btnSubmitForm.textContent = "Thêm";
     
     if (userForm) {
         userForm.reset(); 
-        
-        // Đặt giá trị mặc định cho ngày tham gia là hôm nay
         const today = new Date().toISOString().split('T')[0];
-        // --- GÁN LOGIC LƯU DỮ LIỆU VÀO onsubmit ---
         userForm.onsubmit = function(event) {
-            event.preventDefault(); // Ngăn trình duyệt tải lại trang
-
-            // LẤY DỮ LIỆU
+            event.preventDefault();
             const name = document.getElementById('UserName').value.trim();
             const email = document.getElementById('UserEmail').value.trim();
             const password = document.getElementById('UserPassword').value.trim();
             const status = parseInt(document.getElementById('UserStatus').value);
-            
-            // KIỂM TRA DỮ LIỆU
             if (!name || !email || !password) { 
                 alert("Vui lòng điền đầy đủ các trường bắt buộc (Tên, Email, Mật khẩu).");
                 return; 
             }
-            
-            // Kiểm tra email đã tồn tại
             const existingAccounts = JSON.parse(localStorage.getItem(LS_KEY_USERS) || '[]');
             const emailExists = existingAccounts.some(user => user.email.toLowerCase() === email.toLowerCase());
             
@@ -1728,21 +1546,17 @@ function openAddUserModal() {
             }
             
             const hash_password = "hashed_" + password;
-            // TẠO ĐỐI TƯỢNG MỚI với cấu trúc ĐỒNG BỘ với script.js
             const newUser = {
-                account: name,                // Số điện thoại từ input
-                email: email,                // Email
+                account: name,           
+                email: email,              
                 password: hash_password,         
                 joinDate: today,      
-                isLocked: status === 1 ? false : true,   // 1 = hoạt động, 0 = bị khóa
+                isLocked: status === 1 ? false : true,
             };
-
-            // LƯU VÀO localStorage (accounts)
             existingAccounts.push(newUser);
             localStorage.setItem(LS_KEY_USERS, JSON.stringify(existingAccounts));
             
-            // CẬP NHẬT GIAO DIỆN
-            showUser(); // Cập nhật bảng Khách hàng
+            showUser();
             
             const statusText = status === 1 ? 'Hoạt động' : 'Bị khóa';
             alert(`✅ Đã thêm khách hàng thành công!\n\n` +
@@ -1753,18 +1567,14 @@ function openAddUserModal() {
             closeModal('AddUserModal'); 
         };
     }
-
-    // --- HIỂN THỊ MODAL ---
     userModal.style.display = 'block';
 }
 
-// 3. Chức năng XEM CHI TIẾT (View Detail)
 function viewUserDetail(id) {
     alert(`Chức năng: Xem chi tiết Khách hàng ID ${id}`);
 }
 
-
-    // --- 3. LOGIC ĐƠN HÀNG (Order) ---
+    // LOGIC ĐƠN HÀNG
 
 function findOrder() {
         const tableBody = document.getElementById('show-order');
@@ -1796,7 +1606,7 @@ function findOrder() {
                 order.status === 2 ? 'status-completed' : 
                 order.status === 3 ? 'status-delivered' :
                 ''
-            const currentStatus = order.status; // Lấy trạng thái hiện tại
+            const currentStatus = order.status;
 
             html += `
                 <tr>
@@ -1813,8 +1623,6 @@ function findOrder() {
         });
 
         tableBody.innerHTML = html;
-
-        // Cập nhật thẻ Tổng quan (được gọi lại để đảm bảo trạng thái mới nhất)
         const totalRevenue = calculateTotalRevenue(orderList);
         updateOverviewCards(productList.length, userList.length, totalRevenue);
         
@@ -1828,35 +1636,27 @@ function cancelSearchOrder() {
     findOrder();
 }
 
-    // 1. Chức năng XỬ LÝ/HỦY ĐƠN HÀNG (Toggle Status)
 function showConfirmStatusModal(id, currentStatus) {
     const order = orderList.find(o => o.orderId === id);
     if (!order) {
         alert("Không tìm thấy đơn hàng này.");
         return;
     }
-    // ... (Giữ nguyên logic cập nhật nội dung modal) ...
-
     const modal = document.getElementById('ConfirmOrderStatusModal');
     const confirmButton = document.getElementById('ConfirmActionButton');
-
-    // Gán hàm toggleOrderStatus với ID và trạng thái hiện tại
     confirmButton.onclick = function() {
-        toggleOrderStatus(id, currentStatus); // SỬ DỤNG ID VÀ STATUS TRỰC TIẾP
+        toggleOrderStatus(id, currentStatus); 
     };
     
     modal.style.display = 'block';
 }
 
-// Chức năng XEM CHI TIẾT ĐƠN HÀNG
 function viewOrderDetail(id) { 
    const order = orderList.find(o => o.orderId === id);
     if (!order) {
         alert("Không tìm thấy đơn hàng này.");
         return;
     }
-
-    // 1. Lấy Modal
     const modal = document.getElementById('DetailOrder');
     const productsTableBody = document.getElementById('ProductsTableBody');
     const summaryTotal = document.getElementById('summaryTotal');
@@ -1866,14 +1666,10 @@ function viewOrderDetail(id) {
     const statusActionOrderText = document.getElementById('StatusActionOrderText');
     
     if (!modal || !modalChoice || !actionButton || !cancelButton) return;
-
-    // Lấy Chi tiết các mặt hàng của đơn hàng này
     const orderDetails = order.items || [];
     
     let calculatedTotal = 0;
     let html = '';
-
-    // 2. Tạo nội dung bảng chi tiết đơn hàng
     orderDetails.forEach((item, index) => {
         const lineTotal = item.quantity * item.price;
         calculatedTotal += lineTotal;
@@ -1888,19 +1684,10 @@ function viewOrderDetail(id) {
             </tr>
         `;
     });
-    
-    // Nếu không có chi tiết đơn hàng, hiển thị thông báo
     if (orderDetails.length === 0) {
         html = '<tr><td colspan="5" style="text-align: center; color: gray;">Không tìm thấy chi tiết sản phẩm cho đơn hàng này.</td></tr>';
     }
-
-
-    // 3. Cập nhật Tiêu đề và Thông tin Đơn hàng
-    
-    // Tiêu đề
     document.getElementById('DetailModalTitle').textContent = `Chi Tiết Đơn Hàng #${order.orderId}`;
-
-    // Thông tin Đơn hàng (Order_Info_Left)
     const statusInfo = {
         0: { text: 'Đã hủy', class: 'status-canceled' },
         1: { text: 'Mới đặt', class: 'status-just-ordered' },
@@ -1914,46 +1701,36 @@ function viewOrderDetail(id) {
     document.getElementById('infoOrderDate').textContent = order.orderDate;
     document.getElementById('infoStatus').innerHTML = statusHtml;
 
-    // Thông tin Người nhận (Order_Info_Right)
     document.getElementById('infoCustomerName').textContent = order.userName || 'N/A';
     document.getElementById('infoSDT').textContent = order.shippingInfo?.phone || 'N/A';
     document.getElementById('infoAddress').textContent = order.shippingInfo?.address || 'N/A';
     
-    // 4. Cập nhật Bảng Sản phẩm và Tổng kết
     document.getElementById('ProductsTableBody').innerHTML = html;
     document.getElementById('summaryTotal').textContent = formatCurrency(calculatedTotal); 
 
-    // 5. Logic Hiển thị và Cập nhật nút Hành động
-    if (currentStatus === 1) { // Mới đặt -> Xử lý
+    if (currentStatus === 1) { 
         statusActionOrderText.textContent = "Xử lý đơn";
         actionButton.style.display = 'inline-block';
         cancelButton.style.display = 'inline-block';
         modalChoice.style.display = 'flex';
-        // Gắn sự kiện cho nút 'Xử lý đơn' (chuyển sang trạng thái 2: Đã xử lý)
         actionButton.onclick = () => { changeOrderStatus(id, 2); }; 
-        // Gắn sự kiện cho nút 'Hủy đơn' (chuyển sang trạng thái 0: Đã hủy)
         cancelButton.onclick = () => { changeOrderStatus(id, 0); }; 
 
-    } else if (currentStatus === 2) { // Đã xử lý -> Giao hàng
+    } else if (currentStatus === 2) { 
         statusActionOrderText.textContent = "Giao hàng";
         actionButton.style.display = 'inline-block';
         cancelButton.style.display = 'inline-block';
         modalChoice.style.display = 'flex';
-        // Gắn sự kiện cho nút 'Giao hàng' (chuyển sang trạng thái 3: Đã giao)
         actionButton.onclick = () => { changeOrderStatus(id, 3); }; 
-        // Gắn sự kiện cho nút 'Hủy đơn' (chuyển sang trạng thái 0: Đã hủy)
         cancelButton.onclick = () => { changeOrderStatus(id, 0); }; 
         
-    } else { // Đã hủy (0) hoặc Đã giao (3)
-        modalChoice.style.display = 'none'; // Ẩn toàn bộ khu vực lựa chọn
+    } else {
+        modalChoice.style.display = 'none'; 
     }
-
-    // 6. Hiển thị Modal
     modal.style.display = 'block';
 }
 
 function changeOrderStatus(id, newStatus) {
-    // Work with the original AllOrders structure stored in localStorage
     const rawOrdersStr = localStorage.getItem(LS_KEY_ORDERS);
     const rawOrders = rawOrdersStr ? JSON.parse(rawOrdersStr) : [];
 
@@ -1961,11 +1738,10 @@ function changeOrderStatus(id, newStatus) {
     if (rawIndex === -1) return;
 
     const oldStatus = typeof rawOrders[rawIndex].status !== 'undefined' ? rawOrders[rawIndex].status : 0;
-    const appliedStatuses = [2, 3]; // trạng thái mà đã tính hàng (xử lý/giao)
+    const appliedStatuses = [2, 3];
     const wasApplied = appliedStatuses.includes(oldStatus);
     const willBeApplied = appliedStatuses.includes(newStatus);
 
-    // Nếu chuyển từ chưa áp dụng -> áp dụng, trừ tồn kho
     if (!wasApplied && willBeApplied) {
         const phieu = rawOrders[rawIndex];
         if (Array.isArray(phieu.items)) {
@@ -1976,7 +1752,6 @@ function changeOrderStatus(id, newStatus) {
                     if (productList[prodIndex].stock < 0) productList[prodIndex].stock = 0;
                 }
             });
-            // persist product list
             const dataProductsFormat = {};
             productList.forEach(product => {
                 let pr_Brand = product.brand || 'Khác';
@@ -1987,13 +1762,9 @@ function changeOrderStatus(id, newStatus) {
                 }
                 dataProductsFormat[brand].push(product);
             });
-
-            // Lưu vào localStorage với định dạng đúng
             localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
         }
     }
-
-    // Nếu chuyển từ đã áp dụng -> chưa áp dụng (ví dụ hủy), hoàn tác tồn kho
     if (wasApplied && !willBeApplied) {
         const phieu = rawOrders[rawIndex];
         if (Array.isArray(phieu.items)) {
@@ -2012,27 +1783,21 @@ function changeOrderStatus(id, newStatus) {
                 }
                 dataProductsFormat[brand].push(product);
             });
-
-            // Lưu vào localStorage với định dạng đúng
             localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat)); 
         }
     }
-
-    // Update status on the original AllOrders entry and persist
     rawOrders[rawIndex].status = newStatus;
     localStorage.setItem(LS_KEY_ORDERS, JSON.stringify(rawOrders));
 
-    // Update derived orderList in memory so UI reflects change
     const mappedIndex = orderList.findIndex(o => o.orderId == id);
     if (mappedIndex !== -1) orderList[mappedIndex].status = newStatus;
 
-    findOrder(); // Cập nhật bảng Đơn hàng
-    thongke(); // Cập nhật thống kê
-    closeModal('DetailOrder'); // Đóng modal Chi tiết
+    findOrder(); 
+    thongke(); 
+    closeModal('DetailOrder');
     return;
 }   
-    // --- 4. LOGIC THỐNG KÊ (Statistical) ---
-
+    // THỐNG KÊ
 function thongke() {
     const tableBody = document.getElementById('show-tk');
     const searchInput = document.getElementById('form-search-tk').value.toLowerCase();
@@ -2040,27 +1805,20 @@ function thongke() {
     const timeStart = document.getElementById('time-start-tk').value;
     const timeEnd = document.getElementById('time-end-tk').value;
 
-    // 1. Lọc các Đơn hàng ĐÃ XỬ LÝ trong khoảng thời gian
     const completedOrders = orderList.filter(order => {
         const dateMatchStart = !timeStart || order.orderDate >= timeStart;
         const dateMatchEnd = !timeEnd || order.orderDate <= timeEnd;
         return order.status > 1 && dateMatchStart && dateMatchEnd;
     });
-
-    // 2. Tổng hợp dữ liệu thống kê từ items trong các đơn hàng đã lọc
     const statisticalData = [];
-    
     completedOrders.forEach(order => {
-        // Lặp qua từng item trong đơn hàng
+
         order.items.forEach(item => {
             const existingProduct = statisticalData.find(stat => stat.id === item.productId);
-            
             if (existingProduct) {
-                // Nếu đã có sản phẩm này, cộng dồn số lượng và doanh thu
                 existingProduct.quantitySold += item.quantity;
                 existingProduct.revenue += item.quantity * item.price;
             } else {
-                // Nếu chưa có, thêm mới
                 statisticalData.push({
                     id: item.productId,
                     name: item.productName,
@@ -2071,15 +1829,11 @@ function thongke() {
             }
         });
     });
-
-    // 3. Áp dụng Tìm kiếm và Lọc trên dữ liệu đã Tổng hợp
     let finalData = statisticalData.filter(item => {
         const nameMatch = item.name.toLowerCase().includes(searchInput);
         const categoryMatch = categorySelect === 'Tất cả' || item.type === categorySelect;
         return nameMatch && categoryMatch;
     });
-
-    // 4. Hiển thị dữ liệu và Cập nhật Thẻ Thống kê
     let totalQuantitySold = 0;
     let totalRevenueStat = 0;
     let html = '';
@@ -2099,8 +1853,6 @@ function thongke() {
     });
 
     tableBody.innerHTML = html;
-
-    // Cập nhật các thẻ thống kê
     document.getElementById('quantity-product').textContent = finalData.length;
     document.getElementById('quantity-order').textContent = totalQuantitySold;
     document.getElementById('quantity-revenue').textContent = formatCurrency(totalRevenueStat);
@@ -2114,9 +1866,7 @@ function cancelSearchThongKe() {
     thongke();
 }
 
-    // --- LOGIC QUẢN LÝ GIÁ BÁN & LỢI NHUẬN (PRICE-MGT) ---
-
-// tạo objs BrandProfitRate
+    // QUẢN LÝ GIÁ BÁN & LỢI NHUẬN
 const BPR = [{
         type: "yonex",
         profitRate: 0.23
@@ -2153,25 +1903,18 @@ function initBrandProfitRate() {
 }
 initBrandProfitRate();
 
-
-// Hàm tìm tỷ lệ lợi nhuận theo loại sản phẩm
 function getProfitRateByType(productType) {
     const rateObj = profitRateList.find(r => r.type === productType);
-    return rateObj ? rateObj.rate : 0.15; // 15% là mặc định
+    return rateObj ? rateObj.rate : 0.15; 
 }
 
-// Hàm tính Giá bán theo Tỷ lệ lợi nhuận
 function calculateSellingPrice(importPrice, rate) {
     if (importPrice <= 0 || rate >= 1) return importPrice;
     // Giá bán = Giá vốn / (1 - %Lợi nhuận)
     return Math.round(importPrice / (1 - rate));
 }
-
-// Hiển thị bảng quản lý theo LOẠI sản phẩm
 function showBrandProfitManagement() {
     const tableBody = document.getElementById('show-brand-profit');
-    
-    // Nhóm sản phẩm theo brand
     const brandGroups = {};
     productList.forEach(product => {
         const brand = product.brand;
@@ -2180,10 +1923,8 @@ function showBrandProfitManagement() {
         }
         brandGroups[brand].push(product);
     });
-    
     let html = '';
     let index = 1;
-    
     Object.keys(brandGroups).forEach(brand => {
         const products = brandGroups[brand];
         const profitRateObj = profitRateList.find(r => r.type === brand.toLowerCase());
@@ -2219,7 +1960,6 @@ function showBrandProfitManagement() {
     tableBody.innerHTML = html;
 }
 
-// Cập nhật lợi nhuận cho TẤT CẢ sản phẩm của 1 loại
 function updateBrandProfit(brand) {
     const inputElement = document.querySelector(`.brand-profit-input[data-brand="${brand}"]`);
     const newProfitPercentage = parseFloat(inputElement.value) / 100;
@@ -2228,8 +1968,6 @@ function updateBrandProfit(brand) {
         alert("Tỷ lệ lợi nhuận không hợp lệ (Phải từ 0% đến 99%).");
         return;
     }
-    
-    // Lưu tỷ lệ vào profitRateList
     const rateIndex = profitRateList.findIndex(r => r.type === brand);
     if (rateIndex >= 0) {
         profitRateList[rateIndex].profitRate = newProfitPercentage;
@@ -2238,7 +1976,7 @@ function updateBrandProfit(brand) {
         return;
     }
     
-    // Cập nhật giá cho TẤT CẢ sản phẩm của loại này
+    // Cập nhật giá cho tất cả sản phẩm của loại này
     let updatedCount = 0;
     productList.forEach((product, index) => {
         const productBrand = product.brand.toLowerCase();
@@ -2250,8 +1988,6 @@ function updateBrandProfit(brand) {
             updatedCount++;
         }
     });
-    
-    // Lưu vào localStorage
     localStorage.setItem(LS_KEY_PROFIT_RATE, JSON.stringify(profitRateList));
 
     const dataProductsFormat = {};
@@ -2264,12 +2000,7 @@ function updateBrandProfit(brand) {
         }
         dataProductsFormat[brand].push(product);
     });
-
-    // Lưu vào localStorage với định dạng đúng
     localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat));  
-
-    
-    // Cập nhật giao diện
     showBrandProfitManagement();
     showPriceManagement();
     showProduct();
@@ -2277,7 +2008,6 @@ function updateBrandProfit(brand) {
     alert(`Đã cập nhật lợi nhuận ${(newProfitPercentage * 100).toFixed(2)}% cho ${updatedCount} sản phẩm loại ${brand}`);
 }
 
-// Hiển thị bảng quản lý TỪNG sản phẩm
 function showPriceManagement() {
     const tableBody = document.getElementById('show-profit-rate');
     const searchValue = document.getElementById('form-search-price')?.value.toLowerCase() || '';
@@ -2290,8 +2020,7 @@ function showPriceManagement() {
         const brandName = product.brand.toLowerCase();
         const productName = product.name.toLowerCase();
         const productID = product.id.toLowerCase();
-        
-        // Filter
+
         if (searchValue && !productName.includes(searchValue) 
             && !brandName.toLowerCase().includes(searchValue) 
             && !productID.toLowerCase().includes(searchValue)) {
@@ -2300,8 +2029,6 @@ function showPriceManagement() {
         if (filterBrand && brandName !== filterBrand) {
             return;
         }
-        
-        // Tính % lợi nhuận thực tế
         const profitPercentage = product.profitRate * 100;
         
         html += `
@@ -2335,12 +2062,8 @@ function showPriceManagement() {
     });
 
     tableBody.innerHTML = html;
-    
-    // Cập nhật dropdown filter brand
     updateBrandFilter();
 }
-
-// Cập nhật dropdown lọc theo brand
 function updateBrandFilter() {
     const selectElement = document.getElementById('filter-brand-price');
     if (!selectElement) return;
@@ -2359,8 +2082,6 @@ function updateBrandFilter() {
     selectElement.innerHTML = options;
     selectElement.value = currentValue;
 }
-
-// Hàm Áp dụng giá mới cho TỪNG sản phẩm
 function updateProductPrice(id) {
     const row = document.querySelector(`.update-price-btn[data-stt="${id}"]`).closest('tr');
     const inputElement = row.querySelector('.profit-input');
@@ -2376,12 +2097,9 @@ function updateProductPrice(id) {
 
     if (product) {
         const newSellingPrice = calculateSellingPrice(product.importPrice, newProfitPercentage);
-        
-        // Cập nhật giá bán mới vào productList
         productList[productIndex].price = newSellingPrice;
         productList[productIndex].profitRate = newProfitPercentage;
         
-        // Lưu vào localStorage
         const dataProductsFormat = {};
         productList.forEach(product => {
             let pr_Brand = product.brand || 'Khác';
@@ -2393,10 +2111,7 @@ function updateProductPrice(id) {
             dataProductsFormat[brand].push(product);
         });
 
-        // Lưu vào localStorage với định dạng đúng
         localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(dataProductsFormat));  
-
-        // Cập nhật lại giao diện
         showPriceManagement(); 
         showProduct();
         alert(`Đã cập nhật giá bán mới cho ${product.name} thành ${formatCurrency(newSellingPrice)}.`);
@@ -2404,15 +2119,12 @@ function updateProductPrice(id) {
 }
 
 
-// --- LOGIC QUẢN LÝ NHẬP HÀNG (IMPORT-MGT) ---
+//QUẢN LÝ NHẬP HÀNG
 
-// Hàm tạo HTML cho danh sách sản phẩm (dropdown)
 function getProductOptions(selectedProductId = null) {
     let options = '<option value="">-- Chọn sản phẩm --</option>';
-    // Hiển thị tất cả sản phẩm, không filter theo status
     productList.forEach(p => {
         const isSelected = p.id === selectedProductId ? 'selected' : '';
-        // Thêm thông tin status để dễ nhận biết
         let statusInfo = '';
         if (p.status === 0) statusInfo = ' [Hết hàng]';
         else if (p.status === 2) statusInfo = ' [Sắp hết]';
@@ -2424,14 +2136,11 @@ function getProductOptions(selectedProductId = null) {
 
 // Hàm tạo một dòng sản phẩm mới trong form nhập hàng
 function createImportItemRow(item = null) {
-    // Luôn tạo unique ID cho row (dùng timestamp), KHÔNG dùng productId để tránh trùng lặp
-    const rowId = Date.now() + Math.random(); // Thêm random để đảm bảo unique ngay cả khi tạo nhiều row cùng lúc
+    const rowId = Date.now() + Math.random();
     const productName = item ? productList.find(p => p.id === item.productId)?.name : '';
     const initialPrice = item ? item.importPrice : 0;
     const initialQuantity = item ? item.quantity : 1;
     const selectedProductId = item ? item.productId : null;
-    
-    // Gán dữ liệu sản phẩm gốc để hiển thị/tính toán
     const productOptions = getProductOptions(selectedProductId);
 
     return `
@@ -2472,8 +2181,6 @@ function createImportItemRow(item = null) {
         </div>
     `;
 }
-
-// Hàm thêm dòng sản phẩm vào Modal
 function addImportItemRow(item = null) {
     const container = document.getElementById('ImportItemsContainer');
     if (container) {
@@ -2482,7 +2189,6 @@ function addImportItemRow(item = null) {
     }
 }
 
-// Hàm xóa dòng sản phẩm khỏi Modal
 function removeImportItemRow(rowId) {
     const row = document.querySelector(`.import-item-row[data-row-id="${rowId}"]`);
     if (row) {
@@ -2491,7 +2197,6 @@ function removeImportItemRow(rowId) {
     }
 }
 
-// Hàm tính tổng tiền cho phiếu nhập (tạm thời)
 function calculateImportTotal() {
     let total = 0;
     const itemRows = document.querySelectorAll('.import-item-row');
@@ -2505,11 +2210,9 @@ function calculateImportTotal() {
     document.getElementById('ImportTotalDisplay').textContent = formatCurrency(total);
 }
 
-// Hàm cập nhật dữ liệu khi thay đổi (select/price/quantity)
 function updateImportItem(rowId, value, type) {
-    // Nếu thay đổi sản phẩm, cập nhật giá nhập mặc định
     if (type === 'select') {
-        const productId = value; // productId là string (vd: "Y001-5U"), không cần parseInt
+        const productId = value;
         const product = productList.find(p => p.id === productId);
         
         if (product) {
@@ -2520,7 +2223,6 @@ function updateImportItem(rowId, value, type) {
     calculateImportTotal();
 }
 
-// Hàm chung thu thập dữ liệu từ Form Modal (CẦN THÊM VÀO PHẦN LOGIC IMPORT)
 function collectImportFormData() {
     const date = document.getElementById('ImportDate').value;
     const itemRows = document.getElementById('ImportItemsContainer').querySelectorAll('.import-item-row');
@@ -2530,15 +2232,13 @@ function collectImportFormData() {
     let isValid = true;
 
     itemRows.forEach(row => {
-        // Lấy dữ liệu từ các trường trong dòng
-        const productId = row.querySelector('.import-product-select').value; // productId là string, không parseInt
+        const productId = row.querySelector('.import-product-select').value;
         const price = parseInt(row.querySelector('.import-price-input').value);
         const quantity = parseInt(row.querySelector('.import-quantity-input').value);
 
         if (!productId || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
             isValid = false;
         }
-        
         const product = productList.find(p => p.id === productId);
         if (product) {
             totalAmount += price * quantity;
@@ -2550,7 +2250,6 @@ function collectImportFormData() {
             });
         }
     });
-
     return {
         isValid: isValid,
         date: date,
@@ -2559,72 +2258,50 @@ function collectImportFormData() {
     };
 }
 
-// Hàm lưu phiếu nhập (hoàn thành hoặc lưu nháp)
-// Hàm lưu phiếu nhập (hoàn thành hoặc lưu nháp)
+
 function saveImport(isComplete) {
-    // 1. Thu thập dữ liệu chi tiết
-    const formData = collectImportFormData(); // Dùng hàm tách biệt
+    const formData = collectImportFormData();
     
     if (!formData.isValid) {
         alert("Lỗi: Vui lòng chọn sản phẩm và nhập Giá nhập/Số lượng hợp lệ (> 0) cho tất cả các dòng.");
         return;
     }
-    
-    // ... [Phần còn lại của logic (Tạo ID, Cập nhật tồn kho, Lưu, Cập nhật giao diện)] ...
-    
-    // 2. Tạo ID mới và đối tượng phiếu nhập
     const newId = 'PN' + String(importList.length + 1).padStart(3, '0');
     const newImport = {
         id: newId,
-        date: formData.date, // Dùng dữ liệu từ formData
-        totalAmount: formData.totalAmount, // Dùng dữ liệu từ formData
+        date: formData.date, 
+        totalAmount: formData.totalAmoun,
         status: isComplete ? 1 : 0,
-        items: formData.items // Dùng dữ liệu từ formData
+        items: formData.items 
     };
-    
-    // ... [Logic Tồn kho (Dùng newImport.items thay vì items (biến cục bộ))] ...
     if (isComplete) {
-        newImport.items.forEach(item => { // SỬ DỤNG newImport.items
+        newImport.items.forEach(item => { 
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity;
-                // Cập nhật status dựa trên stock mới
                 const newStock = productList[productIndex].stock;
                 productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
-                
-                // Cập nhật giá nhập
                 productList[productIndex].importPrice = item.importPrice;
-                
-                // Tính lại giá bán dựa trên giá nhập mới và profitRate
                 const profitRate = productList[productIndex].profitRate || 0.15;
                 productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
         });
     }
-
-    // 4. LƯU & CẬP NHẬT GIAO DIỆN
     importList.push(newImport);
-    
-    // Lưu vào localStorage
     saveToLocalStorage(LS_KEY_IMPORT, importList);
-    saveProductListToLocalStorage(productList); // Lưu theo format grouped
-    
+    saveProductListToLocalStorage(productList);
     showImportList();
     showProduct(); 
     closeModal('ImportModal');
     alert(`Phiếu Nhập ${newId} đã được ${isComplete ? 'HOÀN THÀNH & nhập kho' : 'LƯU NHÁP'}!`);
 }
 
-// Hàm xử lý Cập nhật Phiếu Nhập đã tồn tại
 function updateImport(id, isComplete) {
-    // 1. Thu thập dữ liệu mới từ form
-    const formItems = collectImportFormData(); // Sử dụng hàm chung để thu thập form data
-    
+    const formItems = collectImportFormData();
     if (!formItems.isValid) {
         alert("Lỗi: Vui lòng chọn sản phẩm và nhập Giá nhập/Số lượng hợp lệ (> 0) cho tất cả các dòng.");
         return;
     }
-    
     const phieuIndex = importList.findIndex(p => p.id === id);
     if (phieuIndex === -1) {
         alert("Lỗi: Không tìm thấy phiếu nhập cần sửa.");
@@ -2632,22 +2309,17 @@ function updateImport(id, isComplete) {
     }
     
     const oldPhieu = importList[phieuIndex];
-
-    // 2. Hoàn tác tồn kho cũ nếu phiếu đã được hoàn thành trước đó (Quan trọng cho tính chính xác)
-    // Nếu phiếu cũ là 'Hoàn thành' (1), ta trừ đi lượng cũ trước khi áp dụng lượng mới
     if (oldPhieu.status === 1) {
         oldPhieu.items.forEach(item => {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock -= item.quantity;
-                // Cập nhật status dựa trên stock mới sau khi trừ
                 const newStock = productList[productIndex].stock;
                 productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
             }
         });
     }
     
-    // 3. Tạo đối tượng phiếu nhập MỚI
     const updatedImport = {
         id: id,
         date: formItems.date,
@@ -2655,41 +2327,29 @@ function updateImport(id, isComplete) {
         status: isComplete ? 1 : 0,
         items: formItems.items
     };
-    
-    // 4. Áp dụng tồn kho mới nếu HOÀN THÀNH
     if (isComplete) {
         updatedImport.items.forEach(item => {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
-                productList[productIndex].stock += item.quantity; // Tăng tồn kho mới
-                // Cập nhật status dựa trên stock mới
+                productList[productIndex].stock += item.quantity; 
                 const newStock = productList[productIndex].stock;
                 productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
-                
-                // Cập nhật giá nhập
                 productList[productIndex].importPrice = item.importPrice;
-                
-                // Tính lại giá bán dựa trên giá nhập mới và profitRate
                 const profitRate = productList[productIndex].profitRate || 0.15;
                 productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
         });
     }
-    
-    // 5. THAY THẾ PHIẾU CŨ
     importList[phieuIndex] = updatedImport;
     
     saveToLocalStorage(LS_KEY_IMPORT, importList); 
-    saveProductListToLocalStorage(productList); // Lưu theo format grouped
-
-    // 6. CẬP NHẬT GIAO DIỆN
+    saveProductListToLocalStorage(productList);
     showImportList();
     showProduct(); 
     closeModal('ImportModal');
     alert(`Phiếu Nhập ${id} đã được ${isComplete ? 'HOÀN THÀNH & nhập kho' : 'LƯU NHÁP'}!`);
 }
 
-// Hàm hiển thị danh sách phiếu nhập
 function showImportList() {
     const tableBody = document.getElementById('show-import-list');
     const searchInput = document.getElementById('form-search-import') ? document.getElementById('form-search-import').value.toLowerCase() : '';
@@ -2724,9 +2384,6 @@ function showImportList() {
     });
     tableBody.innerHTML = html;
 }
-
-// --- LOGIC THAO TÁC MODAL NHẬP HÀNG ---
-
 function openAddImportModal() {
     const modal = document.getElementById('ImportModal');
     const title = document.getElementById('ImportModalTitle');
@@ -2736,25 +2393,18 @@ function openAddImportModal() {
     title.textContent = 'Thêm Phiếu Nhập Mới';
     form.reset();
     document.getElementById('ImportID').value = '';
-    
-    // 1. Xóa các dòng sản phẩm cũ
     itemsContainer.innerHTML = '';
-    
-    // 2. Thêm một dòng sản phẩm mặc định
     addImportItemRow();
-    
-    // 3. Gán hàm xử lý submit cho form (Lưu nháp)
     form.onsubmit = function(event) {
         event.preventDefault();
-        saveImport(false); // Lưu nháp (status: 0)
+        saveImport(false);
     };
     
-    // 4. Gán hàm xử lý hoàn thành
     document.getElementById('ButtonCompleteImport').onclick = function() {
         if (form.checkValidity()) {
-            saveImport(true); // Hoàn thành (status: 1)
+            saveImport(true); 
         } else {
-            form.reportValidity(); // Hiển thị lỗi HTML5 nếu form chưa hợp lệ
+            form.reportValidity();
         }
     };
     modal.style.display = 'block';
@@ -2768,23 +2418,17 @@ function openEditImportModal(id) {
     const title = document.getElementById('ImportModalTitle');
     const form = document.getElementById('ImportForm');
     const itemsContainer = document.getElementById('ImportItemsContainer');
-    const isEditable = phieu.status === 0; // Chỉ được sửa khi là Nháp (0)
-
-    // 1. Cài đặt Tiêu đề
+    const isEditable = phieu.status === 0; 
     title.textContent = `Chi tiết Phiếu Nhập #${phieu.id} (${isEditable ? 'Nháp' : 'Hoàn thành'})`;
-    
-    // 2. Đổ dữ liệu cơ bản
+
     document.getElementById('ImportID').value = phieu.id;
     document.getElementById('ImportDate').value = phieu.date;
-    document.getElementById('ImportItemsContainer').innerHTML = ''; // Xóa nội dung cũ
+    document.getElementById('ImportItemsContainer').innerHTML = ''; 
 
-    // 3. Đổ dữ liệu các dòng sản phẩm
     phieu.items.forEach(item => {
-        addImportItemRow(item); // Hàm addImportItemRow đã được thiết kế để nhận item
+        addImportItemRow(item);
     });
     calculateImportTotal();
-
-    // 4. Quản lý Khả năng chỉnh sửa và Nút bấm
     const saveButton = document.getElementById('ButtonSubmitImportForm');
     const completeButton = document.getElementById('ButtonCompleteImport');
     const addButton = document.querySelector('#ImportModal .btn-action');
@@ -2792,7 +2436,6 @@ function openEditImportModal(id) {
     const allInputs = itemsContainer.querySelectorAll('input, select');
     
     if (isEditable) {
-        // CHO PHÉP CHỈNH SỬA VÀ LƯU
         document.getElementById('ImportDate').disabled = false;
         allInputs.forEach(el => el.disabled = false);
         
@@ -2800,23 +2443,19 @@ function openEditImportModal(id) {
         completeButton.style.display = 'block';
         addButton.style.display = 'block';
 
-        // THIẾT LẬP LOGIC SỬA
         form.onsubmit = function(event) {
             event.preventDefault();
-            updateImport(id, false); // SỬ DỤNG HÀM MỚI: Lưu Nháp (status: 0)
+            updateImport(id, false);
         }
         completeButton.onclick = function() {
-            updateImport(id, true); // SỬ DỤNG HÀM MỚI: Hoàn thành (status: 1)
+            updateImport(id, true);
         };
     } else {
-        // CHẾ ĐỘ CHỈ XEM (Khóa tất cả)
         document.getElementById('ImportDate').disabled = true;
         allInputs.forEach(el => el.disabled = true);
         saveButton.style.display = 'none';
         completeButton.style.display = 'none';
         addButton.style.display = 'none';
-        
-        // Khóa luôn nút xóa hàng
         document.querySelectorAll('.import-item-row .btn-delete').forEach(btn => btn.style.display = 'none');
     }
     
@@ -2830,56 +2469,40 @@ function completeImport(id) {
     const phieu = importList[phieuIndex];
 
     if (confirm(`Xác nhận HOÀN THÀNH phiếu nhập ${id}? Tồn kho sẽ được cập nhật.`)) {
-        // 1. CẬP NHẬT TỒN KHO
         phieu.items.forEach(item => {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity;
-                // Cập nhật status dựa trên stock mới
                 const newStock = productList[productIndex].stock;
                 productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
-                
-                // Cập nhật giá nhập
                 productList[productIndex].importPrice = item.importPrice;
-                
-                // Tính lại giá bán dựa trên giá nhập mới và profitRate
                 const profitRate = productList[productIndex].profitRate || 0.15;
                 productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
         });
-
-        // 2. CẬP NHẬT TRẠNG THÁI PHIẾU NHẬP
         importList[phieuIndex].status = 1;
         
         saveToLocalStorage(LS_KEY_IMPORT, importList);
-        saveProductListToLocalStorage(productList); // Lưu theo format grouped
+        saveProductListToLocalStorage(productList); 
 
-        // 3. CẬP NHẬT GIAO DIỆN
         showImportList();
         showProduct();
         alert(`Phiếu nhập ${id} đã HOÀN THÀNH và TỒN KHO đã được cập nhật!`);
     }
 }
 
-    // --- LOGIC CHÍNH: KHỞI TẠO & CHUYỂN ĐỔI MENU ---
-
-    // Hàm điều hướng đến section từ overview cards
+    // khởi tạo & chuyển đổi menu
     function navigateToSection(sectionId) {
         const sections = document.querySelectorAll('.section');
         const menuItems = document.querySelectorAll('.menu-item');
-        
-        // Ẩn tất cả sections
+
         sections.forEach(section => {
             section.classList.remove('active');
         });
-        
-        // Hiển thị section được chọn
         const targetSection = document.querySelector(`.section#${sectionId}`);
         if (targetSection) {
             targetSection.classList.add('active');
         }
-        
-        // Cập nhật menu active
         menuItems.forEach(menuItem => {
             menuItem.classList.remove('active-menu');
             if (menuItem.getAttribute('data-section') === sectionId) {
@@ -2889,34 +2512,22 @@ function completeImport(id) {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-    // 1. Logic Chuyển đổi Menu
-    // CHỈNH SỬA DÒNG NÀY: Tìm kiếm các thẻ <a> có class là 'menu-item'
     const menuItems = document.querySelectorAll('.menu-item'); 
     const sections = document.querySelectorAll('.section');
 
-    menuItems.forEach(item => { // Lặp qua các menu item
+    menuItems.forEach(item => { 
         item.addEventListener('click', (event) => {
-            // Ngăn chặn hành vi mặc định của thẻ <a> (chuyển trang)
             event.preventDefault(); 
-            
             const targetSectionId = item.getAttribute('data-section');
-
-            // Xóa class 'active' khỏi TẤT CẢ các section
             sections.forEach(section => {
                 section.classList.remove('active');
             });
-
-            // Thêm class 'active' vào section mục tiêu
             const targetSection = document.getElementById(targetSectionId);
             if (targetSection) {
                 targetSection.classList.add('active');
             }
-
-            // [TÙY CHỌN] Nếu muốn highlight menu đang chọn:
             menuItems.forEach(i => i.classList.remove('active-menu'));
             item.classList.add('active-menu');
-            
-            // Cập nhật lại dữ liệu khi chuyển tab nếu cần (để chắc chắn)
             if (targetSectionId === 'product') showProduct();
             if (targetSectionId === 'user') showUser();
             if (targetSectionId === 'order') findOrder();
@@ -2928,15 +2539,10 @@ function completeImport(id) {
             if (targetSectionId === 'import-mgt') showImportList();
         });
     });
-
-    // Cần phải chạy một lần khi khởi tạo để hiển thị trang "Tổng quan" ban đầu.
-    // Và để hiển thị dữ liệu trên thẻ Tổng quan.
-    showProduct(); // Chạy các hàm cập nhật dữ liệu lần đầu
+    showProduct();
     showUser();
     findOrder();
     thongke();
-    
-    // [TÙY CHỌN]: Đặt mục "Tổng quan" là active ban đầu
     document.querySelector('.section#overview').classList.add('active');
     document.querySelector('.menu-item[data-section="overview"]').classList.add('active-menu');
 });
