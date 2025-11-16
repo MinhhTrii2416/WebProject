@@ -793,17 +793,22 @@
 
     function formatCurrency(amount) {
         if (amount >= 1000000000) {
-            return (amount / 1000000000).toLocaleString('vi-VN', {
+            // Ví dụ: 1500000000 → "1.5 tỷ" hoặc "1 tỷ"
+            const billions = amount / 1000000000;
+            return billions.toLocaleString('vi-VN', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2
             }) + ' tỷ';
         }
         else if (amount >= 1000000) {
-            return (amount / 1000000).toLocaleString('vi-VN', {
+            // Ví dụ: 1500000 → "1.5 tr" hoặc "1 tr"
+            const millions = amount / 1000000;
+            return millions.toLocaleString('vi-VN', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 1
             }) + ' tr';
         }
+        // Ví dụ: 500000 → "500.000 đ"
         return amount.toLocaleString('vi-VN') + ' đ';
     }
 
@@ -937,7 +942,6 @@ function getOrderDetailsListFromStore() {
     const orderDetailsList = getOrderDetailsListFromStore();
     
     console.log('=== KIỂM TRA DỮ LIỆU KHÁCH HÀNG ===');
-    console.log('localStorage Users:', localStorage.getItem('Users'));
     console.log('userList loaded:', userList);
     console.log('Số lượng users:', userList.length);
    
