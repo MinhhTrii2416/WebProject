@@ -809,7 +809,10 @@
             }) + ' tr';
         }
         // Ví dụ: 500000 → "500.000 đ"
-        else return amount.toLocaleString('vi-VN') + ' đ';
+        else return amount.toLocaleString('vi-VN', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+        }) + ' đ';
     }
 
     function calculateTotalRevenue(orders) {
