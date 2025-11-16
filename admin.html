@@ -696,7 +696,7 @@
                     <label for="ImportDate" style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 14px;">
                         <i class="fa-regular fa-calendar"></i> Ngày Nhập:
                     </label>
-                    <input type="date" id="ImportDate" name="date" required class="form-control-date" style="width: 100%; max-width: 100%;" value="${new Date().toISOString().slice(0, 10)}">
+                    <input type="date" id="ImportDate" name="date" required class="form-control-date" style="width: 100%; max-width: 100%;">
                 </div>
 
                 <h4 style="margin-top: 20px; border-bottom: 2px solid #dc3545; padding-bottom: 8px; color: #343a40; font-weight: 700;">
@@ -792,6 +792,14 @@
     }
 
     function formatCurrency(amount) {
+        // Kiểm tra null/undefined/NaN
+        if (amount == null || isNaN(amount)) {
+            return '0 đ';
+        }
+        
+        // Chuyển sang số nếu là string
+        amount = Number(amount);
+        
         if (amount >= 1000000000) {
             // Ví dụ: 1500000000 → "1.5 tỷ" hoặc "1 tỷ"
             const billions = amount / 1000000000;
@@ -809,10 +817,7 @@
             }) + ' tr';
         }
         // Ví dụ: 500000 → "500.000 đ"
-        else return amount.toLocaleString('vi-VN', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
-        }) + ' đ';
+        return amount.toLocaleString('vi-VN') + ' đ';
     }
 
     function calculateTotalRevenue(orders) {
@@ -2399,6 +2404,11 @@ function openAddImportModal() {
     title.textContent = 'Thêm Phiếu Nhập Mới';
     form.reset();
     document.getElementById('ImportID').value = '';
+    
+    // Set ngày hiện tại cho input date
+    const today = new Date().toISOString().slice(0, 10);
+    document.getElementById('ImportDate').value = today;
+    
     itemsContainer.innerHTML = '';
     addImportItemRow();
     form.onsubmit = function(event) {
