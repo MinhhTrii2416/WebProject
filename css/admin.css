@@ -187,6 +187,56 @@ select option:checked {
 .section.active {
     display: block;
 }
+
+/* Tab Navigation Styles */
+.section-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0;
+}
+
+.section-tabs .tab-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #6c757d;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    bottom: -2px;
+}
+
+.section-tabs .tab-btn:hover {
+    color: #d8dc72;
+    background: rgba(216, 220, 114, 0.05);
+}
+
+.section-tabs .tab-btn.active {
+    color: #d8dc72;
+    border-bottom-color: #d8dc72;
+    background: rgba(216, 220, 114, 0.08);
+}
+
+.section-tabs .tab-btn i {
+    font-size: 16px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

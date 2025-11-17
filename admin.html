@@ -72,6 +72,18 @@
             </div>
             <!--Sản phẩm-->
             <div class="section" id="product">
+                <!-- Tab Navigation -->
+                <div class="section-tabs">
+                    <button class="tab-btn active" onclick="switchProductTab('product-list')">
+                        <i class="fa-solid fa-list"></i> Danh sách Sản phẩm
+                    </button>
+                    <button class="tab-btn" onclick="switchProductTab('category-mgt')">
+                        <i class="fa-solid fa-layer-group"></i> Quản lý Loại
+                    </button>
+                </div>
+
+                <!-- Tab: Danh sách Sản phẩm -->
+                <div class="tab-content active" id="product-list">
                 <div class="admin-control">
                     <div class ="admin-control left">
                         <form action="" class="form-search">
@@ -93,6 +105,15 @@
                            <option value="2">Sắp hết hàng</option>
                            <option value="0">Hết hàng</option>
                          </select>
+                         <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
+                            <label for="warning-level-input" style="font-size: 14px; font-weight: 500; white-space: nowrap;">Mức cảnh báo:</label>
+                            <input type="number" id="warning-level-input" value="5" min="0" max="100" 
+                                   style="width: 70px; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <button class="control" onclick="updateWarningLevelForAll()" 
+                                    style="padding: 8px 16px; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                                <i class="fa-solid fa-check"></i> Áp dụng
+                            </button>
+                         </div>
                     </div>
                     <div class="admin-control right">
                         <button class="control" id="reset-product" onclick="resetSearchProduct()">
@@ -124,7 +145,40 @@
                         </thead>
                         <tbody id="show-product"></tbody>
                     </table>
-                </div>  
+                </div>
+                </div>
+                <!-- End Tab: Danh sách Sản phẩm -->
+
+                <!-- Tab: Quản lý Loại -->
+                <div class="tab-content" id="category-mgt">
+                    <div class="admin-control">
+                        <div class="admin-control left">
+                            <h3 style="margin: 0; color: var(--primary-color);">Quản lý Loại Sản phẩm</h3>
+                        </div>
+                        <div class="admin-control right">
+                            <button class="control" onclick="openAddCategoryModal()">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Thêm Loại</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table">
+                        <table width="100%">
+                            <thead>
+                                <tr>
+                                    <td>STT</td>
+                                    <td>Tên Loại</td>
+                                    <td>Số Sản phẩm</td>
+                                    <td>Tổng Số lượng</td>
+                                    <td>Trạng thái</td>
+                                    <td>Thao tác</td>
+                                </tr>
+                            </thead>
+                            <tbody id="show-category"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- End Tab: Quản lý Loại -->
             </div>
             <!--Khách hàng-->
             <div class="section" id="user">
@@ -223,6 +277,18 @@
             </div>
             <!--Thống kê-->
             <div class="section" id="statistical">
+                <!-- Tab Navigation -->
+                <div class="section-tabs">
+                    <button class="tab-btn active" onclick="switchStatisticalTab('sales-report')">
+                        <i class="fa-solid fa-chart-line"></i> Báo cáo Doanh thu
+                    </button>
+                    <button class="tab-btn" onclick="switchStatisticalTab('inventory-report')">
+                        <i class="fa-solid fa-warehouse"></i> Nhập-Xuất-Tồn
+                    </button>
+                </div>
+
+                <!-- Tab: Báo cáo Doanh thu -->
+                <div class="tab-content active" id="sales-report">
                 <div class="admin-control">
                     <div class="admin-control left">
                         <form action="" class="form-search">
@@ -296,6 +362,89 @@
                         </tbody>
                     </table>
                 </div>
+                </div>
+                <!-- End Tab: Báo cáo Doanh thu -->
+
+                <!-- Tab: Nhập-Xuất-Tồn -->
+                <div class="tab-content" id="inventory-report">
+                    <div class="admin-control">
+                        <div class="admin-control left">
+                            <form action="" class="form-search">
+                                <span class="search"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input id="form-search-inventory" type="text" class="form-search-input" placeholder="Tìm kiếm sản phẩm..." oninput="showInventoryReport()">
+                            </form>
+                        </div>
+                        <div class="admin-control center">
+                            <select name="the-loai-inventory" id="the-loai-inventory" onchange="showInventoryReport()">
+                                <option>Tất cả</option>
+                                <option>Yonex</option>
+                                <option>Victor</option>
+                                <option>Lining</option>
+                                <option>Mizuno</option>
+                            </select>
+                        </div>
+                        <div class="admin-control right">
+                            <form action="" class="fill-date">
+                                <div>
+                                    <label for="time-start-inventory">Từ ngày</label>
+                                    <input id="time-start-inventory" class="form-control-date" type="date" onchange="showInventoryReport()">
+                                </div>
+                                <div>
+                                    <label for="time-end-inventory">Đến ngày</label>
+                                    <input id="time-end-inventory" class="form-control-date" type="date" onchange="showInventoryReport()">
+                                </div>
+                            </form>
+                            <button class="reset-order" onclick="resetInventoryReport()"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-statistical" id="inventory-statistical">
+                        <div class="order-statistical-card">
+                            <div class="order-statistical-card-content">
+                                <p class="order-statistical-card-content-d">Tổng nhập</p>
+                                <h4 class="order-statistical-card-content-h" id="total-import-qty">0</h4>
+                            </div>
+                            <div class="order-statistical-card-icon">
+                                <i class="fa-solid fa-download"></i>
+                            </div>
+                        </div>
+                        <div class="order-statistical-card">
+                            <div class="order-statistical-card-content">
+                                <p class="order-statistical-card-content-d">Tổng xuất</p>
+                                <h4 class="order-statistical-card-content-h" id="total-export-qty">0</h4>
+                            </div>
+                            <div class="order-statistical-card-icon">
+                                <i class="fa-solid fa-upload"></i>
+                            </div>
+                        </div>
+                        <div class="order-statistical-card">
+                            <div class="order-statistical-card-content">
+                                <p class="order-statistical-card-content-d">Tồn hiện tại</p>
+                                <h4 class="order-statistical-card-content-h" id="current-stock-qty">0</h4>
+                            </div>
+                            <div class="order-statistical-card-icon">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table">
+                        <table width="100%">
+                            <thead>
+                                <tr>
+                                    <td>STT</td>
+                                    <td>Mã SP</td>
+                                    <td>Tên sản phẩm</td>
+                                    <td>Loại</td>
+                                    <td>Tồn đầu kỳ</td>
+                                    <td>Nhập trong kỳ</td>
+                                    <td>Xuất trong kỳ</td>
+                                    <td>Tồn cuối kỳ</td>
+                                </tr>
+                            </thead>
+                            <tbody id="show-inventory-report"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- End Tab: Nhập-Xuất-Tồn -->
             </div>
             <!--Giá Bán & Lợi Nhuận-->
             <div class="section" id="price-mgt">
@@ -730,6 +879,48 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal: Thêm/Sửa Loại Sản phẩm -->
+    <div id="CategoryModal" class="modal add-category">
+        <div class="modal_content" style="max-width: 500px;">
+            <span class="close_button" onclick="closeModal('CategoryModal')">&times;</span>
+            <h3 id="CategoryModalTitle">Thêm Loại Sản phẩm</h3>
+            <form id="CategoryForm">
+                <input type="hidden" id="CategoryOldName" value="">
+                
+                <div class="form_group">
+                    <label for="CategoryName">
+                        <i class="fa-solid fa-tag"></i> Tên Loại: <span style="color: red;">*</span>
+                    </label>
+                    <input type="text" id="CategoryName" name="name" placeholder="VD: Yonex, Victor..." required>
+                </div>
+
+                <div class="modal-choice">
+                    <button type="submit" id="ButtonSubmitCategoryForm" class="confirm-button">
+                        <i class="fa-solid fa-check"></i> <span>Thêm</span>
+                    </button>
+                    <button type="button" class="cancel-button" onclick="closeModal('CategoryModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Xóa Loại Sản phẩm -->
+    <div id="DeleteCategoryModal" class="modal modal-confirm">
+        <div class="modal_content">
+            <span class="close_button" onclick="closeModal('DeleteCategoryModal')">&times;</span>
+            <h3>Xác nhận Xóa Loại?</h3>
+            <p style="text-align: center; margin: 20px 0;">
+                Bạn có chắc chắn muốn XÓA loại <br>
+                <strong id="CategoryToDelete" style="color: var(--red);">[TÊN LOẠI]</strong>?
+            </p>
+            <div class="modal-choice" style="margin-top: 30px; display: flex; justify-content: center">
+                <button type="button" id="ConfirmDeleteCategoryButton" class="confirm-button" style="background-color: var(--red);">Xóa</button>
+                <button type="button" class="cancel-button" onclick="closeModal('DeleteCategoryModal')">Hủy</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/product.js"></script>
     <script src="js/initProduct.js"></script>
     <script src="js/script.js"></script>
@@ -954,6 +1145,47 @@ function getOrderDetailsListFromStore() {
     console.log('Số lượng users:', userList.length);
    
     // SẢN PHẨM
+    
+    // Cập nhật mức cảnh báo cho tất cả sản phẩm
+    function updateWarningLevelForAll() {
+        const warningLevel = parseInt(document.getElementById('warning-level-input').value);
+        
+        if (isNaN(warningLevel) || warningLevel < 0) {
+            alert('Vui lòng nhập mức cảnh báo hợp lệ (>= 0)');
+            return;
+        }
+        
+        if (!confirm(`Bạn có chắc muốn áp dụng mức cảnh báo ${warningLevel} cho TẤT CẢ ${productList.length} sản phẩm?`)) {
+            return;
+        }
+        
+        let updatedCount = 0;
+        
+        productList.forEach(product => {
+            product.warningLevel = warningLevel;
+            
+            // Cập nhật status dựa trên stock và warningLevel mới
+            if (product.stock === 0) {
+                product.status = 0; // Hết hàng
+            } else if (product.stock <= warningLevel) {
+                product.status = 2; // Sắp hết
+            } else {
+                product.status = 1; // Còn hàng
+            }
+            
+            updatedCount++;
+        });
+        
+        // Lưu vào localStorage
+        saveProductListToLocalStorage(productList);
+        
+        // Refresh hiển thị
+        showProduct();
+        thongke();
+        
+        alert(`Đã cập nhật mức cảnh báo ${warningLevel} cho ${updatedCount} sản phẩm và điều chỉnh trạng thái tương ứng!`);
+    }
+    
     function showProduct() {
         const tableBody = document.getElementById('show-product');
         const searchInput = document.getElementById('form-search-product').value.toLowerCase();
@@ -1761,6 +1993,18 @@ function changeOrderStatus(id, newStatus) {
                 if (prodIndex !== -1) {
                     productList[prodIndex].stock = (productList[prodIndex].stock || 0) - (item.quantity || 0);
                     if (productList[prodIndex].stock < 0) productList[prodIndex].stock = 0;
+                    
+                    // Cập nhật status dựa trên warningLevel
+                    const newStock = productList[prodIndex].stock;
+                    const warning = productList[prodIndex].warningLevel || 5;
+                    
+                    if (newStock === 0) {
+                        productList[prodIndex].status = 0; // Hết hàng
+                    } else if (newStock <= warning) {
+                        productList[prodIndex].status = 2; // Sắp hết
+                    } else {
+                        productList[prodIndex].status = 1; // Còn hàng
+                    }
                 }
             });
             const dataProductsFormat = {};
@@ -1783,6 +2027,18 @@ function changeOrderStatus(id, newStatus) {
                 const prodIndex = productList.findIndex(p => p.id == item.productId);
                 if (prodIndex !== -1) {
                     productList[prodIndex].stock = (productList[prodIndex].stock || 0) + (item.quantity || 0);
+                    
+                    // Cập nhật status dựa trên warningLevel
+                    const newStock = productList[prodIndex].stock;
+                    const warning = productList[prodIndex].warningLevel || 5;
+                    
+                    if (newStock === 0) {
+                        productList[prodIndex].status = 0; // Hết hàng
+                    } else if (newStock <= warning) {
+                        productList[prodIndex].status = 2; // Sắp hết
+                    } else {
+                        productList[prodIndex].status = 1; // Còn hàng
+                    }
                 }
             });
 
@@ -2290,9 +2546,21 @@ function saveImport(isComplete) {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity;
-                const newStock = productList[productIndex].stock;
-                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
                 productList[productIndex].importPrice = item.importPrice;
+                
+                // Cập nhật status dựa trên warningLevel của sản phẩm
+                const newStock = productList[productIndex].stock;
+                const warning = productList[productIndex].warningLevel || 5;
+                
+                if (newStock === 0) {
+                    productList[productIndex].status = 0; // Hết hàng
+                } else if (newStock <= warning) {
+                    productList[productIndex].status = 2; // Sắp hết
+                } else {
+                    productList[productIndex].status = 1; // Còn hàng
+                }
+                
+                // Cập nhật giá bán
                 const profitRate = productList[productIndex].profitRate || 0.15;
                 productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
@@ -2325,8 +2593,15 @@ function updateImport(id, isComplete) {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock -= item.quantity;
+                const warning = productList[productIndex].warningLevel || 5;
                 const newStock = productList[productIndex].stock;
-                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
+                if (newStock === 0) {
+                    productList[productIndex].status = 0;
+                } else if (newStock <= warning) {
+                    productList[productIndex].status = 2;
+                } else {
+                    productList[productIndex].status = 1;
+                }
             }
         });
     }
@@ -2342,10 +2617,22 @@ function updateImport(id, isComplete) {
         updatedImport.items.forEach(item => {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
-                productList[productIndex].stock += item.quantity; 
-                const newStock = productList[productIndex].stock;
-                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
+                productList[productIndex].stock += item.quantity;
                 productList[productIndex].importPrice = item.importPrice;
+                
+                // Cập nhật status dựa trên warningLevel của sản phẩm
+                const newStock = productList[productIndex].stock;
+                const warning = productList[productIndex].warningLevel || 5;
+                
+                if (newStock === 0) {
+                    productList[productIndex].status = 0; // Hết hàng
+                } else if (newStock <= warning) {
+                    productList[productIndex].status = 2; // Sắp hết
+                } else {
+                    productList[productIndex].status = 1; // Còn hàng
+                }
+                
+                // Cập nhật giá bán
                 const profitRate = productList[productIndex].profitRate || 0.15;
                 productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
@@ -2489,9 +2776,21 @@ function completeImport(id) {
             const productIndex = productList.findIndex(p => p.id === item.productId);
             if (productIndex !== -1) {
                 productList[productIndex].stock += item.quantity;
-                const newStock = productList[productIndex].stock;
-                productList[productIndex].status = newStock > 5 ? 1 : newStock === 0 ? 0 : 2;
                 productList[productIndex].importPrice = item.importPrice;
+                
+                // Cập nhật status dựa trên warningLevel của sản phẩm
+                const newStock = productList[productIndex].stock;
+                const warning = productList[productIndex].warningLevel || 5;
+                
+                if (newStock === 0) {
+                    productList[productIndex].status = 0; // Hết hàng
+                } else if (newStock <= warning) {
+                    productList[productIndex].status = 2; // Sắp hết
+                } else {
+                    productList[productIndex].status = 1; // Còn hàng
+                }
+                
+                // Cập nhật giá bán
                 const profitRate = productList[productIndex].profitRate || 0.15;
                 productList[productIndex].price = Math.round(item.importPrice / (1 - profitRate));
             }
@@ -2562,6 +2861,384 @@ function completeImport(id) {
     document.querySelector('.section#overview').classList.add('active');
     document.querySelector('.menu-item[data-section="overview"]').classList.add('active-menu');
 });
+
+// ===== QUẢN LÝ LOẠI SẢN PHẨM =====
+
+// Lấy danh sách loại từ dataProducts
+function getCategoriesFromProducts() {
+    const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+    if (!rawData) return [];
+    
+    try {
+        const productsData = JSON.parse(rawData);
+        const categories = [];
+        
+        // Duyệt qua từng brand trong dataProducts
+        for (const brand in productsData) {
+            if (Array.isArray(productsData[brand]) && productsData[brand].length > 0) {
+                const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+                
+                // Tính tổng số lượng của loại này
+                const totalStock = productsData[brand].reduce((sum, p) => sum + (p.stock || 0), 0);
+                const productCount = productsData[brand].length;
+                
+                categories.push({
+                    name: brandName,
+                    productCount: productCount,
+                    totalStock: totalStock,
+                    isActive: true
+                });
+            }
+        }
+        
+        return categories;
+    } catch (e) {
+        console.error('Error parsing categories:', e);
+        return [];
+    }
+}
+
+// Chuyển đổi tab trong section Sản phẩm
+function switchProductTab(tabId) {
+    const tabs = document.querySelectorAll('#product .tab-content');
+    const btns = document.querySelectorAll('#product .tab-btn');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    btns.forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    event.target.closest('.tab-btn').classList.add('active');
+    
+    if (tabId === 'category-mgt') {
+        showCategoryList();
+    } else if (tabId === 'product-list') {
+        showProduct();
+    }
+}
+
+// Hiển thị danh sách loại sản phẩm
+function showCategoryList() {
+    const categories = getCategoriesFromProducts();
+    const tableBody = document.getElementById('show-category');
+    
+    let html = '';
+    categories.forEach((cat, index) => {
+        const statusText = cat.isActive ? 'Hoạt động' : 'Đã ẩn';
+        const statusClass = cat.isActive ? 'status-completed' : 'status-canceled';
+        
+        html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${cat.name}</strong></td>
+                <td>${cat.productCount}</td>
+                <td><strong style="color: #28a745;">${cat.totalStock}</strong></td>
+                <td><span class="${statusClass}">${statusText}</span></td>
+                <td>
+                    <button class="btn-action" onclick="openEditCategoryModal('${cat.name}')">
+                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+                    </button>
+                    <button class="btn-delete" onclick="openDeleteCategoryModal('${cat.name}')">
+                        <i class="fa-solid fa-trash"></i> Xóa
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
+}
+
+// Mở modal thêm loại mới
+function openAddCategoryModal() {
+    const modal = document.getElementById('CategoryModal');
+    const form = document.getElementById('CategoryForm');
+    const title = document.getElementById('CategoryModalTitle');
+    const submitBtn = document.getElementById('ButtonSubmitCategoryForm');
+    
+    title.textContent = 'Thêm Loại Sản phẩm';
+    submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Thêm</span>';
+    form.reset();
+    document.getElementById('CategoryOldName').value = '';
+    
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        handleAddCategory();
+    };
+    
+    modal.style.display = 'block';
+}
+
+// Thêm loại mới
+function handleAddCategory() {
+    const name = document.getElementById('CategoryName').value.trim();
+    
+    if (!name) {
+        alert('Vui lòng nhập tên loại!');
+        return;
+    }
+    
+    // Kiểm tra xem loại đã tồn tại chưa
+    const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+    const productsData = rawData ? JSON.parse(rawData) : {};
+    
+    const brandKey = name.toLowerCase();
+    if (productsData[brandKey]) {
+        alert('Loại này đã tồn tại!');
+        return;
+    }
+    
+    // Thêm loại mới vào dataProducts (array rỗng)
+    productsData[brandKey] = [];
+    localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(productsData));
+    
+    // Thêm vào profitRateList với tỉ lệ mặc định 15%
+    profitRateList.push({
+        type: brandKey,
+        profitRate: 0.15
+    });
+    localStorage.setItem(LS_KEY_PROFIT_RATE, JSON.stringify(profitRateList));
+    
+    closeModal('CategoryModal');
+    showCategoryList();
+    alert(`Đã thêm loại "${name}" thành công!`);
+}
+
+// Mở modal sửa loại
+function openEditCategoryModal(categoryName) {
+    const modal = document.getElementById('CategoryModal');
+    const form = document.getElementById('CategoryForm');
+    const title = document.getElementById('CategoryModalTitle');
+    const submitBtn = document.getElementById('ButtonSubmitCategoryForm');
+    
+    title.textContent = 'Chỉnh sửa Tên Loại';
+    submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> <span>Lưu</span>';
+    
+    document.getElementById('CategoryOldName').value = categoryName;
+    document.getElementById('CategoryName').value = categoryName;
+    
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        handleEditCategory();
+    };
+    
+    modal.style.display = 'block';
+}
+
+// Sửa loại
+function handleEditCategory() {
+    const oldName = document.getElementById('CategoryOldName').value;
+    const newName = document.getElementById('CategoryName').value.trim();
+    
+    if (!newName) {
+        alert('Vui lòng nhập tên loại!');
+        return;
+    }
+    
+    if (oldName === newName) {
+        closeModal('CategoryModal');
+        return;
+    }
+    
+    // Kiểm tra trùng tên
+    const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+    const productsData = rawData ? JSON.parse(rawData) : {};
+    
+    const newBrandKey = newName.toLowerCase();
+    const oldBrandKey = oldName.toLowerCase();
+    
+    if (productsData[newBrandKey] && newBrandKey !== oldBrandKey) {
+        alert('Tên loại này đã tồn tại!');
+        return;
+    }
+    
+    // Đổi tên key trong dataProducts
+    if (productsData[oldBrandKey]) {
+        productsData[newBrandKey] = productsData[oldBrandKey];
+        delete productsData[oldBrandKey];
+        
+        // Cập nhật brand trong từng sản phẩm
+        productsData[newBrandKey].forEach(product => {
+            product.brand = newName;
+        });
+        
+        localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(productsData));
+    }
+    
+    // Cập nhật profitRateList
+    const prIndex = profitRateList.findIndex(pr => pr.type.toLowerCase() === oldBrandKey);
+    if (prIndex !== -1) {
+        profitRateList[prIndex].type = newBrandKey;
+        localStorage.setItem(LS_KEY_PROFIT_RATE, JSON.stringify(profitRateList));
+    }
+    
+    closeModal('CategoryModal');
+    showCategoryList();
+    showBrandProfitManagement();
+    showProduct();
+    alert(`Đã đổi tên loại "${oldName}" thành "${newName}" thành công!`);
+}
+
+// Mở modal xóa loại
+function openDeleteCategoryModal(categoryName) {
+    const modal = document.getElementById('DeleteCategoryModal');
+    const confirmBtn = document.getElementById('ConfirmDeleteCategoryButton');
+    
+    document.getElementById('CategoryToDelete').textContent = categoryName;
+    
+    confirmBtn.onclick = function() {
+        deleteCategory(categoryName);
+    };
+    
+    modal.style.display = 'block';
+}
+
+// Xóa loại
+function deleteCategory(categoryName) {
+    const rawData = localStorage.getItem(LS_KEY_PRODUCT_DATA);
+    const productsData = rawData ? JSON.parse(rawData) : {};
+    
+    const brandKey = categoryName.toLowerCase();
+    const productCount = productsData[brandKey] ? productsData[brandKey].length : 0;
+    
+    // Xác nhận xóa nếu còn sản phẩm
+    if (productCount > 0) {
+        if (!confirm(`Loại "${categoryName}" có ${productCount} sản phẩm. Xóa loại sẽ XÓA TẤT CẢ sản phẩm trong loại này. Bạn có chắc chắn?`)) {
+            closeModal('DeleteCategoryModal');
+            return;
+        }
+    }
+    
+    // Xóa loại khỏi dataProducts
+    if (productsData[brandKey]) {
+        delete productsData[brandKey];
+        localStorage.setItem(LS_KEY_PRODUCT_DATA, JSON.stringify(productsData));
+    }
+    
+    // Xóa khỏi profitRateList
+    const newProfitRates = profitRateList.filter(pr => pr.type.toLowerCase() !== brandKey);
+    localStorage.setItem(LS_KEY_PROFIT_RATE, JSON.stringify(newProfitRates));
+    
+    closeModal('DeleteCategoryModal');
+    showCategoryList();
+    showProduct(); // Refresh danh sách sản phẩm
+    
+    if (productCount > 0) {
+        alert(`Đã xóa loại "${categoryName}" và ${productCount} sản phẩm!`);
+    } else {
+        alert(`Đã xóa loại "${categoryName}" thành công!`);
+    }
+}
+
+// ===== BÁO CÁO NHẬP-XUẤT-TỒN =====
+
+// Chuyển đổi tab trong section Thống kê
+function switchStatisticalTab(tabId) {
+    const tabs = document.querySelectorAll('#statistical .tab-content');
+    const btns = document.querySelectorAll('#statistical .tab-btn');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    btns.forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    event.target.closest('.tab-btn').classList.add('active');
+    
+    if (tabId === 'inventory-report') {
+        showInventoryReport();
+    } else if (tabId === 'sales-report') {
+        thongke();
+    }
+}
+
+// Hiển thị báo cáo nhập-xuất-tồn
+function showInventoryReport() {
+    const tableBody = document.getElementById('show-inventory-report');
+    const searchValue = document.getElementById('form-search-inventory')?.value.toLowerCase() || '';
+    const brandFilter = document.getElementById('the-loai-inventory')?.value || 'Tất cả';
+    const startDate = document.getElementById('time-start-inventory')?.value || '';
+    const endDate = document.getElementById('time-end-inventory')?.value || '';
+    
+    let totalImport = 0;
+    let totalExport = 0;
+    let totalStock = 0;
+    
+    let html = '';
+    let index = 1;
+    
+    productList.forEach(product => {
+        // Lọc theo tìm kiếm
+        if (searchValue && !product.name.toLowerCase().includes(searchValue) && !product.id.toLowerCase().includes(searchValue)) {
+            return;
+        }
+        
+        // Lọc theo loại
+        if (brandFilter !== 'Tất cả' && product.brand !== brandFilter) {
+            return;
+        }
+        
+        // Tính nhập trong kỳ
+        let importQty = 0;
+        const productImports = importList.filter(imp => {
+            const dateMatch = (!startDate || imp.date >= startDate) && (!endDate || imp.date <= endDate);
+            return imp.status === 1 && dateMatch;
+        });
+        
+        productImports.forEach(imp => {
+            const item = imp.items.find(i => i.productId === product.id);
+            if (item) importQty += item.quantity;
+        });
+        
+        // Tính xuất trong kỳ (từ đơn hàng đã xử lý)
+        let exportQty = 0;
+        const completedOrders = orderList.filter(order => {
+            const dateMatch = (!startDate || order.orderDate >= startDate) && (!endDate || order.orderDate <= endDate);
+            return order.status > 1 && dateMatch; // status 2, 3 = đã xử lý, đã giao
+        });
+        
+        completedOrders.forEach(order => {
+            const item = order.items.find(i => i.productId === product.id);
+            if (item) exportQty += item.quantity;
+        });
+        
+        // Tồn cuối kỳ
+        const currentStock = product.stock || 0;
+        
+        // Tồn đầu kỳ = Tồn cuối - Nhập + Xuất
+        const beginStock = currentStock - importQty + exportQty;
+        
+        totalImport += importQty;
+        totalExport += exportQty;
+        totalStock += currentStock;
+        
+        html += `
+            <tr>
+                <td>${index++}</td>
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.brand}</td>
+                <td>${beginStock}</td>
+                <td style="color: #28a745; font-weight: 600;">${importQty}</td>
+                <td style="color: #dc3545; font-weight: 600;">${exportQty}</td>
+                <td><strong>${currentStock}</strong></td>
+            </tr>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
+    
+    // Cập nhật thống kê tổng
+    document.getElementById('total-import-qty').textContent = totalImport;
+    document.getElementById('total-export-qty').textContent = totalExport;
+    document.getElementById('current-stock-qty').textContent = totalStock;
+}
+
+// Reset bộ lọc báo cáo tồn kho
+function resetInventoryReport() {
+    document.getElementById('form-search-inventory').value = '';
+    document.getElementById('the-loai-inventory').value = 'Tất cả';
+    document.getElementById('time-start-inventory').value = '';
+    document.getElementById('time-end-inventory').value = '';
+    showInventoryReport();
+}
 
     
         </script>

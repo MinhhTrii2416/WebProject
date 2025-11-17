@@ -312,7 +312,12 @@
             <div id="section-title"></div><h2 class="section-title">SẢN PHẨM NỔI BẬT</h2></div>
             
             <!-- Filter Bar cho trang chủ -->
-            <div class="filter-bar">
+            <form class="filter-bar" id="filter-form">
+                <div class="filter-group filter-search-group">
+                    <label for="home-search-filter">Tên sản phẩm:</label>
+                    <input type="text" id="home-search-filter" placeholder="Nhập tên sản phẩm...">
+                </div>
+
                 <div class="filter-group">
                     <label for="home-price-filter">Giá:</label>
                     <select id="home-price-filter">
@@ -321,6 +326,16 @@
                         <option value="3000000-4000000">3 - 4 triệu</option>
                         <option value="4000000-5000000">4 - 5 triệu</option>
                         <option value="5000000-999999999">Trên 5 triệu</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="home-category-filter">Lối chơi:</label>
+                    <select id="home-category-filter">
+                        <option value="all">Tất cả</option>
+                        <option value="Tấn công">Tấn công</option>
+                        <option value="Đa năng">Đa năng</option>
+                        <option value="Tốc độ">Tốc độ</option>
                     </select>
                 </div>
 
@@ -336,16 +351,12 @@
                     </select>
                 </div>
 
-                <div class="filter-group">
-                    <label for="home-category-filter">Lối chơi:</label>
-                    <select id="home-category-filter">
-                        <option value="all">Tất cả</option>
-                        <option value="Tấn công">Tấn công</option>
-                        <option value="Đa năng">Đa năng</option>
-                        <option value="Tốc độ">Tốc độ</option>
-                    </select>
+                <div class="filter-group filter-submit-group">
+                    <button type="submit" class="filter-submit-btn">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
                 </div>
-            </div>
+            </form>
             
             <div class="container flex-container">
                 <!-- Product Grid -->

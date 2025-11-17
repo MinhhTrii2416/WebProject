@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const featuredPagination = document.getElementById('featured-pagination');
     
     // Filters
+    const filterForm = document.getElementById('filter-form');
+    const homeSearchFilter = document.getElementById('home-search-filter');
     const priceFilter = document.getElementById('home-price-filter');
     const weightFilter = document.getElementById('home-weight-filter');
     const categoryFilter = document.getElementById('home-category-filter');
@@ -315,13 +317,40 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayProducts(page = 1) {
         const allProducts = getAllProducts();
         
-        // Get filter values
+        // Get filter values from form
+        const searchTerm = homeSearchFilter ? homeSearchFilter.value.trim() : '';
         const priceRange = priceFilter ? priceFilter.value : 'all';
         const weightRange = weightFilter ? weightFilter.value : 'all';
         const categoryValue = categoryFilter ? categoryFilter.value : 'all';
         
         // Apply filters
-        let filtered = filterAndSortProducts(allProducts, '', priceRange, 'rating', weightRange, categoryValue);
+        let filtered = filterAndSortProducts(allProducts, searchTerm, priceRange, 'rating', weightRange, categoryValue);
+        
+        // Update section title based on filter
+        if (searchTerm || priceRange !== 'all' || weightRange !== 'all' || categoryValue !== 'all') {
+            let filterDesc = [];
+            if (searchTerm) filterDesc.push(`"${searchTerm}"`);
+            if (categoryValue !== 'all') filterDesc.push(categoryValue);
+            if (priceRange !== 'all') {
+                const priceLabels = {
+                    '0-3000000': 'Dưới 3 triệu',
+                    '3000000-4000000': '3 - 4 triệu',
+                    '4000000-5000000': '4 - 5 triệu',
+                    '5000000-999999999': 'Trên 5 triệu'
+                };
+                filterDesc.push(priceLabels[priceRange]);
+            }
+            sectionTitle.textContent = `KẾT QUẢ TÌM KIẾM: ${filterDesc.join(' | ')}`;
+        } else {
+            sectionTitle.textContent = 'SẢN PHẨM NỔI BẬT';
+        }
+        
+        // Check if no results
+        if (filtered.length === 0) {
+            featuredGrid.innerHTML = '<p class="no-products">Không tìm thấy sản phẩm nào.</p>';
+            featuredPagination.innerHTML = '';
+            return;
+        }
         
         // Pagination
         const startIndex = (page - 1) * ITEMS_PER_PAGE;
@@ -460,7 +489,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Show home section
                 showSection('home');
                 
-                // Reset filters
+                // Reset all filters
+                if (homeSearchFilter) homeSearchFilter.value = '';
                 if (priceFilter) priceFilter.value = 'all';
                 if (weightFilter) weightFilter.value = 'all';
                 if (categoryFilter) categoryFilter.value = 'all';
@@ -483,9 +513,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Home page
             showSection('home');
             
-            // Clear search
+            // Clear all searches and filters
+            if (homeSearchFilter) homeSearchFilter.value = '';
             if (headerSearchInput) headerSearchInput.value = '';
             if (mobileSearchInput) mobileSearchInput.value = '';
+            if (priceFilter) priceFilter.value = 'all';
+            if (weightFilter) weightFilter.value = 'all';
+            if (categoryFilter) categoryFilter.value = 'all';
             
             // Reset display
             searchResults = [];
@@ -495,42 +529,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Filter event listeners
-    if (priceFilter) {
-        priceFilter.addEventListener('change', () => {
+    // Filter form submit handler
+    if (filterForm) {
+        filterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
             currentPage = 1;
-            // Check if we're in search mode
-            const currentSearchTerm = headerSearchInput ? headerSearchInput.value : '';
-            if (searchResults.length > 0 || currentSearchTerm) {
-                displaySearchResults(1, currentSearchTerm);
-            } else {
-                displayProducts(1);
-            }
-        });
-    }
-    
-    if (weightFilter) {
-        weightFilter.addEventListener('change', () => {
-            currentPage = 1;
-            // Check if we're in search mode
-            const currentSearchTerm = headerSearchInput ? headerSearchInput.value : '';
-            if (searchResults.length > 0 || currentSearchTerm) {
-                displaySearchResults(1, currentSearchTerm);
-            } else {
-                displayProducts(1);
-            }
-        });
-    }
-    
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', () => {
-            currentPage = 1;
-            // Check if we're in search mode
-            const currentSearchTerm = headerSearchInput ? headerSearchInput.value : '';
-            if (searchResults.length > 0 || currentSearchTerm) {
-                displaySearchResults(1, currentSearchTerm);
-            } else {
-                displayProducts(1);
+            searchResults = []; // Clear header search results
+            displayProducts(1);
+            // Scroll to products section
+            if (featuredSection) {
+                window.scrollTo({ top: featuredSection.offsetTop - 100, behavior: 'smooth' });
             }
         });
     }
@@ -713,7 +721,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const allProducts = getAllProducts();
         
         if (!searchTerm || searchTerm.trim() === '') {
-            // Nếu không có từ khóa, hiển thị tất cả sản phẩm
+            // Nếu không có từ khóa, reset filter form và hiển thị tất cả
+            if (homeSearchFilter) homeSearchFilter.value = '';
+            if (priceFilter) priceFilter.value = 'all';
+            if (weightFilter) weightFilter.value = 'all';
+            if (categoryFilter) categoryFilter.value = 'all';
             searchResults = [];
             currentPage = 1;
             sectionTitle.textContent = 'SẢN PHẨM NỔI BẬT';

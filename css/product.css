@@ -52,6 +52,57 @@
     border-color: var(--accent-color);
 }
 
+.filter-search-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-search-group input[type="text"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f5f5f5;
+    transition: border-color 0.3s;
+}
+
+.filter-search-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: white;
+}
+
+.filter-submit-group {
+    margin-left: auto;
+}
+
+.filter-submit-btn {
+    padding: 0.75rem 2rem;
+    background: var(--accent-color);
+    color: black;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.filter-submit-btn:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
+}
+
+.filter-submit-btn:active {
+    transform: translateY(0);
+}
+
 /* Product Grid */
 .flex-container {
     display: flex;
