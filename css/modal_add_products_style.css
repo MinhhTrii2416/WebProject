@@ -258,7 +258,6 @@ textarea
     gap: 8px;
     transition: background-color 0.2s;
 }
-
 /* Scrollbar styling */
 .modal_content::-webkit-scrollbar {
     width: 8px;
