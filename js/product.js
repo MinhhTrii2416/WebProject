@@ -226,8 +226,8 @@ const productsData = {
             originalPrice: 4800000,
             images: [
                 "img/Lining/Lining Aeronaut 9000/Lining.png",
-                "img/Lining/LiningLining Aeronaut 9000/OP1.png ",
-                "img/Lining/LiningLining Aeronaut 9000/OI2.png",
+                "img/Lining/Lining Aeronaut 9000/OP1.jpg",
+                "img/Lining/Lining Aeronaut 9000/OI2.jpg",
             ],
             description: "Vợt cao cấp nhất của Lining với công nghệ Wing Stabilizer",
             weight: "3U",
@@ -248,8 +248,8 @@ const productsData = {
             originalPrice: 4800000,
             images: [
                 "img/Lining/Lining Aeronaut 9000/Lining.png",
-                "img/Lining/Lining Aeronaut 9000/OP1.png",
-                "img/Lining/Lining Aeronaut 9000/OI2.png"
+                "img/Lining/Lining Aeronaut 9000/OP1.jpg",
+                "img/Lining/Lining Aeronaut 9000/OI2.jpg"
             ],
             description: "Vợt cao cấp của Lining. Phiên bản 4U nhẹ và nhanh hơn.",
             weight: "4U",
@@ -270,8 +270,8 @@ const productsData = {
             originalPrice: 4000000,
             images: [
                 "img/Lining/Lining N99/vot-cau-long-lining-n99-blue-chinh-hang-2.webp",
-                "img/Lining/Lining N99/vot-cau-long-lining-n99-blue-2.webp",
-                "img/Lining/Lining N99/vot-lining-air-stream-N99-than-1.webp",
+                "img/Lining/Lining N99/vot-cau-long-lining-n99-blue-2.gif",
+                "img/Lining/Lining N99/vot-lining-air-stream-N99-than-1.png",
             ],
             description: "Vợt của Lin Dan, kiểm soát và tấn công hoàn hảo",
             weight: "4U",
@@ -315,7 +315,7 @@ const productsData = {
             images: [
                 "img/Lining/3D Calibar 900/74d67d9d-901e-4e24-a6eb-1bad9ec381d6_2048x2048.webp",
                 "img/Lining/3D Calibar 900/3efbcdf0-03ea-42c7-965c-cccbfe3e3c53_x700.webp",
-                "img/Lining/3D Calibar 900/images-007001481-48915_4.j",
+                "img/Lining/3D Calibar 900/images-007001481-48915_4.jpg",
             ],
             description: "Khung vợt 3D độc đáo, tăng vùng ngọt khi đánh",
             weight: "4U",

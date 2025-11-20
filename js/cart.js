@@ -149,13 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const cart = getCart(currentUser);
 
         if (cart.length === 0) {
-            cartEmpty.classList.remove('hidden');
-            cartContent.classList.add('hidden');
+            if (cartEmpty) cartEmpty.classList.remove('hidden');
+            if (cartContent) cartContent.classList.add('hidden');
             return;
         }
 
-        cartEmpty.classList.add('hidden');
-        cartContent.classList.remove('hidden');
+        if (cartEmpty) cartEmpty.classList.add('hidden');
+        if (cartContent) cartContent.classList.remove('hidden');
 
         // Render each cart item
         cartItemsContainer.innerHTML = cart.map(item => {
